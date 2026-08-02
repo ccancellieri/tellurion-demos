@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tellurion STAC projection demo</title>
+  <meta name="description" content="Inspect a live Tellurion collection and its feature items through the STAC API projection.">
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.15.0/dist/maplibre-gl.css">
+  <link rel="stylesheet" href="../viewer.css">
+  <link rel="stylesheet" href="../protocol.css">
+</head>
+<body>
+  <main class="layout">
+    <section class="panel">
+      <a class="back" href="../../">← All Tellurion demos</a>
+      <p class="eyebrow">STAC API · same collection, another projection</p>
+      <h1>Browse the catalog behind the map.</h1>
+      <p class="intro">The road collection that powers the vector viewer is also exposed as a STAC Collection with STAC Items. The page follows those live resources instead of copying their metadata.</p>
+      <div class="status" id="status" role="status"><strong>Reading the live catalog…</strong><br>Render may need a short cold start.</div>
+      <div class="links">
+        <a class="button" href="https://tellurion-vector-demo.onrender.com/public/stac/catalogs/default/collections/sample_roads">Collection JSON</a>
+        <a class="button" href="https://tellurion-vector-demo.onrender.com/public/stac/catalogs/default/collections/sample_roads/items?limit=5">ItemCollection JSON</a>
+      </div>
+      <p class="notes">This is a STAC projection of a vector feature collection, not an asset-catalog demonstration. These items do not prove COG, thumbnail or downloadable-source asset inventories; those require explicit asset metadata.</p>
+    </section>
+    <section class="protocol-stage">
+      <div class="protocol-card">
+        <p class="eyebrow">Linked metadata</p>
+        <h2 id="collection-title">sample_roads</h2>
+        <div class="metric-grid">
+          <div class="metric"><strong id="stac-version">—</strong><span>STAC version</span></div>
+          <div class="metric"><strong id="item-count">—</strong><span>sample items</span></div>
+          <div class="metric"><strong id="link-count">—</strong><span>collection links</span></div>
+        </div>
+        <div class="result-map"><div id="map"></div></div>
+        <div class="record-list" id="records"></div>
+      </div>
+    </section>
+  </main>
+  <script src="https://unpkg.com/maplibre-gl@5.15.0/dist/maplibre-gl.js"></script>
+  <script>
+    const service = "https://tellurion-vector-demo.onrender.com";
+    const collectionUrl = `${service}/public/stac/catalogs/default/collections/sample_roads`;
+    const itemsUrl = `${collectionUrl}/items?limit=5`;
+    const empty = {type:"FeatureCollection",features:[]};
+    const statusBox = document.getElementById("status");
+    const recordsBox = document.getElementById("records");
+    const map = new maplibregl.Map({container:"map",center:[12.49,41.903],zoom:12.2,style:{version:8,sources:{items:{type:"geojson",data:empty}},layers:[{id:"background",type:"background",paint:{"background-color":"#06110f"}},{id:"items",type:"line",source:"items",paint:{"line-color":"#f5bd67","line-width":3,"line-opacity":.9}}]}});
+    map.addControl(new maplibregl.NavigationControl(),"top-right");
+
+    async function loadCatalog() {
+      try {
+        const [collectionResponse, itemsResponse] = await Promise.all([fetch(collectionUrl), fetch(itemsUrl, {headers:{accept:"application/geo+json"}})]);
+        if (!collectionResponse.ok || !itemsResponse.ok) throw new Error(`HTTP ${collectionResponse.status}/${itemsResponse.status}`);
+        const collection = await collectionResponse.json();
+        const items = await itemsResponse.json();
+        const features = Array.isArray(items.features) ? items.features : [];
+        document.getElementById("collection-title").textContent = collection.title || collection.id;
+        document.getElementById("stac-version").textContent = collection.stac_version || "declared at root";
+        document.getElementById("item-count").textContent = features.length;
+        document.getElementById("link-count").textContent = Array.isArray(collection.links) ? collection.links.length : 0;
+        map.getSource("items").setData(items);
+        recordsBox.innerHTML = features.map(feature => `<div class="record"><strong>${feature.id}</strong><span>${feature.geometry?.type || "No geometry"} · ${Object.keys(feature.properties || {}).slice(0,4).join(", ") || "No properties"}</span></div>`).join("");
+        statusBox.innerHTML = `<strong>Live STAC resources loaded.</strong><br>${features.length} sample items followed from the collection endpoint.`;
+      } catch (error) {
+        statusBox.innerHTML = `<strong>The catalog did not load.</strong><br>${error.message}. Retry after the public service wakes.`;
+      }
+    }
+    map.on("load", loadCatalog);
+  </script>
+</body>
+</html>

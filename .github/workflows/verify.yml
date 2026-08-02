@@ -23,6 +23,7 @@ jobs:
           sh tests/render_raster_contract.sh
           sh tests/render_zarr_contract.sh
           sh tests/render_3d_contract.sh
+          sh tests/render_protocol_gallery_contract.sh
 
       - name: Verify human-facing pages
         run: |
@@ -36,7 +37,7 @@ jobs:
             sleep 0.25
           done
           grep -Fq '<title>Tellurion demos' /tmp/tellurion-demos-index.html
-          for page in vector raster zarr 3d; do
+          for page in vector raster zarr 3d query stac maps; do
             curl --fail --silent "http://127.0.0.1:8080/demos/$page/" | grep -Fq '<title>Tellurion'
           done
 

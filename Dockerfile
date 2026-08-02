@@ -55,6 +55,7 @@ COPY --from=builder /app/tellurion /app/tellurion
 COPY --from=builder /app/data /app/data
 COPY --from=builder /app/licenses /app/licenses
 COPY deploy/render/vector.yaml /app/config.yaml
+COPY deploy/render/roads-style.json /app/styles/roads.json
 
 ENV TELLURION_CONFIG=/app/config.yaml
 ENV TELLURION_GEOPACKAGE_PATH=/app/data/sample-roads.gpkg
