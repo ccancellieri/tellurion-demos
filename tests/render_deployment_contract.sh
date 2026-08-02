@@ -39,6 +39,7 @@ require_text render.yaml 'healthCheckPath: /'
 require_text deploy/render/vector.yaml 'driver: geopackage'
 require_text deploy/render/vector.yaml 'id: sample_roads'
 require_text deploy/render/vector.yaml 'url_env: TELLURION_GEOPACKAGE_PATH'
+require_text demos/vector/index.html 'WebMercatorQuad/{z}/{y}/{x}.mvt'
 
 if grep -Eq 'routing:[[:space:]]*$|write:[[:space:]]' "$ROOT/deploy/render/vector.yaml"; then
   printf 'the public vector demo must not configure a write route\n' >&2

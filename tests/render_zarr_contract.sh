@@ -44,6 +44,7 @@ require_text deploy/render/zarr.yaml 'driver: zarr'
 require_text deploy/render/zarr.yaml 'id: sample_zarr_t0'
 require_text deploy/render/zarr.yaml 'id: sample_zarr_t1'
 require_text deploy/render/zarr.yaml 'ramp: viridis'
+require_text demos/zarr/index.html 'WebMercatorQuad/{z}/{y}/{x}.png'
 
 require_text deploy/render/build_zarr_demo.py '"shape": [2, 256, 256]'
 require_text deploy/render/build_zarr_demo.py '"chunks": [1, 64, 64]'

@@ -26,8 +26,8 @@
     const service = "https://tellurion-zarr-demo.onrender.com";
     const status = document.getElementById("status");
     const sources = {
-      t0:`${service}/public/tiles/catalogs/default/collections/sample_zarr_t0/tiles/WebMercatorQuad/{z}/{x}/{y}.png`,
-      t1:`${service}/public/tiles/catalogs/default/collections/sample_zarr_t1/tiles/WebMercatorQuad/{z}/{x}/{y}.png`
+      t0:`${service}/public/tiles/catalogs/default/collections/sample_zarr_t0/tiles/WebMercatorQuad/{z}/{y}/{x}.png`,
+      t1:`${service}/public/tiles/catalogs/default/collections/sample_zarr_t1/tiles/WebMercatorQuad/{z}/{y}/{x}.png`
     };
     const map = new maplibregl.Map({container:"map",center:[.02,.015],zoom:13.4,style:{version:8,sources:{field:{type:"raster",tiles:[sources.t0],tileSize:256,minzoom:0,maxzoom:14}},layers:[{id:"background",type:"background",paint:{"background-color":"#071310"}},{id:"field",type:"raster",source:"field",paint:{"raster-resampling":"nearest","raster-fade-duration":250}}]}});
     map.addControl(new maplibregl.NavigationControl(),"top-right");

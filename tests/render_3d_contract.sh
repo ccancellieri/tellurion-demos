@@ -57,6 +57,7 @@ require_text demos/3d/index.html 'Synthetic capability data'
 require_text demos/3d/index.html '3D Tiles 1.1'
 require_text demos/3d/index.html '3D GeoVolumes remains a draft'
 require_text demos/3d/index.html 'const tileGroundMeters = 40075016.68557849 / (2 ** 13);'
+require_text demos/3d/index.html '3dtiles/tiles/13/4095/4096.glb'
 
 require_text README.md 'Interactive GLB scene'
 require_text README.md 'no OGC API 3D GeoVolumes conformance claim'

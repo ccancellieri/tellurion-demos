@@ -43,6 +43,7 @@ require_text render.yaml 'plan: free'
 require_text deploy/render/raster.yaml 'driver: cog'
 require_text deploy/render/raster.yaml 'id: sample_landcover'
 require_text deploy/render/raster.yaml 'url_env: TELLURION_COG_PATH'
+require_text demos/raster/index.html 'WebMercatorQuad/{z}/{y}/{x}.png'
 
 require_text README.md '**Visual entry point:** <https://ccancellieri.github.io/tellurion-demos/>'
 require_text README.md 'Cloud Optimized GeoTIFF-backed raster tiles'
