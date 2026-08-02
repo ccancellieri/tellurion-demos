@@ -1,0 +1,69 @@
+name: Public demo smoke test
+
+on:
+  schedule:
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: public-demo-smoke
+  cancel-in-progress: true
+
+jobs:
+  live-endpoints:
+    name: ${{ matrix.demo }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - demo: human-facing gallery
+            url: https://ccancellieri.github.io/tellurion-demos/
+            content_type: text/html
+            minimum_bytes: 1000
+          - demo: vector features
+            url: https://tellurion-vector-demo.onrender.com/public/features/catalogs/default/collections/sample_roads/items?limit=1
+            content_type: application/json
+            minimum_bytes: 200
+          - demo: raster tile
+            url: https://tellurion-raster-demo.onrender.com/public/tiles/catalogs/default/collections/sample_landcover/tiles/WebMercatorQuad/13/3044/4380.png
+            content_type: image/png
+            minimum_bytes: 1000
+          - demo: Zarr tile
+            url: https://tellurion-zarr-demo.onrender.com/public/tiles/catalogs/default/collections/sample_zarr_t0/tiles/WebMercatorQuad/13/4095/4096.png
+            content_type: image/png
+            minimum_bytes: 1000
+          - demo: 3D GLB tile
+            url: https://tellurion-3d-demo.onrender.com/public/3dtiles/catalogs/default/collections/sample_buildings_3d/3dtiles/tiles/13/4095/4096.glb
+            content_type: model/gltf-binary
+            minimum_bytes: 1000
+    steps:
+      - name: Wake and verify public endpoint
+        env:
+          DEMO_URL: ${{ matrix.url }}
+          EXPECTED_CONTENT_TYPE: ${{ matrix.content_type }}
+          MINIMUM_BYTES: ${{ matrix.minimum_bytes }}
+        run: |
+          for attempt in $(seq 1 12); do
+            : > headers.txt
+            : > body.bin
+            status=$(curl --silent --show-error --location --max-time 70 \
+              --dump-header headers.txt --output body.bin \
+              --write-out '%{http_code}' "$DEMO_URL" || true)
+            size=$(wc -c < body.bin 2>/dev/null || printf '0')
+            if [ "$status" = 200 ] \
+              && grep -Eiq "^content-type: ${EXPECTED_CONTENT_TYPE}([;[:space:]]|$)" headers.txt \
+              && [ "$size" -ge "$MINIMUM_BYTES" ]; then
+              printf 'Verified HTTP 200, %s, %s bytes\n' "$EXPECTED_CONTENT_TYPE" "$size"
+              exit 0
+            fi
+            printf 'Attempt %s: HTTP %s, %s bytes; waiting for the free service to wake\n' \
+              "$attempt" "$status" "$size"
+            sleep 10
+          done
+          printf 'Public endpoint did not satisfy its contract\n' >&2
+          cat headers.txt >&2 || true
+          exit 1

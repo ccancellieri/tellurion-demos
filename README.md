@@ -5,6 +5,9 @@ multidimensional and 3D serving paths.
 
 **Visual entry point:** <https://ccancellieri.github.io/tellurion-demos/>
 
+The public gallery and each live backend are checked daily by the
+[`Public demo smoke test`](https://github.com/ccancellieri/tellurion-demos/actions/workflows/smoke.yml).
+
 This repository intentionally separates the public landing pages from the
 machine-readable OGC API endpoints. Start with the visual gallery; use the API
 links when you want to inspect the protocol payloads.
