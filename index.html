@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tellurion demos — spatial data, served in the open</title>
+  <meta name="description" content="Human-first demonstrations of Tellurion serving vector, COG raster, multidimensional Zarr and 3D Tiles through open geospatial interfaces.">
+  <meta property="og:title" content="Tellurion demos">
+  <meta property="og:description" content="Vector, raster, multidimensional and 3D serving paths — visible, reproducible and honest about their evidence boundaries.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://ccancellieri.github.io/tellurion-demos/">
+  <link rel="icon" href="favicon.svg">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="shell nav">
+    <a class="brand" href="./"><img src="favicon.svg" alt=""><span>Tellurion demos</span></a>
+    <nav class="nav-links" aria-label="Primary navigation">
+      <a href="#capabilities">Capabilities</a>
+      <a href="#evidence">Evidence</a>
+      <a href="#author">Author</a>
+      <a href="https://github.com/ccancellieri/tellurion-demos">Source</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="shell hero">
+      <div>
+        <p class="eyebrow">Open geospatial serving, made visible</p>
+        <h1>One engine.<br><em>Four data worlds.</em></h1>
+        <p class="lede">Tellurion routes vector features, cloud-optimized rasters, multidimensional arrays and streamed 3D content through focused, read-only services. This gallery puts a human interface in front of every machine endpoint.</p>
+        <div class="actions">
+          <a class="button primary" href="#capabilities">Explore the demos</a>
+          <a class="button" href="https://github.com/ccancellieri/tellurion">Read the engine</a>
+        </div>
+      </div>
+      <aside class="hero-note">
+        <strong>Public, reproducible, bounded.</strong>
+        Synthetic fixtures are labelled. Open data keeps its attribution. Hosted timings are never presented as benchmarks. Render services may need a short cold start.
+      </aside>
+    </section>
+
+    <section class="section" id="capabilities">
+      <div class="shell">
+        <div class="section-head">
+          <div><p class="eyebrow">Capability gallery</p><h2>Choose the data, then inspect the protocol.</h2></div>
+          <p class="section-copy">Each entry begins with a visual experience and keeps the raw OGC API or 3D Tiles resource one deliberate step deeper.</p>
+        </div>
+        <div class="grid">
+          <a class="card" href="demos/vector/">
+            <span class="card-index">01 / VECTOR</span>
+            <h3>Roads as queryable features and tiles.</h3>
+            <p>A 5,603-feature OpenStreetMap sample served from GeoPackage through OGC API Features and Mapbox Vector Tiles.</p>
+            <span class="card-link">Open the vector viewer →</span>
+          </a>
+          <a class="card" href="demos/raster/">
+            <span class="card-index">02 / COG RASTER</span>
+            <h3>Land cover, read by range and rendered.</h3>
+            <p>An attributed ESA WorldCover sample authored as a Cloud Optimized GeoTIFF and rendered into PNG tiles.</p>
+            <span class="card-link">Open the raster viewer →</span>
+          </a>
+          <a class="card" href="demos/zarr/">
+            <span class="card-index">03 / ZARR</span>
+            <h3>Two slices of one multidimensional field.</h3>
+            <p>Deterministic Zarr v2 arrays with `[time, y, x]` shape, fixed leading indexes and a transparent limitation boundary.</p>
+            <span class="card-link">Compare the Zarr slices →</span>
+          </a>
+          <a class="card" href="demos/3d/">
+            <span class="card-index">04 / 3D TILES</span>
+            <h3>Footprints become streamable 3D.</h3>
+            <p>Synthetic polygons move through vector tiling and extrusion into GLB content inside a 3D Tiles 1.1 tileset.</p>
+            <span class="card-link">Orbit the 3D scene →</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="evidence">
+      <div class="shell">
+        <div class="section-head">
+          <div><p class="eyebrow">Evidence discipline</p><h2>Show what works. State what it proves.</h2></div>
+        </div>
+        <div class="evidence">
+          <div class="fact"><strong>Reproducible</strong><p>Versioned Tellurion 0.3.0 artifacts are checksum-verified. Generated fixtures are deterministic and dependency-light.</p></div>
+          <div class="fact"><strong>Standards-aware</strong><p>3D Tiles 1.1 is identified as an approved OGC Community Standard; draft-inspired API routes are not labelled conformant.</p></div>
+          <div class="fact"><strong>Licence-aware</strong><p>Demo code, Tellurion software, OpenStreetMap data and ESA WorldCover each retain their own terms and attribution.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="author">
+      <div class="shell profile">
+        <div><p class="eyebrow">Built by</p><h2>Carlo Cancellieri</h2></div>
+        <div class="profile-copy">
+          <p><strong>Geospatial platform engineer, open-standards implementer and former GeoServer core developer.</strong> I build interoperable systems spanning OGC APIs, STAC, vector and raster processing, multidimensional data, 3D delivery and high-performance Rust services.</p>
+          <p>This gallery connects current Tellurion work with the broader engineering path behind GeoID and years of open-source geospatial development.</p>
+          <div class="profile-links">
+            <a class="button primary" href="https://www.linkedin.com/in/ccancellieri/">Connect on LinkedIn</a>
+            <a class="button" href="https://github.com/ccancellieri">GitHub</a>
+            <a class="button" href="https://ccancellieri.github.io/">Portfolio</a>
+            <a class="button" href="https://github.com/ccancellieri/tellurion-italy-demo">Italy field case</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="shell">
+    <span>Tellurion demos · public technical evidence, not a production SLA.</span>
+    <span>Demo code AGPL-3.0 · Tellurion 0.3.0 has separate BUSL-1.1 terms.</span>
+  </footer>
+</body>
+</html>

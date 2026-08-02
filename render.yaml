@@ -1,0 +1,45 @@
+services:
+  - type: web
+    name: tellurion-vector-demo
+    runtime: docker
+    repo: https://github.com/ccancellieri/tellurion-demos
+    branch: main
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    region: frankfurt
+    plan: free
+    healthCheckPath: /
+    autoDeployTrigger: commit
+  - type: web
+    name: tellurion-raster-demo
+    runtime: docker
+    repo: https://github.com/ccancellieri/tellurion-demos
+    branch: main
+    dockerfilePath: ./Dockerfile.raster
+    dockerContext: .
+    region: frankfurt
+    plan: free
+    healthCheckPath: /
+    autoDeployTrigger: commit
+  - type: web
+    name: tellurion-zarr-demo
+    runtime: docker
+    repo: https://github.com/ccancellieri/tellurion-demos
+    branch: main
+    dockerfilePath: ./Dockerfile-zarr
+    dockerContext: .
+    region: frankfurt
+    plan: free
+    healthCheckPath: /
+    autoDeployTrigger: commit
+  - type: web
+    name: tellurion-3d-demo
+    runtime: docker
+    repo: https://github.com/ccancellieri/tellurion-demos
+    branch: main
+    dockerfilePath: ./Dockerfile-3d
+    dockerContext: .
+    region: frankfurt
+    plan: free
+    healthCheckPath: /
+    autoDeployTrigger: commit
