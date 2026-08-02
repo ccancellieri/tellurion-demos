@@ -26,7 +26,7 @@ jobs:
             minimum_bytes: 1000
           - demo: vector features
             url: https://tellurion-vector-demo.onrender.com/public/features/catalogs/default/collections/sample_roads/items?limit=1
-            content_type: application/json
+            content_type: application/geo+json
             minimum_bytes: 200
           - demo: raster tile
             url: https://tellurion-raster-demo.onrender.com/public/tiles/catalogs/default/collections/sample_landcover/tiles/WebMercatorQuad/13/3044/4380.png
@@ -55,7 +55,7 @@ jobs:
               --write-out '%{http_code}' "$DEMO_URL" || true)
             size=$(wc -c < body.bin 2>/dev/null || printf '0')
             if [ "$status" = 200 ] \
-              && grep -Eiq "^content-type: ${EXPECTED_CONTENT_TYPE}([;[:space:]]|$)" headers.txt \
+              && grep -Fiq "content-type: ${EXPECTED_CONTENT_TYPE}" headers.txt \
               && [ "$size" -ge "$MINIMUM_BYTES" ]; then
               printf 'Verified HTTP 200, %s, %s bytes\n' "$EXPECTED_CONTENT_TYPE" "$size"
               exit 0
