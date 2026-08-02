@@ -4,9 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Tellurion demos — spatial data, served in the open</title>
-  <meta name="description" content="Human-first demonstrations of Tellurion serving vector, COG raster, multidimensional Zarr and 3D Tiles through open geospatial interfaces.">
+  <meta name="description" content="Human-first demonstrations of Tellurion serving vector, COG raster, multidimensional Zarr, 3D Tiles, CQL2, STAC, Maps and Styles through open geospatial interfaces.">
   <meta property="og:title" content="Tellurion demos">
-  <meta property="og:description" content="Vector, raster, multidimensional and 3D serving paths — visible, reproducible and honest about their evidence boundaries.">
+  <meta property="og:description" content="Seven visible geospatial paths — vector, raster, multidimensional, 3D, CQL2, STAC and server-rendered maps — with explicit evidence boundaries.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://ccancellieri.github.io/tellurion-demos/">
   <link rel="icon" href="favicon.svg">
@@ -27,8 +27,8 @@
     <section class="shell hero">
       <div>
         <p class="eyebrow">Open geospatial serving, made visible</p>
-        <h1>One engine.<br><em>Four data worlds.</em></h1>
-        <p class="lede">Tellurion routes vector features, cloud-optimized rasters, multidimensional arrays and streamed 3D content through focused, read-only services. This gallery puts a human interface in front of every machine endpoint.</p>
+        <h1>One engine.<br><em>Seven visible paths.</em></h1>
+        <p class="lede">Tellurion routes vector features, cloud-optimized rasters, multidimensional arrays and streamed 3D content, then exposes CQL2 filtering, STAC catalog views and server-rendered maps. This gallery puts a human interface in front of every machine endpoint.</p>
         <div class="actions">
           <a class="button primary" href="#capabilities">Explore the demos</a>
           <a class="button" href="https://github.com/ccancellieri/tellurion">Read the engine</a>
@@ -70,6 +70,24 @@
             <h3>Footprints become streamable 3D.</h3>
             <p>Synthetic polygons move through vector tiling and extrusion into GLB content inside a 3D Tiles 1.1 tileset.</p>
             <span class="card-link">Orbit the 3D scene →</span>
+          </a>
+          <a class="card" href="demos/query/">
+            <span class="card-index">05 / CQL2</span>
+            <h3>Filter live features with a real expression.</h3>
+            <p>A bounded query workbench sends CQL2 text to the GeoPackage driver and maps the returned GeoJSON.</p>
+            <span class="card-link">Run a CQL2 query →</span>
+          </a>
+          <a class="card" href="demos/stac/">
+            <span class="card-index">06 / STAC</span>
+            <h3>Follow the collection into its catalog view.</h3>
+            <p>The same road data appears as linked STAC Collection and Item resources, without inventing an asset inventory.</p>
+            <span class="card-link">Browse the STAC projection →</span>
+          </a>
+          <a class="card" href="demos/maps/">
+            <span class="card-index">07 / MAPS + STYLES</span>
+            <h3>Render one bounded map on the server.</h3>
+            <p>A CRS84 window becomes an 800 × 500 PNG, with a switch between the collection default and a named MapLibre style.</p>
+            <span class="card-link">Request the rendered map →</span>
           </a>
         </div>
       </div>

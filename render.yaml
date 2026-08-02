@@ -14,6 +14,7 @@ services:
       paths:
         - Dockerfile
         - deploy/render/vector.yaml
+        - deploy/render/roads-style.json
   - type: web
     name: tellurion-raster-demo
     runtime: docker

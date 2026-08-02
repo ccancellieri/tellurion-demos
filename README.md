@@ -1,7 +1,7 @@
 # Tellurion demos
 
 A human-first, reproducible gallery for Tellurion's vector, raster,
-multidimensional and 3D serving paths.
+multidimensional, 3D, filtering, catalog and server-rendering paths.
 
 **Visual entry point:** <https://ccancellieri.github.io/tellurion-demos/>
 
@@ -20,6 +20,9 @@ links when you want to inspect the protocol payloads.
 | Raster | [Interactive land-cover map](https://ccancellieri.github.io/tellurion-demos/demos/raster/) | COG → OGC API Tiles/Maps PNG | ESA WorldCover sample, correctly attributed |
 | Zarr | [Two-slice comparison](https://ccancellieri.github.io/tellurion-demos/demos/zarr/) | Zarr v2 shape `[time, y, x]` → PNG | Synthetic fixed slices; no on-wire dimension-selection claim |
 | 3D | [Interactive GLB scene](https://ccancellieri.github.io/tellurion-demos/demos/3d/) | polygons → MVT → extrusion → GLB/3D Tiles 1.1 | Synthetic footprints; no OGC API 3D GeoVolumes conformance claim |
+| CQL2 | [Live query workbench](https://ccancellieri.github.io/tellurion-demos/demos/query/) | CQL2 text → GeoPackage filter → GeoJSON | Bounded to 50 features and this driver's advertised filter classes |
+| STAC | [Linked catalog projection](https://ccancellieri.github.io/tellurion-demos/demos/stac/) | canonical collection → STAC Collection and Items | Feature projection only; no source-asset inventory claim |
+| Maps + Styles | [Server-rendered Rome map](https://ccancellieri.github.io/tellurion-demos/demos/maps/) | MVT mosaic → PNG, optionally painted by MapLibre Style JSON | Maps 1.0 path; Styles surface is draft-aligned and read-only |
 
 Render's free services can sleep after inactivity, so a viewer may need a short
 cold start. Hosted response times are not benchmark evidence.

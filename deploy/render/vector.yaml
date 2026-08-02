@@ -35,3 +35,7 @@ collections:
         - { name: railway, type: string }
     settings:
       tile_properties: [highway, name, railway]
+
+styles:
+  - id: roads-night
+    path: /app/styles/roads.json
