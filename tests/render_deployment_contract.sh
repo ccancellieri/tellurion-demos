@@ -35,6 +35,8 @@ require_text render.yaml 'name: tellurion-vector-demo'
 require_text render.yaml 'region: frankfurt'
 require_text render.yaml 'plan: free'
 require_text render.yaml 'healthCheckPath: /'
+require_text render.yaml 'autoDeployTrigger: checksPass'
+require_text render.yaml 'deploy/render/vector.yaml'
 
 require_text deploy/render/vector.yaml 'driver: geopackage'
 require_text deploy/render/vector.yaml 'id: sample_roads'

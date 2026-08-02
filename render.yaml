@@ -9,7 +9,11 @@ services:
     region: frankfurt
     plan: free
     healthCheckPath: /
-    autoDeployTrigger: commit
+    autoDeployTrigger: checksPass
+    buildFilter:
+      paths:
+        - Dockerfile
+        - deploy/render/vector.yaml
   - type: web
     name: tellurion-raster-demo
     runtime: docker
@@ -20,7 +24,11 @@ services:
     region: frankfurt
     plan: free
     healthCheckPath: /
-    autoDeployTrigger: commit
+    autoDeployTrigger: checksPass
+    buildFilter:
+      paths:
+        - Dockerfile.raster
+        - deploy/render/raster.yaml
   - type: web
     name: tellurion-zarr-demo
     runtime: docker
@@ -31,7 +39,12 @@ services:
     region: frankfurt
     plan: free
     healthCheckPath: /
-    autoDeployTrigger: commit
+    autoDeployTrigger: checksPass
+    buildFilter:
+      paths:
+        - Dockerfile-zarr
+        - deploy/render/zarr.yaml
+        - deploy/render/build_zarr_demo.py
   - type: web
     name: tellurion-3d-demo
     runtime: docker
@@ -42,4 +55,9 @@ services:
     region: frankfurt
     plan: free
     healthCheckPath: /
-    autoDeployTrigger: commit
+    autoDeployTrigger: checksPass
+    buildFilter:
+      paths:
+        - Dockerfile-3d
+        - deploy/render/three-d.yaml
+        - deploy/render/build_3d_demo.py

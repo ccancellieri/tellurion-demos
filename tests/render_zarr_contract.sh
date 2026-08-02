@@ -39,6 +39,8 @@ require_text render.yaml 'name: tellurion-zarr-demo'
 require_text render.yaml 'dockerfilePath: ./Dockerfile-zarr'
 require_text render.yaml 'region: frankfurt'
 require_text render.yaml 'plan: free'
+require_text render.yaml 'deploy/render/zarr.yaml'
+require_text render.yaml 'deploy/render/build_zarr_demo.py'
 
 require_text deploy/render/zarr.yaml 'driver: zarr'
 require_text deploy/render/zarr.yaml 'id: sample_zarr_t0'

@@ -40,6 +40,8 @@ require_text render.yaml 'name: tellurion-3d-demo'
 require_text render.yaml 'dockerfilePath: ./Dockerfile-3d'
 require_text render.yaml 'region: frankfurt'
 require_text render.yaml 'plan: free'
+require_text render.yaml 'deploy/render/three-d.yaml'
+require_text render.yaml 'deploy/render/build_3d_demo.py'
 
 require_text deploy/render/three-d.yaml 'id: sample_buildings_3d'
 require_text deploy/render/three-d.yaml 'driver: geopackage'

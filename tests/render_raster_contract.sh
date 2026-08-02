@@ -39,6 +39,8 @@ require_text render.yaml 'name: tellurion-raster-demo'
 require_text render.yaml 'dockerfilePath: ./Dockerfile.raster'
 require_text render.yaml 'region: frankfurt'
 require_text render.yaml 'plan: free'
+require_text render.yaml 'Dockerfile.raster'
+require_text render.yaml 'deploy/render/raster.yaml'
 
 require_text deploy/render/raster.yaml 'driver: cog'
 require_text deploy/render/raster.yaml 'id: sample_landcover'
