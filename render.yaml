@@ -31,6 +31,22 @@ services:
         - Dockerfile.raster
         - deploy/render/raster.yaml
   - type: web
+    name: tellurion-stac-harvest-demo
+    runtime: docker
+    repo: https://github.com/ccancellieri/tellurion-demos
+    branch: main
+    dockerfilePath: ./Dockerfile.stac-harvest
+    dockerContext: .
+    region: frankfurt
+    plan: free
+    healthCheckPath: /
+    autoDeployTrigger: checksPass
+    buildFilter:
+      paths:
+        - Dockerfile.stac-harvest
+        - deploy/render/stac-harvest.yaml
+        - data/stac/esa-worldcover
+  - type: web
     name: tellurion-zarr-demo
     runtime: docker
     repo: https://github.com/ccancellieri/tellurion-demos

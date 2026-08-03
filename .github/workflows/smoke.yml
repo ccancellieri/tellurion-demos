@@ -56,6 +56,22 @@ jobs:
             url: https://tellurion-3d-demo.onrender.com/public/3dtiles/catalogs/default/collections/sample_buildings_3d/3dtiles/tiles/13/4095/4096.glb
             content_type: model/gltf-binary
             minimum_bytes: 1000
+          - demo: STAC Collection
+            url: https://tellurion-stac-harvest-demo.onrender.com/public/stac/catalogs/default/collections/esa_worldcover_2021_rome
+            content_type: application/json
+            minimum_bytes: 500
+          - demo: STAC Item
+            url: https://tellurion-stac-harvest-demo.onrender.com/public/stac/catalogs/default/collections/esa_worldcover_2021_rome/items/1
+            content_type: application/geo+json
+            minimum_bytes: 500
+          - demo: raster TileSet
+            url: https://tellurion-stac-harvest-demo.onrender.com/public/tiles/catalogs/default/collections/esa_worldcover_2021_rome/tiles/WebMercatorQuad
+            content_type: application/json
+            minimum_bytes: 300
+          - demo: ESA WorldCover PNG tile
+            url: https://tellurion-stac-harvest-demo.onrender.com/public/tiles/catalogs/default/collections/esa_worldcover_2021_rome/tiles/WebMercatorQuad/13/3035/4380.png
+            content_type: image/png
+            minimum_bytes: 1000
     steps:
       - name: Wake and verify public endpoint
         env:

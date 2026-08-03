@@ -1,0 +1,82 @@
+server:
+  port: 10000
+  request_timeout_s: 30
+  log_json: true
+
+cache:
+  memory_percent: 10.0
+
+storages:
+  - id: harvested_items
+    driver: geopackage
+    url_env: TELLURION_GEOPACKAGE_PATH
+  - id: harvested_cog
+    driver: cog
+    url_env: TELLURION_COG_URL
+
+tenants:
+  - id: public
+
+catalogs:
+  - id: default
+    tenant: public
+
+collections:
+  - id: esa_worldcover_2021_rome
+    title: ESA WorldCover 2021 — Rome tile footprint
+    description: Read-only ESA WorldCover v200 2021 N39E012 footprint. Features and STAC metadata are served from a harvested local GeoPackage; raster tiles read the public source COG.
+    catalog: default
+    storage: harvested_items
+    routing:
+      features: harvested_items
+      tiles: harvested_cog
+    tiles:
+      minzoom: 0
+      maxzoom: 14
+      caps: {}
+    schema:
+      properties:
+        - { name: source_item_id, type: string }
+        - { name: start_datetime, type: datetime }
+        - { name: end_datetime, type: datetime }
+        - { name: product_version, type: string }
+        - { name: grid_code, type: string }
+    settings:
+      colormap:
+        kind: stops
+        stops:
+          - { value: 0.0, rgba: [0, 0, 0, 0] }
+          - { value: 10.0, rgba: [0, 100, 0, 255] }
+          - { value: 20.0, rgba: [255, 187, 34, 255] }
+          - { value: 30.0, rgba: [255, 255, 76, 255] }
+          - { value: 40.0, rgba: [240, 150, 255, 255] }
+          - { value: 50.0, rgba: [250, 0, 0, 255] }
+          - { value: 60.0, rgba: [180, 180, 180, 255] }
+          - { value: 70.0, rgba: [240, 240, 240, 255] }
+          - { value: 80.0, rgba: [0, 100, 200, 255] }
+          - { value: 90.0, rgba: [0, 150, 160, 255] }
+          - { value: 95.0, rgba: [0, 207, 117, 255] }
+          - { value: 100.0, rgba: [250, 230, 160, 255] }
+      stac:
+        license: CC-BY-4.0
+        keywords: [ESA, WorldCover, land cover, 2021]
+        providers:
+          - { name: ESA, roles: [licensor, producer], url: "https://esa-worldcover.org" }
+          - { name: ESA WorldCover Consortium, roles: [processor], url: "https://esa-worldcover.org" }
+          - { name: Microsoft, roles: [host], url: "https://planetarycomputer.microsoft.com" }
+        assets:
+          source_cog:
+            href: https://ai4edataeuwest.blob.core.windows.net/esa-worldcover/v200/2021/map/ESA_WorldCover_10m_2021_v200_N39E012_Map.tif
+            type: image/tiff; application=geotiff; profile=cloud-optimized
+            title: ESA WorldCover v200 2021 source COG
+            roles: [data]
+          source_snapshot:
+            href: https://raw.githubusercontent.com/ccancellieri/tellurion-demos/main/data/stac/esa-worldcover/item.json
+            type: application/geo+json
+            title: Harvested upstream STAC Item snapshot
+            roles: [metadata]
+          provenance_manifest:
+            href: https://raw.githubusercontent.com/ccancellieri/tellurion-demos/main/data/stac/esa-worldcover/manifest.json
+            type: application/json
+            title: Harvest provenance manifest
+            roles: [metadata, provenance]
