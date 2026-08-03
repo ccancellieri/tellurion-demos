@@ -3,70 +3,196 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Tellurion STAC projection demo</title>
-  <meta name="description" content="Inspect a live Tellurion collection and its feature items through the STAC API projection.">
+  <title>ESA WorldCover harvest viewer — Tellurion</title>
+  <meta name="description" content="Trace a preserved ESA WorldCover STAC item through its source COG, Tellurion raster tiles, and a live browser map.">
   <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.15.0/dist/maplibre-gl.css">
   <link rel="stylesheet" href="../viewer.css">
   <link rel="stylesheet" href="../protocol.css">
 </head>
 <body>
-  <main class="layout">
-    <section class="panel">
+  <main class="layout harvest-layout">
+    <section class="panel harvest-panel">
       <a class="back" href="../../">← All Tellurion demos</a>
-      <p class="eyebrow">STAC API · same collection, another projection</p>
-      <h1>Browse the catalog behind the map.</h1>
-      <p class="intro">The road collection that powers the vector viewer is also exposed as a STAC Collection with STAC Items. The page follows those live resources instead of copying their metadata.</p>
-      <div class="status" id="status" role="status"><strong>Reading the live catalog…</strong><br>Render may need a short cold start.</div>
-      <div class="links">
-        <a class="button" href="https://tellurion-vector-demo.onrender.com/public/stac/catalogs/default/collections/sample_roads">Collection JSON</a>
-        <a class="button" href="https://tellurion-vector-demo.onrender.com/public/stac/catalogs/default/collections/sample_roads/items?limit=5">ItemCollection JSON</a>
+      <p class="eyebrow">STAC harvest · raster Tiles</p>
+      <h1>A source COG, kept in view.</h1>
+      <p class="intro">ESA WorldCover STAC → preserved COG and class metadata → Tellurion STAC/Features/raster Tiles. The map is the live proof: Tellurion reads the source COG and composes PNG tiles for this browser.</p>
+      <div class="status" id="map-status" role="status" aria-live="polite"><strong>Preparing the live map…</strong><br>Render may need a short cold start before PNG tiles appear.</div>
+      <div class="links" aria-label="Source and live resource links">
+        <a class="button" id="source-cog-link" href="https://ai4edataeuwest.blob.core.windows.net/esa-worldcover/v200/2021/map/ESA_WorldCover_10m_2021_v200_N39E012_Map.tif">Source COG</a>
+        <a class="button" href="https://tellurion-stac-harvest-demo.onrender.com/public/stac/catalogs/default/collections/esa_worldcover_2021_rome">Tellurion Collection</a>
       </div>
-      <p class="notes">This is a STAC projection of a vector feature collection, not an asset-catalog demonstration. These items do not prove COG, thumbnail or downloadable-source asset inventories; those require explicit asset metadata.</p>
+      <p class="notes"><strong>Attribution:</strong> © ESA WorldCover project 2021; produced by ESA and the ESA WorldCover Consortium, hosted by Microsoft. <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Dynamic PNG tile composition, not a raster OGC API Maps conformance claim.</p>
     </section>
-    <section class="protocol-stage">
-      <div class="protocol-card">
-        <p class="eyebrow">Linked metadata</p>
-        <h2 id="collection-title">sample_roads</h2>
-        <div class="metric-grid">
-          <div class="metric"><strong id="stac-version">—</strong><span>STAC version</span></div>
-          <div class="metric"><strong id="item-count">—</strong><span>sample items</span></div>
-          <div class="metric"><strong id="link-count">—</strong><span>collection links</span></div>
+
+    <section class="protocol-stage harvest-stage" aria-label="Live map and harvested evidence">
+      <div class="protocol-card harvest-card">
+        <div class="harvest-heading">
+          <div>
+            <p class="eyebrow">Live raster proof</p>
+            <h2>WorldCover over Rome</h2>
+          </div>
+          <p>One MapLibre raster source requests Tellurion PNG tiles directly from the harvested WorldCover source.</p>
         </div>
-        <div class="result-map"><div id="map"></div></div>
-        <div class="record-list" id="records"></div>
+        <div class="harvest-map" id="map-region" aria-label="Interactive ESA WorldCover raster map">
+          <div id="map"></div>
+          <p class="map-fallback" id="map-fallback">The map is waiting for the public tile service. If it remains unavailable, inspect the independent resource checks below and retry after Render wakes.</p>
+          <div class="map-credit">© ESA WorldCover 2021 · CC BY 4.0</div>
+        </div>
+
+        <section class="transect" aria-labelledby="transect-title">
+          <div class="transect-head">
+            <div><p class="eyebrow">Evidence transect</p><h3 id="transect-title">Source and derived resources</h3></div>
+            <p><span class="source-key">Source asset</span><span class="derived-key">Derived by Tellurion</span></p>
+          </div>
+          <ol class="provenance-graph">
+            <li class="source-node"><span class="node-mark tree"></span><strong>Planetary Computer STAC snapshot</strong><a href="https://raw.githubusercontent.com/ccancellieri/tellurion-demos/main/data/stac/esa-worldcover/item.json">Preserved Item evidence</a></li>
+            <li class="source-node"><span class="node-mark crop"></span><strong>ESA source COG asset</strong><a id="asset-link" href="https://ai4edataeuwest.blob.core.windows.net/esa-worldcover/v200/2021/map/ESA_WorldCover_10m_2021_v200_N39E012_Map.tif">Read-only public COG</a></li>
+            <li class="derived-node"><span class="node-mark water"></span><strong>Tellurion COG driver</strong><span>Raster windows and class colors</span></li>
+            <li class="derived-node"><span class="node-mark built"></span><strong>raster TileSet / PNG tiles</strong><a href="https://tellurion-stac-harvest-demo.onrender.com/public/tiles/catalogs/default/collections/esa_worldcover_2021_rome/tiles/WebMercatorQuad">Live TileSet metadata</a></li>
+            <li class="derived-node"><span class="node-mark moss"></span><strong>browser map</strong><span>MapLibre renders the returned tiles</span></li>
+          </ol>
+        </section>
+
+        <section class="evidence-grid" aria-label="Harvested metadata and live endpoint checks">
+          <div class="evidence-block identity-block">
+            <p class="eyebrow">Preserved identity</p>
+            <dl class="facts">
+              <div><dt>Source collection</dt><dd id="source-collection">—</dd></div>
+              <div><dt>Source Item</dt><dd id="source-item">—</dd></div>
+              <div><dt>Tellurion source_item_id</dt><dd id="tellurion-item">Waiting for Item…</dd></div>
+              <div><dt>Harvested</dt><dd id="harvested-at">—</dd></div>
+              <div><dt>Collection digest</dt><dd id="collection-digest">—</dd></div>
+              <div><dt>Item digest</dt><dd id="item-digest">—</dd></div>
+            </dl>
+          </div>
+          <div class="evidence-block legend-block">
+            <p class="eyebrow">Generated class legend</p>
+            <p class="legend-note">The committed legend is generated from the preserved WorldCover class metadata.</p>
+            <div class="worldcover-legend" id="legend" aria-live="polite"><p>Reading preserved class metadata…</p></div>
+          </div>
+        </section>
+
+        <section class="resource-checks" aria-labelledby="resource-title">
+          <div class="resource-heading"><div><p class="eyebrow">Independent checks</p><h3 id="resource-title">Four live Tellurion resources</h3></div><p>Each request reports separately; one cold or unavailable endpoint does not hide the others.</p></div>
+          <div class="resource-list">
+            <article class="resource" id="resource-collection"><a href="https://tellurion-stac-harvest-demo.onrender.com/public/stac/catalogs/default/collections/esa_worldcover_2021_rome">STAC Collection</a><p>Waiting to request…</p></article>
+            <article class="resource" id="resource-item"><a href="https://tellurion-stac-harvest-demo.onrender.com/public/stac/catalogs/default/collections/esa_worldcover_2021_rome/items/1">STAC Item</a><p>Waiting to request…</p></article>
+            <article class="resource" id="resource-tileset"><a href="https://tellurion-stac-harvest-demo.onrender.com/public/tiles/catalogs/default/collections/esa_worldcover_2021_rome/tiles/WebMercatorQuad">raster TileSet</a><p>Waiting to request…</p></article>
+            <article class="resource" id="resource-png"><a href="https://tellurion-stac-harvest-demo.onrender.com/public/tiles/catalogs/default/collections/esa_worldcover_2021_rome/tiles/WebMercatorQuad/13/3035/4380.png">PNG tile</a><p>Waiting to request…</p></article>
+          </div>
+        </section>
       </div>
     </section>
   </main>
   <script src="https://unpkg.com/maplibre-gl@5.15.0/dist/maplibre-gl.js"></script>
   <script>
-    const service = "https://tellurion-vector-demo.onrender.com";
-    const collectionUrl = `${service}/public/stac/catalogs/default/collections/sample_roads`;
-    const itemsUrl = `${collectionUrl}/items?limit=5`;
-    const empty = {type:"FeatureCollection",features:[]};
-    const statusBox = document.getElementById("status");
-    const recordsBox = document.getElementById("records");
-    const map = new maplibregl.Map({container:"map",center:[12.49,41.903],zoom:12.2,style:{version:8,sources:{items:{type:"geojson",data:empty}},layers:[{id:"background",type:"background",paint:{"background-color":"#06110f"}},{id:"items",type:"line",source:"items",paint:{"line-color":"#f5bd67","line-width":3,"line-opacity":.9}}]}});
-    map.addControl(new maplibregl.NavigationControl(),"top-right");
+    const service = "https://tellurion-stac-harvest-demo.onrender.com";
+    const collectionUrl = `${service}/public/stac/catalogs/default/collections/esa_worldcover_2021_rome`;
+    const itemUrl = `${collectionUrl}/items/1`;
+    const tileSetUrl = `${service}/public/tiles/catalogs/default/collections/esa_worldcover_2021_rome/tiles/WebMercatorQuad`;
+    const tileTemplate = `${tileSetUrl}/{z}/{y}/{x}.png`;
+    const pngUrl = `${service}/public/tiles/catalogs/default/collections/esa_worldcover_2021_rome/tiles/WebMercatorQuad/13/3035/4380.png`;
+    const mapStatus = document.getElementById("map-status");
+    const fallback = document.getElementById("map-fallback");
+    const resourceStates = {
+      collection: document.querySelector("#resource-collection p"),
+      item: document.querySelector("#resource-item p"),
+      tileset: document.querySelector("#resource-tileset p"),
+      png: document.querySelector("#resource-png p")
+    };
 
-    async function loadCatalog() {
+    function updateResourceState(name, message, failed) {
+      const element = resourceStates[name];
+      element.textContent = message;
+      element.parentElement.classList.toggle("resource-failed", failed);
+      element.parentElement.classList.toggle("resource-ready", !failed);
+    }
+
+    function renderLegend(entries) {
+      const legend = document.getElementById("legend");
+      legend.replaceChildren();
+      entries.forEach(entry => {
+        const row = document.createElement("div");
+        row.className = "legend-row";
+        const swatch = document.createElement("span");
+        swatch.className = "legend-swatch";
+        swatch.style.backgroundColor = entry.color;
+        const label = document.createElement("span");
+        label.textContent = entry.label;
+        const value = document.createElement("code");
+        value.textContent = entry.value;
+        row.append(swatch, label, value);
+        legend.append(row);
+      });
+    }
+
+    function showMapState(message, isFailure) {
+      mapStatus.replaceChildren();
+      const strong = document.createElement("strong");
+      strong.textContent = isFailure ? "The live map is unavailable." : "Live map initialized.";
+      mapStatus.append(strong, document.createElement("br"), document.createTextNode(message));
+      fallback.hidden = !isFailure;
+    }
+
+    async function loadEvidence() {
       try {
-        const [collectionResponse, itemsResponse] = await Promise.all([fetch(collectionUrl), fetch(itemsUrl, {headers:{accept:"application/geo+json"}})]);
-        if (!collectionResponse.ok || !itemsResponse.ok) throw new Error(`HTTP ${collectionResponse.status}/${itemsResponse.status}`);
-        const collection = await collectionResponse.json();
-        const items = await itemsResponse.json();
-        const features = Array.isArray(items.features) ? items.features : [];
-        document.getElementById("collection-title").textContent = collection.title || collection.id;
-        document.getElementById("stac-version").textContent = collection.stac_version || "declared at root";
-        document.getElementById("item-count").textContent = features.length;
-        document.getElementById("link-count").textContent = Array.isArray(collection.links) ? collection.links.length : 0;
-        map.getSource("items").setData(items);
-        recordsBox.innerHTML = features.map(feature => `<div class="record"><strong>${feature.id}</strong><span>${feature.geometry?.type || "No geometry"} · ${Object.keys(feature.properties || {}).slice(0,4).join(", ") || "No properties"}</span></div>`).join("");
-        statusBox.innerHTML = `<strong>Live STAC resources loaded.</strong><br>${features.length} sample items followed from the collection endpoint.`;
+        const [legendResponse, manifestResponse] = await Promise.all([fetch("legend.json"), fetch("manifest.json")]);
+        if (!legendResponse.ok || !manifestResponse.ok) throw new Error(`metadata HTTP ${legendResponse.status}/${manifestResponse.status}`);
+        const [legend, manifest] = await Promise.all([legendResponse.json(), manifestResponse.json()]);
+        renderLegend(Array.isArray(legend) ? legend : []);
+        const source = manifest.source || {};
+        document.getElementById("source-collection").textContent = source.collection_id || "—";
+        document.getElementById("source-item").textContent = source.item_id || "—";
+        document.getElementById("harvested-at").textContent = manifest.retrieved_at || "—";
+        document.getElementById("collection-digest").textContent = (manifest.digests || {}).collection || "—";
+        document.getElementById("item-digest").textContent = (manifest.digests || {}).item || "—";
+        if (source.asset_href) {
+          document.getElementById("source-cog-link").href = source.asset_href;
+          document.getElementById("asset-link").href = source.asset_href;
+        }
       } catch (error) {
-        statusBox.innerHTML = `<strong>The catalog did not load.</strong><br>${error.message}. Retry after the public service wakes.`;
+        document.getElementById("legend").textContent = "The preserved legend could not be read.";
+        document.getElementById("harvested-at").textContent = "Metadata unavailable";
       }
     }
-    map.on("load", loadCatalog);
+
+    async function loadResource(name, url, accept) {
+      try {
+        const response = await fetch(url, accept ? {headers:{accept}} : undefined);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        updateResourceState(name, `Available · HTTP ${response.status}`, false);
+        if (name === "item") {
+          const item = await response.json();
+          document.getElementById("tellurion-item").textContent = (item.properties || {}).source_item_id || "source_item_id not declared";
+        }
+      } catch (error) {
+        updateResourceState(name, `Unavailable · ${error.message}. Render may still be waking.`, true);
+        if (name === "item") document.getElementById("tellurion-item").textContent = "Item unavailable";
+      }
+    }
+
+    const map = new maplibregl.Map({
+      container: "map",
+      center: [12.49, 41.903],
+      zoom: 13.2,
+      style: {
+        version: 8,
+        sources: {worldcover:{type:"raster",tiles:[tileTemplate],tileSize:256,minzoom:0,maxzoom:14}},
+        layers: [
+          {id:"background",type:"background",paint:{"background-color":"#0b1513"}},
+          {id:"worldcover",type:"raster",source:"worldcover",paint:{"raster-resampling":"nearest","raster-fade-duration":0}}
+        ]
+      }
+    });
+    map.addControl(new maplibregl.NavigationControl(), "top-right");
+    map.on("load", () => showMapState("Tellurion is requesting dynamically composed PNG tiles from the source COG.", false));
+    map.on("error", () => showMapState("Tiles could not be loaded yet. The public Render service may be cold or unavailable; retry after it wakes.", true));
+
+    loadEvidence();
+    loadResource("collection", collectionUrl, "application/json");
+    loadResource("item", itemUrl, "application/geo+json");
+    loadResource("tileset", tileSetUrl, "application/json");
+    loadResource("png", pngUrl);
   </script>
 </body>
 </html>
