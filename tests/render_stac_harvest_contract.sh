@@ -40,6 +40,8 @@ require_text Dockerfile.stac-harvest 'COPY --chown=10001:10001 --from=data-build
 require_text deploy/render/stac-harvest.yaml 'features: harvested_items'
 require_text deploy/render/stac-harvest.yaml 'tiles: harvested_cog'
 require_text deploy/render/stac-harvest.yaml 'source_item_id'
+require_text deploy/render/stac-harvest.yaml '{ name: start_datetime, type: string }'
+require_text deploy/render/stac-harvest.yaml '{ name: end_datetime, type: string }'
 require_text render.yaml 'name: tellurion-stac-harvest-demo'
 require_text .github/workflows/verify.yml 'tests/render_stac_harvest_contract.sh'
 
