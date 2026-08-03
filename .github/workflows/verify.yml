@@ -17,6 +17,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Verify STAC harvest transformation
+        run: python3 -m unittest -v tests.test_harvest_esa_worldcover
+
       - name: Verify deployment contracts
         run: |
           sh tests/render_deployment_contract.sh
