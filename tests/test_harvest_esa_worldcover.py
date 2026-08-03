@@ -1,10 +1,15 @@
+import io
 import json
+import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from scripts.harvest_esa_worldcover import (
     HarvestError,
+    fetch_json,
+    main,
     validate_and_derive,
     write_artifacts,
 )
@@ -54,6 +59,68 @@ class HarvestContractTests(unittest.TestCase):
                 {"value": 50, "label": "Built-up", "color": "#FA0000"},
             )
             self.assertTrue((output / "colormap.yaml").read_text().endswith("\n"))
+
+    def test_fixture_cli_is_network_free_and_byte_stable(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            first = root / "first"
+            second = root / "second"
+            command = [
+                "harvest_esa_worldcover.py",
+                "--fixture-dir",
+                str(FIXTURES),
+                "--retrieved-at",
+                "2026-08-03T00:00:00Z",
+            ]
+            with patch(
+                "scripts.harvest_esa_worldcover.urlopen",
+                side_effect=AssertionError("fixture mode must not call the network"),
+            ) as urlopen:
+                with patch.object(sys, "argv", [command[0], str(first), *command[1:]]):
+                    main()
+                with patch.object(sys, "argv", [command[0], str(second), *command[1:]]):
+                    main()
+            urlopen.assert_not_called()
+            self.assertEqual(
+                {
+                    path.relative_to(first): path.read_bytes()
+                    for path in first.rglob("*")
+                    if path.is_file()
+                },
+                {
+                    path.relative_to(second): path.read_bytes()
+                    for path in second.rglob("*")
+                    if path.is_file()
+                },
+            )
+
+    def test_fetch_json_encodes_query_parameters_with_timeout(self):
+        calls = []
+
+        def fake_urlopen(url, timeout):
+            calls.append((url, timeout))
+            return io.BytesIO(b'{"status": "ok"}')
+
+        with patch("scripts.harvest_esa_worldcover.urlopen", side_effect=fake_urlopen):
+            result = fetch_json(
+                "https://example.test/search",
+                {
+                    "bbox": "12.45,41.87,12.55,41.95",
+                    "datetime": "2021-01-01T00:00:00Z/2021-12-31T23:59:59Z",
+                },
+            )
+
+        self.assertEqual(result, {"status": "ok"})
+        self.assertEqual(
+            calls,
+            [
+                (
+                    "https://example.test/search?bbox=12.45%2C41.87%2C12.55%2C41.95"
+                    "&datetime=2021-01-01T00%3A00%3A00Z%2F2021-12-31T23%3A59%3A59Z",
+                    30,
+                )
+            ],
+        )
 
     def test_rejects_an_unexpected_item(self):
         self.search["features"][0]["id"] = "another-item"
