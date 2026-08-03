@@ -24,6 +24,10 @@ links when you want to inspect the protocol payloads.
 | STAC harvest | [WorldCover source-to-map viewer](https://ccancellieri.github.io/tellurion-demos/demos/stac/) | ESA WorldCover STAC → preserved COG and class metadata → Tellurion STAC/Features/raster Tiles | dynamic PNG tile composition, not a raster OGC API Maps conformance claim; ESA, Microsoft, and CC BY 4.0 attribution retained |
 | Maps + Styles | [Server-rendered Rome map](https://ccancellieri.github.io/tellurion-demos/demos/maps/) | MVT mosaic → PNG, optionally painted by MapLibre Style JSON | Maps 1.0 path; Styles surface is draft-aligned and read-only |
 
+Read the STAC harvest field note,
+[From STAC discovery to a live map](docs/articles/from-stac-discovery-to-a-live-map.md),
+for the verified source-to-service provenance chain and its stated limitations.
+
 Render's free services can sleep after inactivity, so a viewer may need a short
 cold start. Hosted response times are not benchmark evidence.
 
