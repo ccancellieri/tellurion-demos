@@ -7,6 +7,7 @@ CONFIG="$ROOT/deploy/render/stac-harvest.yaml"
 RENDER="$ROOT/render.yaml"
 WORKFLOW="$ROOT/.github/workflows/verify.yml"
 MANIFEST="$ROOT/data/stac/esa-worldcover/manifest.json"
+COLORMAP="$ROOT/data/stac/esa-worldcover/colormap.yaml"
 
 require_file() {
   if [ ! -f "$1" ]; then
@@ -27,6 +28,7 @@ require_file "$CONFIG"
 require_file "$RENDER"
 require_file "$WORKFLOW"
 require_file "$MANIFEST"
+require_file "$COLORMAP"
 
 require_text Dockerfile.stac-harvest 'ARG TELLURION_VERSION=v0.3.0'
 require_text Dockerfile.stac-harvest 'sha256sum -c'
@@ -47,6 +49,11 @@ require_text .github/workflows/verify.yml 'tests/render_stac_harvest_contract.sh
 
 if grep -Eq 'write:[[:space:]]' "$CONFIG"; then
   printf 'the STAC harvest demo must not configure a write route\n' >&2
+  exit 1
+fi
+
+if grep -Fq 'colormap:' "$CONFIG"; then
+  printf 'the paletted WorldCover COG must use its embedded colormap\n' >&2
   exit 1
 fi
 
@@ -96,7 +103,7 @@ for stop in \
   '{ value: 90.0, rgba: [0, 150, 160, 255] }' \
   '{ value: 95.0, rgba: [0, 207, 117, 255] }' \
   '{ value: 100.0, rgba: [250, 230, 160, 255] }'; do
-  require_text deploy/render/stac-harvest.yaml "$stop"
+  require_text data/stac/esa-worldcover/colormap.yaml "$stop"
 done
 
 printf 'render STAC harvest contract passed\n'
