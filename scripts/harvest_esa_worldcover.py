@@ -8,6 +8,19 @@ from urllib.parse import urlsplit
 COLLECTION_ID = "esa-worldcover"
 ITEM_ID = "ESA_WorldCover_10m_2021_v200_N39E012"
 EXPECTED_VALUES = [10, 20, 30, 40, 50, 60, 70, 80, 90, 95, 100]
+EXPECTED_CLASS_METADATA = {
+    10: ("006400", "Tree cover"),
+    20: ("FFBB22", "Shrubland"),
+    30: ("FFFF4C", "Grassland"),
+    40: ("F096FF", "Cropland"),
+    50: ("FA0000", "Built-up"),
+    60: ("B4B4B4", "Bare / sparse vegetation"),
+    70: ("F0F0F0", "Snow and ice"),
+    80: ("0064C8", "Permanent water bodies"),
+    90: ("0096A0", "Herbaceous wetland"),
+    95: ("00CF75", "Mangroves"),
+    100: ("FAE6A0", "Moss and lichen"),
+}
 
 
 @dataclass(frozen=True)
@@ -61,8 +74,13 @@ def validate_and_derive(collection: dict, search: dict) -> Derived:
         label = entry.get("description", "")
         if not re.fullmatch(r"[0-9A-Fa-f]{6}", color):
             raise HarvestError("invalid color-hint")
+        expected_color, expected_label = EXPECTED_CLASS_METADATA[entry["value"]]
+        if color != expected_color:
+            raise HarvestError("unexpected color-hint")
         if not label:
             raise HarvestError("classification description is required")
+        if label != expected_label:
+            raise HarvestError("unexpected classification description")
         legend.append(
             {"value": entry["value"], "label": label, "color": f"#{color.upper()}"}
         )

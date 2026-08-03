@@ -48,6 +48,18 @@ class HarvestContractTests(unittest.TestCase):
         with self.assertRaisesRegex(HarvestError, "color-hint"):
             validate_and_derive(self.collection, self.search)
 
+    def test_rejects_a_valid_format_but_wrong_color(self):
+        classes = self.search["features"][0]["assets"]["map"]["classification:classes"]
+        classes[0]["color-hint"] = "112233"
+        with self.assertRaisesRegex(HarvestError, "unexpected color-hint"):
+            validate_and_derive(self.collection, self.search)
+
+    def test_rejects_an_altered_non_empty_description(self):
+        classes = self.search["features"][0]["assets"]["map"]["classification:classes"]
+        classes[0]["description"] = "Trees"
+        with self.assertRaisesRegex(HarvestError, "unexpected classification description"):
+            validate_and_derive(self.collection, self.search)
+
     def test_rejects_a_non_cog_map_asset(self):
         self.search["features"][0]["assets"]["map"]["type"] = "image/tiff"
         with self.assertRaisesRegex(HarvestError, "Cloud Optimized GeoTIFF"):
