@@ -69,7 +69,7 @@ jobs:
             content_type: application/json
             minimum_bytes: 300
           - demo: ESA WorldCover PNG tile
-            url: https://tellurion-stac-harvest-demo.onrender.com/public/tiles/catalogs/default/collections/esa_worldcover_2021_rome/tiles/WebMercatorQuad/13/3035/4380.png
+            url: https://tellurion-stac-harvest-demo.onrender.com/public/tiles/catalogs/default/collections/esa_worldcover_2021_rome/tiles/WebMercatorQuad/13/3043/4380.png
             content_type: image/png
             minimum_bytes: 1000
     steps:
