@@ -37,8 +37,8 @@ collections:
     schema:
       properties:
         - { name: source_item_id, type: string }
-        - { name: start_datetime, type: datetime }
-        - { name: end_datetime, type: datetime }
+        - { name: start_datetime, type: string }
+        - { name: end_datetime, type: string }
         - { name: product_version, type: string }
         - { name: grid_code, type: string }
     settings:
