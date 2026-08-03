@@ -53,7 +53,20 @@ class HarvestContractTests(unittest.TestCase):
                 manifest["source"]["asset_media_type"],
                 derived.item["assets"]["map"]["type"],
             )
+            self.assertEqual(
+                manifest["source"]["asset_href"],
+                derived.item["assets"]["map"]["href"],
+            )
             self.assertRegex(manifest["digests"]["item"], r"^[0-9a-f]{64}$")
+            self.assertEqual(
+                manifest["served_asset"],
+                {
+                    "byte_length": 41236803,
+                    "href": "https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/ESA_WorldCover_10m_2021_v200_N39E012_Map.tif",
+                    "relationship": "byte-identical-official-mirror",
+                    "sha256": "5d951afb19e5fdcb90773bac374b556d425f8945ba4b719114c7f7b03157464a",
+                },
+            )
             self.assertEqual(
                 legend[4],
                 {"value": 50, "label": "Built-up", "color": "#FA0000"},

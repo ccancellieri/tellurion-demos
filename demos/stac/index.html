@@ -15,13 +15,13 @@
       <a class="back" href="../../">← All Tellurion demos</a>
       <p class="eyebrow">STAC harvest · raster Tiles</p>
       <h1>A source COG, kept in view.</h1>
-      <p class="intro">ESA WorldCover STAC → preserved COG and class metadata → Tellurion STAC/Features/raster Tiles. The map is the live proof: Tellurion reads the source COG and composes PNG tiles for this browser.</p>
+      <p class="intro">ESA WorldCover STAC → preserved source metadata and a byte-identical official COG mirror → Tellurion STAC/Features/raster Tiles. The map is the live proof: Tellurion reads that COG and composes PNG tiles for this browser.</p>
       <div class="status" id="map-status" role="status" aria-live="polite"><strong>Preparing the live map…</strong><br>Render may need a short cold start before PNG tiles appear.</div>
       <div class="links" aria-label="Source and live resource links">
-        <a class="button" id="source-cog-link" href="https://ai4edataeuwest.blob.core.windows.net/esa-worldcover/v200/2021/map/ESA_WorldCover_10m_2021_v200_N39E012_Map.tif">Source COG</a>
+        <a class="button" id="source-cog-link" href="https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/ESA_WorldCover_10m_2021_v200_N39E012_Map.tif">Served COG</a>
         <a class="button" href="https://tellurion-stac-harvest-demo.onrender.com/public/stac/catalogs/default/collections/esa_worldcover_2021_rome">Tellurion Collection</a>
       </div>
-      <p class="notes"><strong>Attribution:</strong> © ESA WorldCover project 2021; produced by ESA and the ESA WorldCover Consortium, hosted by Microsoft. <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Dynamic PNG tile composition, not a raster OGC API Maps conformance claim.</p>
+      <p class="notes"><strong>Attribution:</strong> © ESA WorldCover project 2021; produced by ESA and the ESA WorldCover Consortium. Source STAC metadata is preserved from Microsoft Planetary Computer; the byte-identical served COG is hosted in ESA's public S3 bucket. <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Dynamic PNG tile composition, not a raster OGC API Maps conformance claim.</p>
     </section>
 
     <section class="protocol-stage harvest-stage" aria-label="Live map and harvested evidence">
@@ -46,7 +46,7 @@
           </div>
           <ol class="provenance-graph">
             <li class="source-node"><span class="node-mark tree"></span><strong>Planetary Computer STAC snapshot</strong><a href="https://raw.githubusercontent.com/ccancellieri/tellurion-demos/main/data/stac/esa-worldcover/item.json">Preserved Item evidence</a></li>
-            <li class="source-node"><span class="node-mark crop"></span><strong>ESA source COG asset</strong><a id="asset-link" href="https://ai4edataeuwest.blob.core.windows.net/esa-worldcover/v200/2021/map/ESA_WorldCover_10m_2021_v200_N39E012_Map.tif">Read-only public COG</a></li>
+            <li class="source-node"><span class="node-mark crop"></span><strong>Official ESA COG mirror</strong><a id="asset-link" href="https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/ESA_WorldCover_10m_2021_v200_N39E012_Map.tif">Byte-identical public COG</a></li>
             <li class="derived-node"><span class="node-mark water"></span><strong>Tellurion COG driver</strong><span>Raster windows and class colors</span></li>
             <li class="derived-node"><span class="node-mark built"></span><strong>raster TileSet / PNG tiles</strong><a href="https://tellurion-stac-harvest-demo.onrender.com/public/tiles/catalogs/default/collections/esa_worldcover_2021_rome/tiles/WebMercatorQuad">Live TileSet metadata</a></li>
             <li class="derived-node"><span class="node-mark moss"></span><strong>browser map</strong><span>MapLibre renders the returned tiles</span></li>
@@ -141,14 +141,15 @@
         const [legend, manifest] = await Promise.all([legendResponse.json(), manifestResponse.json()]);
         renderLegend(Array.isArray(legend) ? legend : []);
         const source = manifest.source || {};
+        const servedAsset = manifest.served_asset || {};
         document.getElementById("source-collection").textContent = source.collection_id || "—";
         document.getElementById("source-item").textContent = source.item_id || "—";
         document.getElementById("harvested-at").textContent = manifest.retrieved_at || "—";
         document.getElementById("collection-digest").textContent = (manifest.digests || {}).collection || "—";
         document.getElementById("item-digest").textContent = (manifest.digests || {}).item || "—";
-        if (source.asset_href) {
-          document.getElementById("source-cog-link").href = source.asset_href;
-          document.getElementById("asset-link").href = source.asset_href;
+        if (servedAsset.href) {
+          document.getElementById("source-cog-link").href = servedAsset.href;
+          document.getElementById("asset-link").href = servedAsset.href;
         }
       } catch (error) {
         document.getElementById("legend").textContent = "The preserved legend could not be read.";
@@ -185,7 +186,7 @@
       }
     });
     map.addControl(new maplibregl.NavigationControl(), "top-right");
-    map.on("load", () => showMapState("Tellurion is requesting dynamically composed PNG tiles from the source COG.", false));
+    map.on("load", () => showMapState("Tellurion is requesting dynamically composed PNG tiles from the official ESA COG mirror.", false));
     map.on("error", () => showMapState("Tiles could not be loaded yet. The public Render service may be cold or unavailable; retry after it wakes.", true));
 
     loadEvidence();

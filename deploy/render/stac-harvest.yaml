@@ -24,7 +24,7 @@ catalogs:
 collections:
   - id: esa_worldcover_2021_rome
     title: ESA WorldCover 2021 — Rome tile footprint
-    description: Read-only ESA WorldCover v200 2021 N39E012 footprint. Features and STAC metadata are served from a harvested local GeoPackage; raster tiles read the public source COG.
+    description: Read-only ESA WorldCover v200 2021 N39E012 footprint. Features and STAC metadata are served from a harvested local GeoPackage; raster tiles read a byte-identical copy from ESA's public S3 bucket.
     catalog: default
     storage: harvested_items
     routing:
@@ -66,9 +66,9 @@ collections:
           - { name: Microsoft, roles: [host], url: "https://planetarycomputer.microsoft.com" }
         assets:
           source_cog:
-            href: https://ai4edataeuwest.blob.core.windows.net/esa-worldcover/v200/2021/map/ESA_WorldCover_10m_2021_v200_N39E012_Map.tif
+            href: https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/ESA_WorldCover_10m_2021_v200_N39E012_Map.tif
             type: image/tiff; application=geotiff; profile=cloud-optimized
-            title: ESA WorldCover v200 2021 source COG
+            title: ESA WorldCover v200 2021 COG — byte-identical official mirror
             roles: [data]
           source_snapshot:
             href: https://raw.githubusercontent.com/ccancellieri/tellurion-demos/main/data/stac/esa-worldcover/item.json

@@ -39,7 +39,7 @@ require_text demos/stac/index.html 'https://tellurion-stac-harvest-demo.onrender
 require_text demos/stac/index.html 'source_item_id'
 require_text demos/stac/index.html 'Promise.all([fetch("legend.json"), fetch("manifest.json")])'
 require_text demos/stac/index.html 'Planetary Computer STAC snapshot'
-require_text demos/stac/index.html 'ESA source COG asset'
+require_text demos/stac/index.html 'Official ESA COG mirror'
 require_text demos/stac/index.html 'Tellurion COG driver'
 require_text demos/stac/index.html 'raster TileSet / PNG tiles'
 require_text demos/stac/index.html 'browser map'
