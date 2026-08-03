@@ -39,8 +39,8 @@ RUN mkdir -p /app/data \
          -lco GEOMETRY_NAME=geom \
          -lco FID=id \
     && test "$(ogrinfo -ro -so /app/data/worldcover.gpkg esa_worldcover_2021_rome | sed -n 's/^Feature Count: //p')" = "1" \
-    && chmod 0555 /app/data \
-    && chmod 0444 /app/data/worldcover.gpkg
+    && chmod 0755 /app/data \
+    && chmod 0644 /app/data/worldcover.gpkg
 
 FROM debian:bookworm-slim@sha256:7b140f374b289a7c2befc338f42ebe6441b7ea838a042bbd5acbfca6ec875818
 
@@ -48,7 +48,7 @@ COPY --from=source-builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-
 COPY --from=source-builder /build/target/release/tellurion /app/tellurion
 COPY --from=source-builder /build/LICENSE /app/licenses/LICENSE
 COPY --from=source-builder /build/COMMERCIAL-LICENSE.md /app/licenses/COMMERCIAL-LICENSE.md
-COPY --from=data-builder /app/data /app/data
+COPY --chown=10001:10001 --from=data-builder /app/data /app/data
 COPY deploy/render/stac-harvest.yaml /app/config.yaml
 
 ENV TELLURION_CONFIG=/app/config.yaml
