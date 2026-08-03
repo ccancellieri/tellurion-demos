@@ -53,15 +53,18 @@ import json
 import sys
 
 with open(sys.argv[1], encoding="utf-8") as manifest_file:
-    print(json.load(manifest_file)["source"]["asset_href"])
+    print(json.load(manifest_file)["served_asset"]["href"])
 PY
 )
 image_url=$(sed -n 's/^ENV TELLURION_COG_URL=//p' "$DOCKERFILE" | head -n 1)
 
 if [ -z "$manifest_url" ] || [ "$manifest_url" != "$image_url" ]; then
-  printf 'the image COG URL must exactly match the committed manifest\n' >&2
+  printf 'the served COG URL must exactly match the committed manifest\n' >&2
   exit 1
 fi
+
+require_text data/stac/esa-worldcover/manifest.json '"relationship": "byte-identical-official-mirror"'
+require_text data/stac/esa-worldcover/manifest.json '"sha256": "5d951afb19e5fdcb90773bac374b556d425f8945ba4b719114c7f7b03157464a"'
 
 case "$image_url" in
   *\?*|*sig=*|*token=*|*se=*)

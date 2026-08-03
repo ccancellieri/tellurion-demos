@@ -4,6 +4,12 @@
     "item": "8370f37c0ffadd33fff59473c633a827653c14f1d46c4175ed07b77efbf17aa5"
   },
   "retrieved_at": "2026-08-03T20:16:29Z",
+  "served_asset": {
+    "byte_length": 41236803,
+    "href": "https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/ESA_WorldCover_10m_2021_v200_N39E012_Map.tif",
+    "relationship": "byte-identical-official-mirror",
+    "sha256": "5d951afb19e5fdcb90773bac374b556d425f8945ba4b719114c7f7b03157464a"
+  },
   "source": {
     "asset_href": "https://ai4edataeuwest.blob.core.windows.net/esa-worldcover/v200/2021/map/ESA_WorldCover_10m_2021_v200_N39E012_Map.tif",
     "asset_media_type": "image/tiff; application=geotiff; profile=cloud-optimized",
@@ -36,5 +42,5 @@
       }
     ]
   },
-  "transform_version": "1"
+  "transform_version": "2"
 }

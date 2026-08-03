@@ -31,7 +31,13 @@ EXPECTED_CLASS_METADATA = {
 }
 COLLECTION_URL = "https://planetarycomputer.microsoft.com/api/stac/v1/collections/esa-worldcover"
 SEARCH_URL = "https://planetarycomputer.microsoft.com/api/stac/v1/search"
-TRANSFORM_VERSION = "1"
+TRANSFORM_VERSION = "2"
+SERVED_ASSET = {
+    "byte_length": 41236803,
+    "href": "https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/ESA_WorldCover_10m_2021_v200_N39E012_Map.tif",
+    "relationship": "byte-identical-official-mirror",
+    "sha256": "5d951afb19e5fdcb90773bac374b556d425f8945ba4b719114c7f7b03157464a",
+}
 
 
 @dataclass(frozen=True)
@@ -187,6 +193,7 @@ def write_artifacts(derived: Derived, output: Path, retrieved_at: str) -> None:
             "license": derived.collection["license"],
             "providers": derived.collection["providers"],
         },
+        "served_asset": SERVED_ASSET,
         "transform_version": TRANSFORM_VERSION,
     }
     artifacts = {

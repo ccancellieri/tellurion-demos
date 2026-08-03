@@ -53,7 +53,7 @@ COPY deploy/render/stac-harvest.yaml /app/config.yaml
 
 ENV TELLURION_CONFIG=/app/config.yaml
 ENV TELLURION_GEOPACKAGE_PATH=/app/data/worldcover.gpkg
-ENV TELLURION_COG_URL=https://ai4edataeuwest.blob.core.windows.net/esa-worldcover/v200/2021/map/ESA_WorldCover_10m_2021_v200_N39E012_Map.tif
+ENV TELLURION_COG_URL=https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/ESA_WorldCover_10m_2021_v200_N39E012_Map.tif
 
 USER 10001:10001
 EXPOSE 10000
