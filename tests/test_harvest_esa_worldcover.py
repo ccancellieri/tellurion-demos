@@ -1,8 +1,13 @@
 import json
+import tempfile
 import unittest
 from pathlib import Path
 
-from scripts.harvest_esa_worldcover import HarvestError, validate_and_derive
+from scripts.harvest_esa_worldcover import (
+    HarvestError,
+    validate_and_derive,
+    write_artifacts,
+)
 
 
 FIXTURES = Path(__file__).parent / "fixtures" / "stac"
@@ -30,6 +35,25 @@ class HarvestContractTests(unittest.TestCase):
             [10, 20, 30, 40, 50, 60, 70, 80, 90, 95, 100],
         )
         self.assertEqual(result.legend[0]["color"], "#006400")
+
+    def test_writes_digest_linked_deterministic_outputs(self):
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory)
+            derived = validate_and_derive(self.collection, self.search)
+            write_artifacts(derived, output, "2026-08-03T00:00:00Z")
+            manifest = json.loads((output / "manifest.json").read_text())
+            legend = json.loads((output / "legend.json").read_text())
+            self.assertEqual(manifest["source"]["item_id"], derived.item["id"])
+            self.assertEqual(
+                manifest["source"]["asset_media_type"],
+                derived.item["assets"]["map"]["type"],
+            )
+            self.assertRegex(manifest["digests"]["item"], r"^[0-9a-f]{64}$")
+            self.assertEqual(
+                legend[4],
+                {"value": 50, "label": "Built-up", "color": "#FA0000"},
+            )
+            self.assertTrue((output / "colormap.yaml").read_text().endswith("\n"))
 
     def test_rejects_an_unexpected_item(self):
         self.search["features"][0]["id"] = "another-item"

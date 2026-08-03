@@ -1,8 +1,16 @@
 """Validate and derive the bounded ESA WorldCover STAC harvest contract."""
 
+import argparse
 from dataclasses import dataclass
+from datetime import datetime, timezone
+import hashlib
+import json
+from pathlib import Path
 import re
-from urllib.parse import urlsplit
+import tempfile
+from typing import Mapping
+from urllib.parse import urlencode, urlsplit
+from urllib.request import urlopen
 
 
 COLLECTION_ID = "esa-worldcover"
@@ -21,6 +29,9 @@ EXPECTED_CLASS_METADATA = {
     95: ("00CF75", "Mangroves"),
     100: ("FAE6A0", "Moss and lichen"),
 }
+COLLECTION_URL = "https://planetarycomputer.microsoft.com/api/stac/v1/collections/esa-worldcover"
+SEARCH_URL = "https://planetarycomputer.microsoft.com/api/stac/v1/search"
+TRANSFORM_VERSION = "1"
 
 
 @dataclass(frozen=True)
@@ -130,3 +141,102 @@ def validate_and_derive(collection: dict, search: dict) -> Derived:
             "asset_href": href,
         },
     )
+
+
+def fetch_json(url: str, params: Mapping[str, str] | None = None) -> dict:
+    if params:
+        url = f"{url}?{urlencode(params)}"
+    with urlopen(url, timeout=30) as response:
+        return json.load(response)
+
+
+def _json_bytes(value: object) -> bytes:
+    return (json.dumps(value, indent=2, sort_keys=True) + "\n").encode("utf-8")
+
+
+def _yaml_colormap(colormap: dict) -> bytes:
+    lines = ["kind: stops", "stops:"]
+    for stop in colormap["stops"]:
+        rgba = ", ".join(str(component) for component in stop["rgba"])
+        lines.append(f"  - {{ value: {stop['value']:.1f}, rgba: [{rgba}] }}")
+    return ("\n".join(lines) + "\n").encode("utf-8")
+
+
+def _write_atomic(path: Path, contents: bytes) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.NamedTemporaryFile(dir=path.parent, delete=False) as temporary:
+        temporary.write(contents)
+        temporary_path = Path(temporary.name)
+    temporary_path.replace(path)
+
+
+def write_artifacts(derived: Derived, output: Path, retrieved_at: str) -> None:
+    collection_bytes = _json_bytes(derived.collection)
+    item_bytes = _json_bytes(derived.item)
+    manifest = {
+        "digests": {
+            "collection": hashlib.sha256(collection_bytes).hexdigest(),
+            "item": hashlib.sha256(item_bytes).hexdigest(),
+        },
+        "retrieved_at": retrieved_at,
+        "source": {
+            "asset_href": derived.manifest_facts["asset_href"],
+            "asset_media_type": derived.item["assets"]["map"]["type"],
+            "collection_id": derived.manifest_facts["collection_id"],
+            "item_id": derived.manifest_facts["item_id"],
+            "license": derived.collection["license"],
+            "providers": derived.collection["providers"],
+        },
+        "transform_version": TRANSFORM_VERSION,
+    }
+    artifacts = {
+        "collection.json": collection_bytes,
+        "item.json": item_bytes,
+        "manifest.json": _json_bytes(manifest),
+        "footprint.geojson": _json_bytes(derived.footprint),
+        "legend.json": _json_bytes(derived.legend),
+        "colormap.yaml": _yaml_colormap(derived.colormap),
+    }
+    for name, contents in artifacts.items():
+        _write_atomic(output / name, contents)
+
+
+def _read_fixture(fixture_dir: Path) -> tuple[dict, dict]:
+    collection = json.loads((fixture_dir / "collection.json").read_text(encoding="utf-8"))
+    search = json.loads((fixture_dir / "item-search.json").read_text(encoding="utf-8"))
+    return collection, search
+
+
+def _retrieved_at_now() -> str:
+    return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("output", type=Path)
+    parser.add_argument("--fixture-dir", type=Path)
+    parser.add_argument("--retrieved-at")
+    arguments = parser.parse_args()
+
+    if arguments.fixture_dir:
+        collection, search = _read_fixture(arguments.fixture_dir)
+    else:
+        collection = fetch_json(COLLECTION_URL)
+        search = fetch_json(
+            SEARCH_URL,
+            {
+                "collections": COLLECTION_ID,
+                "bbox": "12.45,41.87,12.55,41.95",
+                "datetime": "2021-01-01T00:00:00Z/2021-12-31T23:59:59Z",
+                "limit": "1",
+            },
+        )
+    write_artifacts(
+        validate_and_derive(collection, search),
+        arguments.output,
+        arguments.retrieved_at or _retrieved_at_now(),
+    )
+
+
+if __name__ == "__main__":
+    main()
