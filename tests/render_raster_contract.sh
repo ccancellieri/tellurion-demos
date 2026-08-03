@@ -46,6 +46,8 @@ require_text deploy/render/raster.yaml 'driver: cog'
 require_text deploy/render/raster.yaml 'id: sample_landcover'
 require_text deploy/render/raster.yaml 'url_env: TELLURION_COG_PATH'
 require_text demos/raster/index.html 'WebMercatorQuad/{z}/{y}/{x}.png'
+require_text demos/raster/index.html 'Open sample PNG tile'
+require_text demos/raster/index.html '/tiles/WebMercatorQuad/13/3044/4380.png'
 
 require_text README.md '**Visual entry point:** <https://ccancellieri.github.io/tellurion-demos/>'
 require_text README.md 'Cloud Optimized GeoTIFF-backed raster tiles'
@@ -59,6 +61,11 @@ fi
 
 if grep -Eq '(^|[[:space:]])PORT=[0-9]+' "$ROOT/Dockerfile.raster"; then
   printf 'the raster container must accept Render\047s dynamic PORT instead of fixing one\n' >&2
+  exit 1
+fi
+
+if grep -Fq '/collections/sample_landcover">Inspect tileset metadata' "$ROOT/demos/raster/index.html"; then
+  printf 'raster viewer still links to the unsupported collection metadata route\n' >&2
   exit 1
 fi
 
