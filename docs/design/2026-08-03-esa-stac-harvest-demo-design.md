@@ -101,8 +101,9 @@ test proves the endpoint.
 
 The demo uses one logical collection with split serving lanes:
 
-- a generated GeoPackage contains the harvested Item footprint and selected
-  searchable properties;
+- a generated GeoPackage contains the harvested Item footprint, deterministic
+  local integer id `1`, and the upstream id in `source_item_id` alongside
+  selected searchable properties;
 - the COG driver supplies raster windows for the Tiles lane;
 - STAC projects the GeoPackage feature back into an Item and attaches the
   source asset metadata;
@@ -127,7 +128,8 @@ URL, then:
    values and six-digit hexadecimal color hints;
 7. records source URLs, retrieval time, SHA-256 digests, transform version,
    collection/item ids, asset href, media type, license, and providers;
-8. writes source snapshots, a GeoJSON footprint, a Tellurion colormap fragment,
+8. writes source snapshots, a GeoJSON footprint with deterministic local id
+   `1` and the upstream id in `source_item_id`, a Tellurion colormap fragment,
    and a browser legend JSON.
 
 Failures are closed and named. Missing license, ambiguous assets, malformed
@@ -190,7 +192,8 @@ Repository contract tests must verify:
 - the harvester rejects malformed or incomplete fixtures without network
   access;
 - the generated colormap contains all eleven exact values and colors;
-- the GeoPackage fixture contains exactly one feature with the source Item id;
+- the GeoPackage fixture contains exactly one feature whose `source_item_id`
+  equals the upstream Item id;
 - the deployment is read-only and non-root;
 - no secret, signed URL, or expiring token is committed;
 - the viewer has accessible status, fallback, attribution, and legend content;
