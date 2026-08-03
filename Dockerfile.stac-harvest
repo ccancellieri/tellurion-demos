@@ -21,7 +21,7 @@ RUN curl --fail --location --retry 3 \
     && sha256sum -c source.sha256 \
     && unzip -q "${SOURCE_ARCHIVE}"
 
-RUN cargo build --release --locked -p tellurion --no-default-features --features cog
+RUN cargo build --release --locked -p tellurion --no-default-features --features cog,geopackage
 
 FROM debian:bookworm-slim@sha256:7b140f374b289a7c2befc338f42ebe6441b7ea838a042bbd5acbfca6ec875818 AS data-builder
 
