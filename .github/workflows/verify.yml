@@ -24,6 +24,7 @@ jobs:
         run: |
           sh tests/render_deployment_contract.sh
           sh tests/render_raster_contract.sh
+          sh tests/render_stac_harvest_contract.sh
           sh tests/render_zarr_contract.sh
           sh tests/render_3d_contract.sh
           sh tests/render_protocol_gallery_contract.sh
