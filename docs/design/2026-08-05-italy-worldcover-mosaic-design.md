@@ -158,10 +158,14 @@ The STAC Collection spatial extent is the union of the accepted source Item
 footprints; its temporal extent remains the preserved 2021 product interval.
 Collection links advertise only live, verified Tellurion capabilities.
 
-Tellurion does not yet persist arbitrary Item-specific STAC assets. Therefore
-the source Item snapshots and national manifest remain the authoritative asset
-evidence, and the existing general engine issue stays open. The demo must not
-invent collection-level asset semantics for a multi-item source set.
+Current Tellurion supports config-declared Collection assets and PostGIS-backed
+per-Item asset records, plus a separate PostGIS STAC metadata sidecar. The
+embedded GeoPackage driver used by this deployment advertises neither sidecar,
+and the STAC harvester does not yet project harvested asset maps into those
+records. Therefore the source Item snapshots and national manifest remain this
+demo's authoritative asset evidence. The demo must not invent Collection-level
+asset semantics for a multi-Item source set or present the PostGIS-only
+capability as if it were available through GeoPackage.
 
 ## Viewer
 
@@ -270,8 +274,10 @@ one demo epic with child issues for:
 6. live endpoint and visual evidence;
 7. field-note and portfolio updates.
 
-The existing Item-specific asset issue remains open and linked as a declared
-limitation rather than being closed by demo-specific metadata.
+The current Item-asset work is linked as prior engine capability. If its tracked
+scope does not already cover embedded storage and harvest projection, open a
+precise follow-up for GeoPackage-backed Item assets instead of treating this
+demo manifest as a general solution.
 
 ## Non-goals
 
@@ -283,4 +289,5 @@ limitation rather than being closed by demo-specific metadata.
 - arbitrary TIFF formats beyond the existing COG reader contract;
 - execution of upstream style documents;
 - OGC API Maps conformance;
-- solving general Item-specific asset persistence in the demo repository.
+- adding GeoPackage Item-asset or STAC-metadata sidecars;
+- projecting harvested assets into Tellurion's PostGIS asset-record store.
