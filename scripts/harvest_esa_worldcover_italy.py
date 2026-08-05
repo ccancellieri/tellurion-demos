@@ -7,6 +7,7 @@ import hashlib
 import json
 import math
 from pathlib import Path
+import re
 import tempfile
 from urllib.parse import urlencode, urlsplit
 from urllib.request import Request, urlopen
@@ -51,12 +52,15 @@ def _write_atomic(path: Path, contents: bytes) -> None:
     temporary_path.replace(path)
 
 
-def _has_query_href(value: object) -> bool:
-    return (
-        isinstance(value, dict)
-        and isinstance(value.get("href"), str)
-        and bool(urlsplit(value["href"]).query)
-    )
+def _has_query_or_fragment(url: object) -> bool:
+    if not isinstance(url, str):
+        return False
+    parsed = urlsplit(url)
+    return bool(parsed.scheme and parsed.netloc and (parsed.query or parsed.fragment))
+
+
+def _has_volatile_href(value: object) -> bool:
+    return isinstance(value, dict) and _has_query_or_fragment(value.get("href"))
 
 
 def _without_query_urls(value: object) -> object:
@@ -64,10 +68,12 @@ def _without_query_urls(value: object) -> object:
         return {
             key: _without_query_urls(child)
             for key, child in value.items()
-            if not _has_query_href(child)
+            if not _has_volatile_href(child)
         }
     if isinstance(value, list):
-        return [_without_query_urls(child) for child in value if not _has_query_href(child)]
+        return [_without_query_urls(child) for child in value if not _has_volatile_href(child)]
+    if _has_query_or_fragment(value):
+        raise HarvestError("generated artifact contains a query-bearing scalar URL")
     return value
 
 
@@ -101,30 +107,123 @@ def _valid_bbox(bbox: object) -> list[float]:
     return [float(value) for value in bbox]
 
 
-def _geometry_bbox(geometry: object) -> list[float]:
-    if not isinstance(geometry, dict) or geometry.get("type") not in {"Polygon", "MultiPolygon"}:
-        raise HarvestError("Italy boundary must contain a Polygon or MultiPolygon")
-
-    coordinates = geometry.get("coordinates")
-    values: list[tuple[float, float]] = []
-
-    def visit(value: object) -> None:
-        if isinstance(value, list) and len(value) >= 2 and all(isinstance(part, (int, float)) for part in value[:2]):
-            values.append((float(value[0]), float(value[1])))
-        elif isinstance(value, list):
-            for child in value:
-                visit(child)
-
-    visit(coordinates)
-    if not values:
-        raise HarvestError("Italy boundary has no coordinates")
-    west, south = min(value[0] for value in values), min(value[1] for value in values)
-    east, north = max(value[0] for value in values), max(value[1] for value in values)
-    return _valid_bbox([west, south, east, north])
-
-
-def _intersects(left: list[float], right: list[float]) -> bool:
+def _bbox_intersects(left: list[float], right: list[float]) -> bool:
     return left[0] <= right[2] and left[2] >= right[0] and left[1] <= right[3] and left[3] >= right[1]
+
+
+def _ring(coordinates: object, label: str) -> list[tuple[float, float]]:
+    if not isinstance(coordinates, list) or len(coordinates) < 4:
+        raise HarvestError(f"{label} has an invalid linear ring")
+    ring = []
+    for position in coordinates:
+        if (
+            not isinstance(position, list)
+            or len(position) < 2
+            or not all(isinstance(value, (int, float)) and math.isfinite(value) for value in position[:2])
+        ):
+            raise HarvestError(f"{label} has an invalid coordinate")
+        ring.append((float(position[0]), float(position[1])))
+    if ring[0] != ring[-1]:
+        raise HarvestError(f"{label} has an unclosed linear ring")
+    return ring
+
+
+def _geometry_polygons(geometry: object, label: str) -> list[list[list[tuple[float, float]]]]:
+    if not isinstance(geometry, dict) or geometry.get("type") not in {"Polygon", "MultiPolygon"}:
+        raise HarvestError(f"{label} must contain a Polygon or MultiPolygon")
+    coordinates = geometry.get("coordinates")
+    polygons = coordinates if geometry["type"] == "MultiPolygon" else [coordinates]
+    if not isinstance(polygons, list) or not polygons:
+        raise HarvestError(f"{label} has no coordinates")
+    result = []
+    for polygon in polygons:
+        if not isinstance(polygon, list) or not polygon:
+            raise HarvestError(f"{label} has an invalid Polygon")
+        result.append([_ring(ring, label) for ring in polygon])
+    return result
+
+
+def _polygon_bbox(polygon: list[list[tuple[float, float]]]) -> list[float]:
+    coordinates = [point for ring in polygon for point in ring]
+    return _valid_bbox(
+        [
+            min(point[0] for point in coordinates),
+            min(point[1] for point in coordinates),
+            max(point[0] for point in coordinates),
+            max(point[1] for point in coordinates),
+        ]
+    )
+
+
+def _cross_product(start: tuple[float, float], end: tuple[float, float], point: tuple[float, float]) -> float:
+    return (end[0] - start[0]) * (point[1] - start[1]) - (end[1] - start[1]) * (point[0] - start[0])
+
+
+def _point_on_segment(point: tuple[float, float], start: tuple[float, float], end: tuple[float, float]) -> bool:
+    return (
+        abs(_cross_product(start, end, point)) <= 1e-12
+        and min(start[0], end[0]) <= point[0] <= max(start[0], end[0])
+        and min(start[1], end[1]) <= point[1] <= max(start[1], end[1])
+    )
+
+
+def _segments_intersect(
+    first_start: tuple[float, float],
+    first_end: tuple[float, float],
+    second_start: tuple[float, float],
+    second_end: tuple[float, float],
+) -> bool:
+    first_crosses = (_cross_product(first_start, first_end, second_start), _cross_product(first_start, first_end, second_end))
+    second_crosses = (_cross_product(second_start, second_end, first_start), _cross_product(second_start, second_end, first_end))
+    if ((first_crosses[0] > 0 > first_crosses[1]) or (first_crosses[0] < 0 < first_crosses[1])) and (
+        (second_crosses[0] > 0 > second_crosses[1]) or (second_crosses[0] < 0 < second_crosses[1])
+    ):
+        return True
+    return any(
+        (
+            _point_on_segment(second_start, first_start, first_end),
+            _point_on_segment(second_end, first_start, first_end),
+            _point_on_segment(first_start, second_start, second_end),
+            _point_on_segment(first_end, second_start, second_end),
+        )
+    )
+
+
+def _point_in_ring(point: tuple[float, float], ring: list[tuple[float, float]]) -> bool:
+    inside = False
+    for start, end in zip(ring, ring[1:]):
+        if _point_on_segment(point, start, end):
+            return True
+        if (start[1] > point[1]) != (end[1] > point[1]):
+            crossing = (end[0] - start[0]) * (point[1] - start[1]) / (end[1] - start[1]) + start[0]
+            if point[0] < crossing:
+                inside = not inside
+    return inside
+
+
+def _point_in_polygon(point: tuple[float, float], polygon: list[list[tuple[float, float]]]) -> bool:
+    if not _point_in_ring(point, polygon[0]):
+        return False
+    return not any(_point_in_ring(point, hole) for hole in polygon[1:])
+
+
+def _polygon_edges(polygon: list[list[tuple[float, float]]]):
+    for ring in polygon:
+        yield from zip(ring, ring[1:])
+
+
+def _polygons_intersect(left: list[list[tuple[float, float]]], right: list[list[tuple[float, float]]]) -> bool:
+    if not _bbox_intersects(_polygon_bbox(left), _polygon_bbox(right)):
+        return False
+    if any(_segments_intersect(*left_edge, *right_edge) for left_edge in _polygon_edges(left) for right_edge in _polygon_edges(right)):
+        return True
+    return _point_in_polygon(left[0][0], right) or _point_in_polygon(right[0][0], left)
+
+
+def _geometries_intersect(
+    left: list[list[list[tuple[float, float]]]], right: list[list[list[tuple[float, float]]]]
+) -> bool:
+    return any(_polygons_intersect(left_polygon, right_polygon) for left_polygon in left for right_polygon in right)
 
 
 def _validate_collection(collection: dict) -> None:
@@ -137,19 +236,23 @@ def _validate_collection(collection: dict) -> None:
         raise HarvestError("expected ESA, ESA WorldCover Consortium, and Microsoft providers")
 
 
-def _validate_boundary(boundary: dict) -> tuple[dict, list[float]]:
+def _validate_boundary(boundary: dict) -> dict:
     if boundary.get("type") != "Feature" or boundary.get("properties", {}).get("CNTR_ID") != "IT":
         raise HarvestError("expected pinned GISCO Italy boundary")
     properties = boundary["properties"]
     if not all(properties.get(key) for key in ("gisco:source_url", "gisco:source_sha256", "gisco:terms")):
         raise HarvestError("Italy boundary provenance is incomplete")
+    if _has_query_or_fragment(properties["gisco:source_url"]):
+        raise HarvestError("Italy boundary source URL must not contain a query or fragment")
     geometry = boundary.get("geometry")
-    return geometry, _geometry_bbox(geometry)
+    _geometry_polygons(geometry, "Italy boundary")
+    return geometry
 
 
 def validate_and_derive(collection: dict, search: dict, italy_boundary: dict) -> ItalyDerived:
     _validate_collection(collection)
-    _, boundary_bbox = _validate_boundary(italy_boundary)
+    boundary_geometry = _validate_boundary(italy_boundary)
+    boundary_polygons = _geometry_polygons(boundary_geometry, "Italy boundary")
     features = search.get("features")
     if not isinstance(features, list) or not features:
         raise HarvestError("search returned no Items")
@@ -171,6 +274,8 @@ def validate_and_derive(collection: dict, search: dict, italy_boundary: dict) ->
         if item_id in ids:
             raise HarvestError("duplicate id")
         ids.add(item_id)
+        if item.get("collection") != COLLECTION_ID:
+            raise HarvestError("Item must belong to the esa-worldcover collection")
         asset = (item.get("assets") or {}).get("map")
         if not isinstance(asset, dict):
             raise HarvestError("missing map asset")
@@ -181,8 +286,9 @@ def validate_and_derive(collection: dict, search: dict, italy_boundary: dict) ->
             raise HarvestError("duplicate map href")
         source_hrefs.add(source_href)
         bbox = _valid_bbox(item.get("bbox"))
-        if not _intersects(bbox, boundary_bbox):
-            raise HarvestError("Item bbox does not intersect the Italy boundary query")
+        item_geometry = _geometry_polygons(item.get("geometry"), f"Item {item_id} geometry")
+        if not _geometries_intersect(item_geometry, boundary_polygons):
+            raise HarvestError("Item geometry does not intersect the Italy boundary")
         item_legend = derive_legend(asset)
         if legend is None:
             legend = item_legend
@@ -190,6 +296,9 @@ def validate_and_derive(collection: dict, search: dict, italy_boundary: dict) ->
             raise HarvestError("classification palette differs between Items")
         properties = item.get("properties") or {}
         official_esa_href = _official_esa_href(source_href)
+        filename = urlsplit(source_href).path.rsplit("/", 1)[-1]
+        if item_id != filename.removesuffix("_Map.tif"):
+            raise HarvestError("Item id must exactly match the map asset filename")
         footprints.append(
             {
                 "type": "Feature",
@@ -244,7 +353,7 @@ def post_json(url: str, body: dict) -> dict:
 
 
 def fetch_live_sources(italy_boundary: dict) -> dict:
-    geometry, _ = _validate_boundary(italy_boundary)
+    geometry = _validate_boundary(italy_boundary)
     search = post_json(
         SEARCH_URL,
         {
@@ -254,8 +363,17 @@ def fetch_live_sources(italy_boundary: dict) -> dict:
             "limit": 100,
         },
     )
-    if search.get("numberMatched") is not None and search["numberMatched"] > MAX_ITEMS:
-        raise HarvestError("pagination refused: more than 32 source Items match")
+    if not isinstance(search, dict):
+        raise HarvestError("source search returned an invalid response")
+    number_matched = search.get("numberMatched")
+    if number_matched is not None:
+        if isinstance(number_matched, bool) or not isinstance(number_matched, int) or number_matched < 0:
+            raise HarvestError("numberMatched must be a non-negative integer")
+        if number_matched > MAX_ITEMS:
+            raise HarvestError("pagination refused: more than 32 source Items match")
+        features = search.get("features")
+        if not isinstance(features, list) or number_matched != len(features):
+            raise HarvestError("numberMatched must equal the returned feature count")
     if any(link.get("rel") == "next" for link in search.get("links") or []):
         raise HarvestError("pagination refused: source search supplied a next link")
     return search
@@ -303,6 +421,11 @@ def _verified_sources(derived: ItalyDerived, verified: dict | None, fixture_mode
         if not fixture_mode:
             raise HarvestError("a production release requires verified asset digests")
         return derived.mosaic["sources"]
+    if not isinstance(verified, dict):
+        raise HarvestError("verified records must be an object")
+    expected_ids = {item["id"] for item in derived.items}
+    if set(verified) != expected_ids:
+        raise HarvestError("verified record ids must exactly match the harvested source ids")
     sources = []
     for item, source in zip(derived.items, derived.mosaic["sources"]):
         record = verified.get(item["id"])
@@ -312,7 +435,7 @@ def _verified_sources(derived: ItalyDerived, verified: dict | None, fixture_mode
             raise HarvestError(f"verified record does not match {item['id']}")
         if not isinstance(record.get("byte_length"), int) or record["byte_length"] <= 0:
             raise HarvestError(f"verified byte length is invalid for {item['id']}")
-        if not isinstance(record.get("sha256"), str) or len(record["sha256"]) != 64:
+        if not isinstance(record.get("sha256"), str) or not re.fullmatch(r"[0-9a-f]{64}", record["sha256"]):
             raise HarvestError(f"verified digest is invalid for {item['id']}")
         sources.append({**source, "byte_length": record["byte_length"], "sha256": record["sha256"]})
     return sources
@@ -334,12 +457,12 @@ def write_artifacts(
         "verified_assets": verified or {},
     }
     artifacts = {
-        "collection.json": _json_bytes(derived.collection),
-        "boundary.geojson": _json_bytes(derived.manifest["boundary_document"]),
-        "footprints.geojson": _json_bytes(derived.footprints),
-        "legend.json": _json_bytes(derived.legend),
-        "manifest.json": _json_bytes(manifest),
-        "mosaic.json": mosaic_bytes,
+        "collection.json": _json_bytes(_without_query_urls(derived.collection)),
+        "boundary.geojson": _json_bytes(_without_query_urls(derived.manifest["boundary_document"])),
+        "footprints.geojson": _json_bytes(_without_query_urls(derived.footprints)),
+        "legend.json": _json_bytes(_without_query_urls(derived.legend)),
+        "manifest.json": _json_bytes(_without_query_urls(manifest)),
+        "mosaic.json": _json_bytes(_without_query_urls(mosaic)),
     }
     artifacts.update(
         {

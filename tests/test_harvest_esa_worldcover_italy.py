@@ -7,6 +7,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from urllib.parse import urlsplit
 from unittest.mock import patch
 
 from scripts.harvest_esa_worldcover_italy import (
@@ -25,6 +26,16 @@ FIXTURES = Path(__file__).parent / "fixtures" / "stac"
 
 def load(name: str) -> dict:
     return json.loads((FIXTURES / name).read_text(encoding="utf-8"))
+
+
+def urls(value: object) -> list[str]:
+    if isinstance(value, dict):
+        return [url for child in value.values() for url in urls(child)]
+    if isinstance(value, list):
+        return [url for child in value for url in urls(child)]
+    if isinstance(value, str) and urlsplit(value).scheme in {"http", "https"}:
+        return [value]
+    return []
 
 
 class ItalyHarvestContractTests(unittest.TestCase):
@@ -70,7 +81,7 @@ class ItalyHarvestContractTests(unittest.TestCase):
                 with self.assertRaisesRegex(HarvestError, message):
                     validate_and_derive(self.collection, search, self.boundary)
 
-    def test_rejects_duplicate_identity_too_many_items_and_nonintersecting_result(self):
+    def test_rejects_duplicate_identity_too_many_items_and_geometry_disjoint_from_italy(self):
         duplicate_id = copy.deepcopy(self.search)
         duplicate_id["features"][1]["id"] = duplicate_id["features"][0]["id"]
         with self.assertRaisesRegex(HarvestError, "duplicate id"):
@@ -94,9 +105,19 @@ class ItalyHarvestContractTests(unittest.TestCase):
             "type": "Polygon",
             "coordinates": [[[80, 80], [81, 80], [81, 81], [80, 81], [80, 80]]],
         }
-        nonintersecting["features"][0]["bbox"] = [80, 80, 81, 81]
-        with self.assertRaisesRegex(HarvestError, "does not intersect"):
+        with self.assertRaisesRegex(HarvestError, "geometry does not intersect"):
             validate_and_derive(self.collection, nonintersecting, self.boundary)
+
+    def test_rejects_an_item_from_another_collection_or_with_a_different_map_filename_id(self):
+        wrong_collection = copy.deepcopy(self.search)
+        wrong_collection["features"][0]["collection"] = "unrelated-collection"
+        with self.assertRaisesRegex(HarvestError, "collection"):
+            validate_and_derive(self.collection, wrong_collection, self.boundary)
+
+        wrong_id = copy.deepcopy(self.search)
+        wrong_id["features"][0]["id"] = "ESA_WorldCover_10m_2021_v200_N99E099"
+        with self.assertRaisesRegex(HarvestError, "filename"):
+            validate_and_derive(self.collection, wrong_id, self.boundary)
 
     def test_posts_the_complete_pinned_geometry_and_refuses_pagination(self):
         calls = []
@@ -123,6 +144,15 @@ class ItalyHarvestContractTests(unittest.TestCase):
         with patch("scripts.harvest_esa_worldcover_italy.post_json", return_value=overflow):
             with self.assertRaisesRegex(HarvestError, "more than 32"):
                 fetch_live_sources(self.boundary)
+
+    def test_rejects_nonexact_or_malformed_number_matched(self):
+        for number_matched in (4, "3", True, -1):
+            with self.subTest(number_matched=number_matched):
+                incomplete = copy.deepcopy(self.search)
+                incomplete["numberMatched"] = number_matched
+                with patch("scripts.harvest_esa_worldcover_italy.post_json", return_value=incomplete):
+                    with self.assertRaisesRegex(HarvestError, "numberMatched"):
+                        fetch_live_sources(self.boundary)
 
     def test_full_asset_verification_streams_and_persists_only_stable_hrefs(self):
         payload = b"byte-identical-worldcover-cog"
@@ -193,6 +223,64 @@ class ItalyHarvestContractTests(unittest.TestCase):
                 (output / f"items/{derived.items[0]['id']}.json").read_text(),
             )
             self.assertEqual(manifest["digests"]["mosaic"], hashlib.sha256((output / "mosaic.json").read_bytes()).hexdigest())
+
+    def test_rejects_reuse_records_that_are_not_exact_positive_lowercase_sha256_records(self):
+        derived = validate_and_derive(self.collection, self.search, self.boundary)
+        verified = {
+            item["id"]: {
+                "source_href": item["assets"]["map"]["href"],
+                "official_esa_href": source["href"],
+                "byte_length": 1,
+                "sha256": "a" * 64,
+            }
+            for item, source in zip(derived.items, derived.mosaic["sources"])
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "release"
+            extra = copy.deepcopy(verified)
+            extra["unexpected-source"] = copy.deepcopy(next(iter(verified.values())))
+            with self.assertRaisesRegex(HarvestError, "record ids"):
+                write_artifacts(derived, output, "2026-08-05T00:00:00Z", extra)
+
+            for digest in ("A" * 64, "z" * 64):
+                with self.subTest(digest=digest[:1]):
+                    invalid_digest = copy.deepcopy(verified)
+                    invalid_digest[derived.items[0]["id"]]["sha256"] = digest
+                    with self.assertRaisesRegex(HarvestError, "digest"):
+                        write_artifacts(derived, output, "2026-08-05T00:00:00Z", invalid_digest)
+
+            zero_length = copy.deepcopy(verified)
+            zero_length[derived.items[0]["id"]]["byte_length"] = 0
+            with self.assertRaisesRegex(HarvestError, "byte length"):
+                write_artifacts(derived, output, "2026-08-05T00:00:00Z", zero_length)
+
+    def test_omits_query_and_fragment_link_records_from_every_generated_artifact(self):
+        collection = copy.deepcopy(self.collection)
+        collection["links"].append(
+            {"rel": "self", "href": "https://example.test/collection?sig=secret#fragment"}
+        )
+        derived = validate_and_derive(collection, self.search, self.boundary)
+
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "release"
+            write_artifacts(derived, output, "2026-08-05T00:00:00Z", fixture_mode=True)
+            artifacts = [json.loads(path.read_text()) for path in output.rglob("*") if path.is_file()]
+            self.assertTrue(all(not urlsplit(url).query and not urlsplit(url).fragment for artifact in artifacts for url in urls(artifact)))
+            persisted_collection = json.loads((output / "collection.json").read_text())
+            self.assertNotIn(
+                "https://example.test/collection?sig=secret#fragment",
+                [link["href"] for link in persisted_collection["links"]],
+            )
+            self.assertNotIn(
+                "https://example.test/collection",
+                [link["href"] for link in persisted_collection["links"]],
+            )
+
+    def test_rejects_query_and_fragment_bearing_scalar_boundary_provenance_url(self):
+        boundary = copy.deepcopy(self.boundary)
+        boundary["properties"]["gisco:source_url"] = "https://example.test/boundary?sig=secret#fragment"
+        with self.assertRaisesRegex(HarvestError, "source URL"):
+            validate_and_derive(self.collection, self.search, boundary)
 
     def test_fixture_cli_is_network_free_and_byte_stable(self):
         with tempfile.TemporaryDirectory() as directory:
