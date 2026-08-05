@@ -54,6 +54,32 @@ class HarvestError(ValueError):
     pass
 
 
+def derive_legend(asset: dict) -> list[dict]:
+    classes = asset.get("classification:classes") or []
+    values = [entry.get("value") for entry in classes]
+    if values != EXPECTED_VALUES:
+        if len(values) != len(set(values)):
+            raise HarvestError("duplicate class value")
+        raise HarvestError("unexpected classification values")
+    legend = []
+    for entry in classes:
+        color = entry.get("color-hint", "")
+        label = entry.get("description", "")
+        if not re.fullmatch(r"[0-9A-Fa-f]{6}", color):
+            raise HarvestError("invalid color-hint")
+        expected_color, expected_label = EXPECTED_CLASS_METADATA[entry["value"]]
+        if color != expected_color:
+            raise HarvestError("unexpected color-hint")
+        if not label:
+            raise HarvestError("classification description is required")
+        if label != expected_label:
+            raise HarvestError("unexpected classification description")
+        legend.append(
+            {"value": entry["value"], "label": label, "color": f"#{color.upper()}"}
+        )
+    return legend
+
+
 def validate_and_derive(collection: dict, search: dict) -> Derived:
     if collection.get("id") != COLLECTION_ID:
         raise HarvestError("unexpected Collection")
@@ -79,28 +105,7 @@ def validate_and_derive(collection: dict, search: dict) -> Derived:
     if parsed.scheme != "https" or parsed.query:
         raise HarvestError("map asset must be an unsigned public HTTPS URL")
 
-    classes = asset.get("classification:classes") or []
-    values = [entry.get("value") for entry in classes]
-    if values != EXPECTED_VALUES:
-        if len(values) != len(set(values)):
-            raise HarvestError("duplicate class value")
-        raise HarvestError("unexpected classification values")
-    legend = []
-    for entry in classes:
-        color = entry.get("color-hint", "")
-        label = entry.get("description", "")
-        if not re.fullmatch(r"[0-9A-Fa-f]{6}", color):
-            raise HarvestError("invalid color-hint")
-        expected_color, expected_label = EXPECTED_CLASS_METADATA[entry["value"]]
-        if color != expected_color:
-            raise HarvestError("unexpected color-hint")
-        if not label:
-            raise HarvestError("classification description is required")
-        if label != expected_label:
-            raise HarvestError("unexpected classification description")
-        legend.append(
-            {"value": entry["value"], "label": label, "color": f"#{color.upper()}"}
-        )
+    legend = derive_legend(asset)
 
     properties = item.get("properties") or {}
     footprint = {
