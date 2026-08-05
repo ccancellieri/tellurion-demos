@@ -8,6 +8,27 @@
   "digests": {
     "collection": "381ac0bb927b0a3014134ac472c627ddf95a1b7c7ed01fbb9ede9f4916f92c49",
     "items": {
+      "ESA_WorldCover_10m_2021_v200_N33E012": "206d5efeb3cc4629479db81172bd90bc854a2e545e209de0612760490f51d639",
+      "ESA_WorldCover_10m_2021_v200_N36E006": "45ed98aaaab9da713304a1b720e89be4e67c7513180321a89ba58c6312264a6a",
+      "ESA_WorldCover_10m_2021_v200_N36E009": "ad5774faf65ff0daf2547ebfcafcc2633df9f927470aca2a0a887ee7e0db46a3",
+      "ESA_WorldCover_10m_2021_v200_N36E012": "917e0bc5535c36db05914a52ec23bfdcb67737361477481e65a4c17fdcc11f6d",
+      "ESA_WorldCover_10m_2021_v200_N36E015": "21481fac2a33cb155a749ef0926c2d9d6315b18db33521948070009e28cedfbe",
+      "ESA_WorldCover_10m_2021_v200_N39E006": "b63c5f2dfa5a31b8183fca8416c4b5f73fe96e2e2570912164911b591a599c68",
+      "ESA_WorldCover_10m_2021_v200_N39E009": "ca60d0ec1eeb20f0027081dcc502c98ca45828f5b2ab2a8d15315713bec8f1c7",
+      "ESA_WorldCover_10m_2021_v200_N39E012": "01b637813a53704d60222f517f66236ffc4a772cd996a3af8fc1b1c2ead45bda",
+      "ESA_WorldCover_10m_2021_v200_N39E015": "fa3350999ac1b5e48c90f6f84446e69a3d76c1aca6e789be1982d21a4e432d9c",
+      "ESA_WorldCover_10m_2021_v200_N39E018": "207c5811568129a077bd11413f06757ef80161c15277bba411976f6812b94833",
+      "ESA_WorldCover_10m_2021_v200_N42E006": "522930728b7f7ee61bd5207ccef3c7e85472e5065c7295f563cdeca431d03884",
+      "ESA_WorldCover_10m_2021_v200_N42E009": "1c3cf1edef18a9c77dcf3410a3ad553cb1eec5f234e63f43328047b28200c6f8",
+      "ESA_WorldCover_10m_2021_v200_N42E012": "9ca91c3d56586de1efb0171f47d36351b57bd283f24c7bd898f055b94456dfcb",
+      "ESA_WorldCover_10m_2021_v200_N42E015": "5b042959d4a4caad6096a078dbce372bfb3ac3b49d5579cdbdc0cd3a9f5fa77b",
+      "ESA_WorldCover_10m_2021_v200_N45E006": "99550e206d98dcbf2522edf13547933312222a214bb3a1e556aae384ccadf3a6",
+      "ESA_WorldCover_10m_2021_v200_N45E009": "87bb8afb71532ba83b07ed9507c97549cede216ca194adcfb904882bcd023c89",
+      "ESA_WorldCover_10m_2021_v200_N45E012": "7acd327ab2a686d1d78b26fee592f26392b30b031349b7f310ebc42a8d1c172c"
+    },
+    "mosaic": "7b1499635f5463b8e2a510b8d6f4f6a3a6ae0b494dc0e15eed48bcd02fcdbedf",
+    "upstream_collection": "381ac0bb927b0a3014134ac472c627ddf95a1b7c7ed01fbb9ede9f4916f92c49",
+    "upstream_items": {
       "ESA_WorldCover_10m_2021_v200_N33E012": "2d91c24b8df2822ff42070b15887541367be4ac06a25e1d467ee286f9f5fea74",
       "ESA_WorldCover_10m_2021_v200_N36E006": "0cf2132a974fc046ee8b479839375cb7b43275f4f1fec01554066fe536896631",
       "ESA_WorldCover_10m_2021_v200_N36E009": "24327a1a799d6453b7c1a8d8f6c5482a59f6d426bff53288990b9bddd0d5d0e4",
@@ -25,8 +46,7 @@
       "ESA_WorldCover_10m_2021_v200_N45E006": "5e5cc40527dad960bd5cfd36ea10ab7ee6b289bba514bedd5a7da544529c9225",
       "ESA_WorldCover_10m_2021_v200_N45E009": "caca90aa00872e48a72faff7d64ee588d29661738befddac547aebaa5bf775de",
       "ESA_WorldCover_10m_2021_v200_N45E012": "80010fca7ca73b2f5eaa968c7da3c6a730bac57d97d93fb5a5c7f0e1b72df963"
-    },
-    "mosaic": "7b1499635f5463b8e2a510b8d6f4f6a3a6ae0b494dc0e15eed48bcd02fcdbedf"
+    }
   },
   "retrieved_at": "2026-08-05T00:00:00Z",
   "source": {

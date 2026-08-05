@@ -176,6 +176,8 @@ require_text .github/workflows/daily.yml '/13/3075/4420.png'
 require_text .github/workflows/daily.yml '/13/3156/4400.png'
 python3 - <<'PY'
 from pathlib import Path
+import hashlib
+import json
 
 import yaml
 
@@ -204,6 +206,29 @@ article = Path('docs/articles/from-one-cog-to-italy.md').read_text()
 evidence_boundary = 'Desktop/browser and 390x844 mobile country/city evidence remain pending until deployment and post-deployment verification.'
 if evidence_boundary not in article:
     failures.append('national article must explicitly leave desktop/browser and 390x844 mobile country/city evidence pending')
+
+release = Path('data/stac/esa-worldcover-italy')
+manifest = json.loads((release / 'manifest.json').read_text())
+digests = manifest['digests']
+item_paths = sorted((release / 'items').glob('*.json'))
+item_ids = {path.stem for path in item_paths}
+if len(item_ids) != 17:
+    failures.append('release must retain exactly 17 Item snapshots')
+if set(digests.get('items', {})) != item_ids:
+    failures.append('public Item snapshot digest ids must exactly match release Items')
+if set(digests.get('upstream_items', {})) != item_ids:
+    failures.append('raw upstream Item digest ids must exactly match release Items')
+if not isinstance(digests.get('upstream_collection'), str):
+    failures.append('release must name the raw upstream Collection digest explicitly')
+if digests.get('collection') != hashlib.sha256((release / 'collection.json').read_bytes()).hexdigest():
+    failures.append('public Collection digest must verify the sanitized committed snapshot')
+if digests.get('mosaic') != hashlib.sha256((release / 'mosaic.json').read_bytes()).hexdigest():
+    failures.append('public mosaic digest must verify the committed runtime artifact')
+if manifest['boundary']['digest'] != hashlib.sha256((release / 'boundary.geojson').read_bytes()).hexdigest():
+    failures.append('boundary digest must verify the committed boundary artifact')
+for item_path in item_paths:
+    if digests['items'].get(item_path.stem) != hashlib.sha256(item_path.read_bytes()).hexdigest():
+        failures.append(f'public Item digest must verify {item_path.name}')
 
 if failures:
     raise SystemExit('\n'.join(failures))

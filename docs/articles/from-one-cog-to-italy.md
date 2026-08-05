@@ -18,8 +18,11 @@ selected 17 ESA WorldCover 2021 v200 source Items. Selection uses true geometry
 intersection, not a bounding-box shortcut. The accepted identifiers are sorted,
 and the release rejects more than 32 sources.
 
-The harvester preserves the source Collection, each Item document, its
-footprint, metadata, and stable source identity. It then streams every
+The harvester commits query-free, sanitized Collection and Item snapshots with
+their footprint, metadata, and stable source identity. The public Collection,
+Item, and mosaic digests verify those serialized snapshots; separately named
+upstream Collection and Item digests retain the raw source-document hashes
+seen before sanitization. It then streams every
 temporary signed Planetary Computer object and its anonymous official ESA S3
 mirror. Both origins matched 889,726,110 bytes and their SHA-256 values, for
 about 1.78 GB transferred during verification. The release tree has 23 files:

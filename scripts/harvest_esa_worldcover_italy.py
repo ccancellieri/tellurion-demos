@@ -273,7 +273,7 @@ def validate_and_derive(collection: dict, search: dict, italy_boundary: dict) ->
     footprints = []
     legend: list[dict] | None = None
     sources = []
-    item_digests = {}
+    upstream_item_digests = {}
 
     for index, item in enumerate(items, start=1):
         item_id = item.get("id")
@@ -323,7 +323,7 @@ def validate_and_derive(collection: dict, search: dict, italy_boundary: dict) ->
             }
         )
         sources.append({"id": item_id, "href": official_esa_href, "bbox": bbox})
-        item_digests[item_id] = hashlib.sha256(_json_bytes(item)).hexdigest()
+        upstream_item_digests[item_id] = hashlib.sha256(_json_bytes(item)).hexdigest()
 
     footprints_document = {"type": "FeatureCollection", "features": footprints}
     mosaic = {"id": "esa_worldcover_2021_italy", "sources": sources}
@@ -336,8 +336,8 @@ def validate_and_derive(collection: dict, search: dict, italy_boundary: dict) ->
         },
         "boundary_document": italy_boundary,
         "digests": {
-            "collection": hashlib.sha256(_json_bytes(collection)).hexdigest(),
-            "items": item_digests,
+            "upstream_collection": hashlib.sha256(_json_bytes(collection)).hexdigest(),
+            "upstream_items": upstream_item_digests,
         },
         "source": {
             "collection_id": COLLECTION_ID,
@@ -457,27 +457,39 @@ def write_artifacts(
     fixture_mode: bool = False,
 ) -> None:
     mosaic = {**derived.mosaic, "sources": _verified_sources(derived, verified, fixture_mode)}
+    collection = _without_query_urls(derived.collection)
+    boundary = _without_query_urls(derived.manifest["boundary_document"])
+    footprints = _without_query_urls(derived.footprints)
+    legend = _without_query_urls(derived.legend)
+    sanitized_items = {item["id"]: _without_query_urls(item) for item in derived.items}
+    mosaic = _without_query_urls(mosaic)
+    collection_bytes = _json_bytes(collection)
+    boundary_bytes = _json_bytes(boundary)
+    footprints_bytes = _json_bytes(footprints)
+    legend_bytes = _json_bytes(legend)
+    item_bytes = {item_id: _json_bytes(item) for item_id, item in sanitized_items.items()}
     mosaic_bytes = _json_bytes(mosaic)
+    snapshot_digests = {
+        "collection": hashlib.sha256(collection_bytes).hexdigest(),
+        "items": {item_id: hashlib.sha256(contents).hexdigest() for item_id, contents in item_bytes.items()},
+        "mosaic": hashlib.sha256(mosaic_bytes).hexdigest(),
+    }
     manifest = {
         **{key: value for key, value in derived.manifest.items() if key != "boundary_document"},
-        "digests": {**derived.manifest["digests"], "mosaic": hashlib.sha256(mosaic_bytes).hexdigest()},
+        "boundary": {**derived.manifest["boundary"], "digest": hashlib.sha256(boundary_bytes).hexdigest()},
+        "digests": {**snapshot_digests, **derived.manifest["digests"]},
         "retrieved_at": retrieved_at,
         "verified_assets": verified or {},
     }
     artifacts = {
-        "collection.json": _json_bytes(_without_query_urls(derived.collection)),
-        "boundary.geojson": _json_bytes(_without_query_urls(derived.manifest["boundary_document"])),
-        "footprints.geojson": _json_bytes(_without_query_urls(derived.footprints)),
-        "legend.json": _json_bytes(_without_query_urls(derived.legend)),
+        "collection.json": collection_bytes,
+        "boundary.geojson": boundary_bytes,
+        "footprints.geojson": footprints_bytes,
+        "legend.json": legend_bytes,
         "manifest.json": _json_bytes(_without_query_urls(manifest)),
-        "mosaic.json": _json_bytes(_without_query_urls(mosaic)),
+        "mosaic.json": mosaic_bytes,
     }
-    artifacts.update(
-        {
-            f"items/{item['id']}.json": _json_bytes(_without_query_urls(item))
-            for item in derived.items
-        }
-    )
+    artifacts.update({f"items/{item_id}.json": contents for item_id, contents in item_bytes.items()})
     for name, contents in artifacts.items():
         _write_atomic(output / name, contents)
 

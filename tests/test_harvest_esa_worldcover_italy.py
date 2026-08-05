@@ -223,6 +223,52 @@ class ItalyHarvestContractTests(unittest.TestCase):
             )
             self.assertEqual(manifest["digests"]["mosaic"], hashlib.sha256((output / "mosaic.json").read_bytes()).hexdigest())
 
+    def test_manifest_digests_verify_sanitized_snapshots_and_retain_raw_upstream_digests(self):
+        collection = copy.deepcopy(self.collection)
+        collection["links"].append({"rel": "preview", "href": "https://example.test/preview?sig=temporary"})
+        search = copy.deepcopy(self.search)
+        search["features"][0]["links"] = [{"rel": "self", "href": "relative/item?sig=temporary"}]
+        derived = validate_and_derive(collection, search, self.boundary)
+
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "release"
+            write_artifacts(derived, output, "2026-08-05T00:00:00Z", fixture_mode=True)
+            manifest = json.loads((output / "manifest.json").read_text())
+
+            self.assertEqual(
+                manifest["digests"]["collection"],
+                hashlib.sha256((output / "collection.json").read_bytes()).hexdigest(),
+            )
+            self.assertEqual(
+                manifest["digests"]["upstream_collection"],
+                hashlib.sha256((json.dumps(collection, indent=2, sort_keys=True) + "\n").encode("utf-8")).hexdigest(),
+            )
+            for item in search["features"]:
+                with self.subTest(item_id=item["id"]):
+                    self.assertEqual(
+                        manifest["digests"]["items"][item["id"]],
+                        hashlib.sha256((output / f"items/{item['id']}.json").read_bytes()).hexdigest(),
+                    )
+                    self.assertEqual(
+                        manifest["digests"]["upstream_items"][item["id"]],
+                        hashlib.sha256((json.dumps(item, indent=2, sort_keys=True) + "\n").encode("utf-8")).hexdigest(),
+                    )
+
+    def test_committed_release_item_digests_verify_all_snapshots_and_name_upstream_digests(self):
+        release = Path(__file__).parents[1] / "data/stac/esa-worldcover-italy"
+        manifest = json.loads((release / "manifest.json").read_text())
+        item_ids = {path.stem for path in (release / "items").glob("*.json")}
+
+        self.assertEqual(set(manifest["digests"]["items"]), item_ids)
+        self.assertEqual(set(manifest["digests"]["upstream_items"]), item_ids)
+        self.assertIn("upstream_collection", manifest["digests"])
+        for item_id in sorted(item_ids):
+            with self.subTest(item_id=item_id):
+                self.assertEqual(
+                    manifest["digests"]["items"][item_id],
+                    hashlib.sha256((release / f"items/{item_id}.json").read_bytes()).hexdigest(),
+                )
+
     def test_rejects_reuse_records_that_are_not_exact_positive_lowercase_sha256_records(self):
         derived = validate_and_derive(self.collection, self.search, self.boundary)
         verified = {
