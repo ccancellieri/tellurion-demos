@@ -26,6 +26,7 @@ COLLECTION_URL = "https://planetarycomputer.microsoft.com/api/stac/v1/collection
 SIGN_URL = "https://planetarycomputer.microsoft.com/api/sas/v1/sign"
 ESA_S3_PREFIX = "https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/"
 SOURCE_ASSET_HOST = "ai4edataeuwest.blob.core.windows.net"
+GISCO_SOURCE_URL = "https://gisco-services.ec.europa.eu/distribution/v2/countries/geojson/CNTR_RG_01M_2024_4326.geojson"
 TRANSFORM_VERSION = "1"
 BOUNDARY_FIXTURE = Path(__file__).resolve().parents[1] / "tests/fixtures/stac/italy-boundary.geojson"
 
@@ -53,9 +54,7 @@ def _write_atomic(path: Path, contents: bytes) -> None:
 
 
 def _has_query_or_fragment(url: object) -> bool:
-    if not isinstance(url, str) or any(character.isspace() for character in url):
-        return False
-    if re.fullmatch(r"#[0-9A-Fa-f]{3,8}", url):
+    if not isinstance(url, str):
         return False
     parsed = urlsplit(url)
     return bool(parsed.query or parsed.fragment)
@@ -65,16 +64,23 @@ def _has_volatile_href(value: object) -> bool:
     return isinstance(value, dict) and _has_query_or_fragment(value.get("href"))
 
 
-def _without_query_urls(value: object) -> object:
+def _is_url_field(key: object) -> bool:
+    if not isinstance(key, str):
+        return False
+    normalized = key.lower()
+    return normalized in {"url", "href"} or normalized.endswith(("_url", ":url", "_href"))
+
+
+def _without_query_urls(value: object, key: object = None) -> object:
     if isinstance(value, dict):
         return {
-            key: _without_query_urls(child)
-            for key, child in value.items()
+            child_key: _without_query_urls(child, child_key)
+            for child_key, child in value.items()
             if not _has_volatile_href(child)
         }
     if isinstance(value, list):
         return [_without_query_urls(child) for child in value if not _has_volatile_href(child)]
-    if _has_query_or_fragment(value):
+    if _is_url_field(key) and _has_query_or_fragment(value):
         raise HarvestError("generated artifact contains a query-bearing scalar URL")
     return value
 
@@ -244,8 +250,8 @@ def _validate_boundary(boundary: dict) -> dict:
     properties = boundary["properties"]
     if not all(properties.get(key) for key in ("gisco:source_url", "gisco:source_sha256", "gisco:terms")):
         raise HarvestError("Italy boundary provenance is incomplete")
-    if _has_query_or_fragment(properties["gisco:source_url"]):
-        raise HarvestError("Italy boundary source URL must not contain a query or fragment")
+    if properties["gisco:source_url"] != GISCO_SOURCE_URL:
+        raise HarvestError("Italy boundary source URL must be the pinned queryless HTTPS GISCO URL")
     geometry = boundary.get("geometry")
     _geometry_polygons(geometry, "Italy boundary")
     return geometry

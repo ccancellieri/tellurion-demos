@@ -261,6 +261,10 @@ class ItalyHarvestContractTests(unittest.TestCase):
             "relative/collection#fragment",
             "?sig=secret",
             "#fragment",
+            "#abc",
+            "#006400",
+            "#12345678",
+            "relative/collection?sig=secret ",
         )
         collection["links"].extend({"rel": "self", "href": href} for href in volatile_hrefs)
         derived = validate_and_derive(collection, self.search, self.boundary)
@@ -282,6 +286,10 @@ class ItalyHarvestContractTests(unittest.TestCase):
             "relative/collection#fragment",
             "?sig=secret",
             "#fragment",
+            "#abc",
+            "#006400",
+            "#12345678",
+            "relative/collection?sig=secret ",
         ):
             with self.subTest(source_url=source_url):
                 boundary = copy.deepcopy(self.boundary)
@@ -289,15 +297,34 @@ class ItalyHarvestContractTests(unittest.TestCase):
                 with self.assertRaisesRegex(HarvestError, "source URL"):
                     validate_and_derive(self.collection, self.search, boundary)
 
-    def test_preserves_prose_with_query_and_fragment_punctuation(self):
+    def test_requires_the_pinned_absolute_gisco_source_url(self):
+        for source_url in (
+            "http://gisco-services.ec.europa.eu/distribution/v2/countries/geojson/CNTR_RG_01M_2024_4326.geojson",
+            "https://example.test/distribution/v2/countries/geojson/CNTR_RG_01M_2024_4326.geojson",
+            "https://gisco-services.ec.europa.eu/distribution/v2/countries/geojson/other.geojson",
+            "relative/italy-boundary.geojson",
+        ):
+            with self.subTest(source_url=source_url):
+                boundary = copy.deepcopy(self.boundary)
+                boundary["properties"]["gisco:source_url"] = source_url
+                with self.assertRaisesRegex(HarvestError, "source URL"):
+                    validate_and_derive(self.collection, self.search, boundary)
+
+    def test_preserves_legend_colours_and_prose_bytes(self):
         boundary = copy.deepcopy(self.boundary)
         boundary["properties"]["gisco:terms"] = "Non-commercial terms? See #attribution."
         derived = validate_and_derive(self.collection, self.search, boundary)
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "release"
             write_artifacts(derived, output, "2026-08-05T00:00:00Z", fixture_mode=True)
-            persisted = json.loads((output / "boundary.geojson").read_text())
-        self.assertEqual(persisted["properties"]["gisco:terms"], "Non-commercial terms? See #attribution.")
+            self.assertEqual(
+                (output / "boundary.geojson").read_bytes(),
+                (json.dumps(boundary, indent=2, sort_keys=True) + "\n").encode("utf-8"),
+            )
+            self.assertEqual(
+                (output / "legend.json").read_bytes(),
+                (json.dumps(derived.legend, indent=2, sort_keys=True) + "\n").encode("utf-8"),
+            )
 
     def test_fixture_cli_is_network_free_and_byte_stable(self):
         with tempfile.TemporaryDirectory() as directory:
