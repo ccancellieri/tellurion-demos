@@ -174,6 +174,40 @@ require_text .github/workflows/daily.yml '/13/2932/4376.png'
 require_text .github/workflows/daily.yml '/13/3043/4380.png'
 require_text .github/workflows/daily.yml '/13/3075/4420.png'
 require_text .github/workflows/daily.yml '/13/3156/4400.png'
+python3 - <<'PY'
+from pathlib import Path
+
+import yaml
+
+workflow = yaml.safe_load(Path('.github/workflows/daily.yml').read_text())
+jobs = workflow['jobs']
+live_entries = jobs['live-endpoints']['strategy']['matrix']['include']
+national_job = jobs.get('italy-endpoints')
+failures = []
+
+if len([entry for entry in live_entries if 'esa_worldcover_2021_rome' in entry['url']]) != 4:
+    failures.append('the four legacy Rome entries must remain active')
+if not all('esa_worldcover_2021_italy' not in entry['url'] for entry in live_entries):
+    failures.append('national entries must not run in the live-endpoints job')
+if national_job is None:
+    failures.append('national entries need an explicitly gated italy-endpoints job')
+else:
+    national_entries = national_job['strategy']['matrix']['include']
+    if national_job.get('if') != "${{ vars.ITALY_WORLDCOVER_SMOKE_ENABLED == 'true' }}":
+        failures.append('national job must be gated by ITALY_WORLDCOVER_SMOKE_ENABLED')
+    if len(national_entries) != 9:
+        failures.append('national matrix must retain exactly nine entries')
+    if not all('esa_worldcover_2021_italy' in entry['url'] for entry in national_entries):
+        failures.append('national matrix entries must retain national URLs')
+
+article = Path('docs/articles/from-one-cog-to-italy.md').read_text()
+evidence_boundary = 'Desktop/browser and 390x844 mobile country/city evidence remain pending until deployment and post-deployment verification.'
+if evidence_boundary not in article:
+    failures.append('national article must explicitly leave desktop/browser and 390x844 mobile country/city evidence pending')
+
+if failures:
+    raise SystemExit('\n'.join(failures))
+PY
 require_text index.html 'Seven visible paths.'
 require_text index.html 'CQL2 filtering, STAC catalog views and server-rendered maps'
 require_text index.html 'Italy-wide ESA WorldCover mosaic'

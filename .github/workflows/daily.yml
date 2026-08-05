@@ -122,7 +122,43 @@ jobs:
             url: https://tellurion-stac-harvest-demo.onrender.com/public/tiles/catalogs/default/collections/esa_worldcover_2021_rome/tiles/WebMercatorQuad/13/3043/4380.png
             content_type: image/png
             minimum_bytes: 1000
-          # Post-deployment monitoring targets for the reviewed Italy release.
+    steps:
+      - name: Wake and verify public endpoint
+        env:
+          DEMO_URL: ${{ matrix.url }}
+          EXPECTED_CONTENT_TYPE: ${{ matrix.content_type }}
+          MINIMUM_BYTES: ${{ matrix.minimum_bytes }}
+        run: |
+          for attempt in $(seq 1 12); do
+            : > headers.txt
+            : > body.bin
+            status=$(curl --silent --show-error --location --max-time 70 \
+              --dump-header headers.txt --output body.bin \
+              --write-out '%{http_code}' "$DEMO_URL" || true)
+            size=$(wc -c < body.bin 2>/dev/null || printf '0')
+            if [ "$status" = 200 ] \
+              && grep -Fiq "content-type: ${EXPECTED_CONTENT_TYPE}" headers.txt \
+              && [ "$size" -ge "$MINIMUM_BYTES" ]; then
+              printf 'Verified HTTP 200, %s, %s bytes\n' "$EXPECTED_CONTENT_TYPE" "$size"
+              exit 0
+            fi
+            printf 'Attempt %s: HTTP %s, %s bytes; waiting for the free service to wake\n' \
+              "$attempt" "$status" "$size"
+            sleep 10
+          done
+          printf 'Public endpoint did not satisfy its contract\n' >&2
+          cat headers.txt >&2 || true
+          exit 1
+
+  # Set the repository variable to true after deployment activates these routes.
+  italy-endpoints:
+    name: Italy WorldCover endpoints (deployment activation required) — ${{ matrix.demo }}
+    if: ${{ vars.ITALY_WORLDCOVER_SMOKE_ENABLED == 'true' }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
           - demo: Italy STAC Collection
             url: https://tellurion-stac-harvest-demo.onrender.com/public/stac/catalogs/default/collections/esa_worldcover_2021_italy
             content_type: application/json

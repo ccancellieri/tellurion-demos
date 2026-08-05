@@ -63,6 +63,7 @@ Collection-level asset projection for the individual source COGs.
 The national routes below are planned resource URLs, not live endpoints. Their
 current deployment is pending, so they are not evidence until the scheduled
 post-deployment smoke checks and visual evidence have succeeded.
+Desktop/browser and 390x844 mobile country/city evidence remain pending until deployment and post-deployment verification.
 
 - [Planned STAC Collection](https://tellurion-stac-harvest-demo.onrender.com/public/stac/catalogs/default/collections/esa_worldcover_2021_italy)
 - [Planned FeatureCollection](https://tellurion-stac-harvest-demo.onrender.com/public/features/catalogs/default/collections/esa_worldcover_2021_italy/items?limit=1)
