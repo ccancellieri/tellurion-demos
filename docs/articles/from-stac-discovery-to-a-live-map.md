@@ -111,3 +111,18 @@ Start with the [reproducible source](https://github.com/ccancellieri/tellurion-d
 then compare the manifest to the [live viewer](https://ccancellieri.github.io/tellurion-demos/demos/stac/).
 
 Interoperability is not copying JSON; it is preserving meaning while each system adds only the capabilities it can prove.
+
+## Italy expansion — 2026-08-05
+
+The first release proved one bounded source path: one preserved Rome Item, one
+official mirror, and one dynamic PNG route. The reviewed Italy release proves a
+different bounded composition in code and committed artifacts: 17 selected
+source Items, their footprints, a release manifest, and one mosaic definition.
+
+National deployment is pending. The Italy URLs must not be described as live
+yet; the Rome resources above remain the live evidence for this field note.
+The [national design](../design/2026-08-05-italy-worldcover-mosaic-design.md),
+[manifest](../../data/stac/esa-worldcover-italy/manifest.json), and [engine
+PR](https://github.com/ccancellieri/tellurion/pull/259) document the reviewed
+release boundary. [From one COG to Italy](from-one-cog-to-italy.md) explains
+the planned country-to-neighbourhood route and its post-deployment checks.
