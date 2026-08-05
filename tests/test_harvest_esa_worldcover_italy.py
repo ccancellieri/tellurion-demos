@@ -7,7 +7,6 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
-from urllib.parse import urlsplit
 from unittest.mock import patch
 
 from scripts.harvest_esa_worldcover_italy import (
@@ -28,13 +27,13 @@ def load(name: str) -> dict:
     return json.loads((FIXTURES / name).read_text(encoding="utf-8"))
 
 
-def urls(value: object) -> list[str]:
+def hrefs(value: object) -> list[str]:
     if isinstance(value, dict):
-        return [url for child in value.values() for url in urls(child)]
+        return ([value["href"]] if isinstance(value.get("href"), str) else []) + [
+            href for child in value.values() for href in hrefs(child)
+        ]
     if isinstance(value, list):
-        return [url for child in value for url in urls(child)]
-    if isinstance(value, str) and urlsplit(value).scheme in {"http", "https"}:
-        return [value]
+        return [href for child in value for href in hrefs(child)]
     return []
 
 
@@ -256,31 +255,49 @@ class ItalyHarvestContractTests(unittest.TestCase):
 
     def test_omits_query_and_fragment_link_records_from_every_generated_artifact(self):
         collection = copy.deepcopy(self.collection)
-        collection["links"].append(
-            {"rel": "self", "href": "https://example.test/collection?sig=secret#fragment"}
+        volatile_hrefs = (
+            "https://example.test/collection?sig=secret#fragment",
+            "relative/collection?sig=secret",
+            "relative/collection#fragment",
+            "?sig=secret",
+            "#fragment",
         )
+        collection["links"].extend({"rel": "self", "href": href} for href in volatile_hrefs)
         derived = validate_and_derive(collection, self.search, self.boundary)
 
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "release"
             write_artifacts(derived, output, "2026-08-05T00:00:00Z", fixture_mode=True)
             artifacts = [json.loads(path.read_text()) for path in output.rglob("*") if path.is_file()]
-            self.assertTrue(all(not urlsplit(url).query and not urlsplit(url).fragment for artifact in artifacts for url in urls(artifact)))
+            persisted_hrefs = [href for artifact in artifacts for href in hrefs(artifact)]
+            self.assertTrue(all(href not in volatile_hrefs for href in persisted_hrefs))
             persisted_collection = json.loads((output / "collection.json").read_text())
-            self.assertNotIn(
-                "https://example.test/collection?sig=secret#fragment",
-                [link["href"] for link in persisted_collection["links"]],
-            )
-            self.assertNotIn(
-                "https://example.test/collection",
-                [link["href"] for link in persisted_collection["links"]],
-            )
+            self.assertFalse(any(link.get("href") in volatile_hrefs for link in persisted_collection["links"]))
+            self.assertNotIn("https://example.test/collection", persisted_hrefs)
 
     def test_rejects_query_and_fragment_bearing_scalar_boundary_provenance_url(self):
+        for source_url in (
+            "https://example.test/boundary?sig=secret#fragment",
+            "relative/collection?sig=secret",
+            "relative/collection#fragment",
+            "?sig=secret",
+            "#fragment",
+        ):
+            with self.subTest(source_url=source_url):
+                boundary = copy.deepcopy(self.boundary)
+                boundary["properties"]["gisco:source_url"] = source_url
+                with self.assertRaisesRegex(HarvestError, "source URL"):
+                    validate_and_derive(self.collection, self.search, boundary)
+
+    def test_preserves_prose_with_query_and_fragment_punctuation(self):
         boundary = copy.deepcopy(self.boundary)
-        boundary["properties"]["gisco:source_url"] = "https://example.test/boundary?sig=secret#fragment"
-        with self.assertRaisesRegex(HarvestError, "source URL"):
-            validate_and_derive(self.collection, self.search, boundary)
+        boundary["properties"]["gisco:terms"] = "Non-commercial terms? See #attribution."
+        derived = validate_and_derive(self.collection, self.search, boundary)
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "release"
+            write_artifacts(derived, output, "2026-08-05T00:00:00Z", fixture_mode=True)
+            persisted = json.loads((output / "boundary.geojson").read_text())
+        self.assertEqual(persisted["properties"]["gisco:terms"], "Non-commercial terms? See #attribution.")
 
     def test_fixture_cli_is_network_free_and_byte_stable(self):
         with tempfile.TemporaryDirectory() as directory:

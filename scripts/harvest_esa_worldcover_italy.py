@@ -53,10 +53,12 @@ def _write_atomic(path: Path, contents: bytes) -> None:
 
 
 def _has_query_or_fragment(url: object) -> bool:
-    if not isinstance(url, str):
+    if not isinstance(url, str) or any(character.isspace() for character in url):
+        return False
+    if re.fullmatch(r"#[0-9A-Fa-f]{3,8}", url):
         return False
     parsed = urlsplit(url)
-    return bool(parsed.scheme and parsed.netloc and (parsed.query or parsed.fragment))
+    return bool(parsed.query or parsed.fragment)
 
 
 def _has_volatile_href(value: object) -> bool:
