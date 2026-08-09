@@ -5,7 +5,7 @@ ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 DOCKERFILE="$ROOT/Dockerfile.stac-harvest"
 CONFIG="$ROOT/deploy/render/stac-harvest.yaml"
 RENDER="$ROOT/render.yaml"
-WORKFLOW="$ROOT/.github/workflows/verify.yml"
+WORKFLOW="$ROOT/.github/workflows/daily.yml"
 MANIFEST="$ROOT/data/stac/esa-worldcover/manifest.json"
 COLORMAP="$ROOT/data/stac/esa-worldcover/colormap.yaml"
 
@@ -45,7 +45,7 @@ require_text deploy/render/stac-harvest.yaml 'source_item_id'
 require_text deploy/render/stac-harvest.yaml '{ name: start_datetime, type: string }'
 require_text deploy/render/stac-harvest.yaml '{ name: end_datetime, type: string }'
 require_text render.yaml 'name: tellurion-stac-harvest-demo'
-require_text .github/workflows/verify.yml 'tests/render_stac_harvest_contract.sh'
+require_text .github/workflows/daily.yml 'tests/render_stac_harvest_contract.sh'
 
 if grep -Eq 'write:[[:space:]]' "$CONFIG"; then
   printf 'the STAC harvest demo must not configure a write route\n' >&2
