@@ -31,7 +31,9 @@ for the verified source-to-service provenance chain and its stated limitations.
 The repository contains a reviewed 17-source Italy release and its
 country-to-neighbourhood viewer. National backend deployment is pending: the
 Italy resource URLs are not live yet. The earlier one-Item Rome release remains
-the live field note and endpoint evidence. ESA WorldCover is CC BY 4.0; the
+the live field note and endpoint evidence. ESA WorldCover is CC BY 4.0; use is
+attributed as © ESA WorldCover project 2021 / Contains modified Copernicus
+Sentinel data (2021) processed by ESA WorldCover consortium. The
 GISCO boundary has separate terms: Non-commercial use; © EuroGeographics for the administrative boundaries.
 See [From one COG to
 Italy](docs/articles/from-one-cog-to-italy.md) for the bounded national

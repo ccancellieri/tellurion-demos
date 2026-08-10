@@ -89,7 +89,7 @@ is available in the [merged Tellurion engine PR](https://github.com/ccancellieri
 
 ## Licence boundaries
 
-ESA WorldCover is available under [ESA WorldCover CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+ESA WorldCover is available under [ESA WorldCover CC BY 4.0](https://esa-worldcover.org/en/data-access) and is attributed as © ESA WorldCover project 2021 / Contains modified Copernicus Sentinel data (2021) processed by ESA WorldCover consortium.
 The pinned GISCO boundary has separate terms: Non-commercial use; © EuroGeographics for the administrative boundaries.
 
 The bounded composition is specific: 17 reviewed 2021 v200 source COGs,
