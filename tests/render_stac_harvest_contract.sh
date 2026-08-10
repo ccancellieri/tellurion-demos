@@ -8,6 +8,10 @@ RENDER="$ROOT/render.yaml"
 WORKFLOW="$ROOT/.github/workflows/daily.yml"
 MANIFEST="$ROOT/data/stac/esa-worldcover/manifest.json"
 COLORMAP="$ROOT/data/stac/esa-worldcover/colormap.yaml"
+ITALY_MANIFEST="$ROOT/data/stac/esa-worldcover-italy/manifest.json"
+ITALY_MOSAIC="$ROOT/data/stac/esa-worldcover-italy/mosaic.json"
+ITALY_BUILDER="$ROOT/deploy/render/build_stac_italy.py"
+ENGINE_SOURCE="$ROOT/dist/tellurion-v0.4.0-source-28fb41c.zip"
 
 require_file() {
   if [ ! -f "$1" ]; then
@@ -29,22 +33,36 @@ require_file "$RENDER"
 require_file "$WORKFLOW"
 require_file "$MANIFEST"
 require_file "$COLORMAP"
+require_file "$ITALY_MANIFEST"
+require_file "$ITALY_MOSAIC"
+require_file "$ITALY_BUILDER"
+require_file "$ENGINE_SOURCE"
 
-require_text Dockerfile.stac-harvest 'ARG TELLURION_VERSION=v0.3.0'
+require_text Dockerfile.stac-harvest 'ARG TELLURION_VERSION=v0.4.0'
+require_text Dockerfile.stac-harvest 'ARG TELLURION_REVISION=28fb41c'
+require_text Dockerfile.stac-harvest 'tellurion-v0.4.0-source-28fb41c.zip'
 require_text Dockerfile.stac-harvest 'sha256sum -c'
+require_text deploy/render/build_stac_italy.py '"cog", "mosaic"'
 require_text Dockerfile.stac-harvest 'ogr2ogr -f GPKG'
 require_text Dockerfile.stac-harvest 'USER 10001:10001'
 require_text Dockerfile.stac-harvest 'TELLURION_GEOPACKAGE_PATH=/app/data/worldcover.gpkg'
+require_text Dockerfile.stac-harvest 'TELLURION_COG_MOSAIC_MANIFEST=/app/data/worldcover/mosaic.yaml'
 require_text Dockerfile.stac-harvest 'cargo build --release --locked -p tellurion --no-default-features --features cog,geopackage'
 require_text Dockerfile.stac-harvest 'chmod 0755 /app/data'
 require_text Dockerfile.stac-harvest 'chmod 0644 /app/data/worldcover.gpkg'
 require_text Dockerfile.stac-harvest 'COPY --chown=10001:10001 --from=data-builder /app/data /app/data'
 require_text deploy/render/stac-harvest.yaml 'features: harvested_items'
 require_text deploy/render/stac-harvest.yaml 'tiles: harvested_cog'
+require_text deploy/render/stac-harvest.yaml 'driver: cog-mosaic'
+require_text deploy/render/stac-harvest.yaml 'tiles: harvested_italy_mosaic'
+require_text deploy/render/stac-harvest.yaml 'id: esa_worldcover_2021_italy'
 require_text deploy/render/stac-harvest.yaml 'source_item_id'
 require_text deploy/render/stac-harvest.yaml '{ name: start_datetime, type: string }'
 require_text deploy/render/stac-harvest.yaml '{ name: end_datetime, type: string }'
 require_text render.yaml 'name: tellurion-stac-harvest-demo'
+require_text render.yaml 'data/stac/esa-worldcover-italy'
+require_text render.yaml 'deploy/render/build_stac_italy.py'
+require_text render.yaml 'dist/tellurion-v0.4.0-source-28fb41c.zip'
 require_text .github/workflows/daily.yml 'tests/render_stac_harvest_contract.sh'
 
 if grep -Eq 'write:[[:space:]]' "$CONFIG"; then
@@ -56,6 +74,20 @@ if grep -Fq 'colormap:' "$CONFIG"; then
   printf 'the paletted WorldCover COG must use its embedded colormap\n' >&2
   exit 1
 fi
+
+python3 - "$CONFIG" <<'PY'
+import sys
+
+import yaml
+
+with open(sys.argv[1], encoding="utf-8") as config_file:
+    config = yaml.safe_load(config_file)
+
+for collection in config["collections"]:
+    keywords = collection.get("settings", {}).get("stac", {}).get("keywords", [])
+    if not all(isinstance(keyword, str) for keyword in keywords):
+        raise SystemExit(f"collection {collection['id']} has a non-string STAC keyword")
+PY
 
 manifest_url=$(python3 - "$MANIFEST" <<'PY'
 import json

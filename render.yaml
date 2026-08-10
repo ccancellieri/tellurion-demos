@@ -46,6 +46,9 @@ services:
         - Dockerfile.stac-harvest
         - deploy/render/stac-harvest.yaml
         - data/stac/esa-worldcover
+        - data/stac/esa-worldcover-italy
+        - deploy/render/build_stac_italy.py
+        - dist/tellurion-v0.4.0-source-28fb41c.zip
   - type: web
     name: tellurion-zarr-demo
     runtime: docker

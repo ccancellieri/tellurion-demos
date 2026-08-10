@@ -21,12 +21,23 @@ links when you want to inspect the protocol payloads.
 | Zarr | [Two-slice comparison](https://ccancellieri.github.io/tellurion-demos/demos/zarr/) | Zarr v2 shape `[time, y, x]` → PNG | Synthetic fixed slices; no on-wire dimension-selection claim |
 | 3D | [Interactive GLB scene](https://ccancellieri.github.io/tellurion-demos/demos/3d/) | polygons → MVT → extrusion → GLB/3D Tiles 1.1 | Synthetic footprints; no OGC API 3D GeoVolumes conformance claim |
 | CQL2 | [Live query workbench](https://ccancellieri.github.io/tellurion-demos/demos/query/) | CQL2 text → GeoPackage filter → GeoJSON | Bounded to 50 features and this driver's advertised filter classes |
-| STAC harvest | [WorldCover source-to-map viewer](https://ccancellieri.github.io/tellurion-demos/demos/stac/) | ESA WorldCover STAC → preserved COG and class metadata → Tellurion STAC/Features/raster Tiles | dynamic PNG tile composition, not a raster OGC API Maps conformance claim; ESA, Microsoft, and CC BY 4.0 attribution retained |
+| STAC harvest | [Italy-wide ESA WorldCover mosaic](https://ccancellieri.github.io/tellurion-demos/demos/stac/) | country-to-neighbourhood coverage through one Tellurion TileSet | dynamic PNG tile composition, not a raster OGC API Maps conformance claim; ESA, Microsoft, and CC BY 4.0 attribution retained |
 | Maps + Styles | [Server-rendered Rome map](https://ccancellieri.github.io/tellurion-demos/demos/maps/) | MVT mosaic → PNG, optionally painted by MapLibre Style JSON | Maps 1.0 path; Styles surface is draft-aligned and read-only |
 
 Read the STAC harvest field note,
 [From STAC discovery to a live map](docs/articles/from-stac-discovery-to-a-live-map.md),
 for the verified source-to-service provenance chain and its stated limitations.
+
+The repository contains a reviewed 17-source Italy release and its
+country-to-neighbourhood viewer. National backend deployment is pending: the
+Italy resource URLs are not live yet. The earlier one-Item Rome release remains
+the live field note and endpoint evidence. ESA WorldCover is CC BY 4.0; use is
+attributed as © ESA WorldCover project 2021 / Contains modified Copernicus
+Sentinel data (2021) processed by ESA WorldCover consortium. The
+GISCO boundary has separate terms: Non-commercial use; © EuroGeographics for the administrative boundaries.
+See [From one COG to
+Italy](docs/articles/from-one-cog-to-italy.md) for the bounded national
+composition and planned post-deployment checks.
 
 Render's free services can sleep after inactivity, so a viewer may need a short
 cold start. Hosted response times are not benchmark evidence.

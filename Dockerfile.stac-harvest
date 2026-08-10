@@ -7,53 +7,70 @@ RUN apt-get update \
 
 WORKDIR /build
 
-ARG TELLURION_VERSION=v0.3.0
-ARG TELLURION_REVISION=b6eb4a5
+ARG TELLURION_VERSION=v0.4.0
+ARG TELLURION_REVISION=28fb41c
+ENV SOURCE_ARCHIVE=tellurion-v0.4.0-source-28fb41c.zip
 
-ENV TELLURION_RELEASE=https://github.com/ccancellieri/tellurion-demos/releases/download/tellurion-${TELLURION_VERSION}
-ENV SOURCE_ARCHIVE=tellurion-${TELLURION_VERSION}-source-${TELLURION_REVISION}.zip
+COPY dist/tellurion-v0.4.0-source-28fb41c.zip /build/tellurion-v0.4.0-source-28fb41c.zip
 
-RUN curl --fail --location --retry 3 \
-      --output "${SOURCE_ARCHIVE}" "${TELLURION_RELEASE}/${SOURCE_ARCHIVE}" \
-    && curl --fail --location --retry 3 \
-      --output SHA256SUMS "${TELLURION_RELEASE}/SHA256SUMS" \
-    && grep "  ${SOURCE_ARCHIVE}$" SHA256SUMS > source.sha256 \
+RUN printf '%s  %s\n' \
+      '7cf5e36b803a1e4b39f367f96774706354d9424a0b7ff965105bf6f1e3467441' \
+      "${SOURCE_ARCHIVE}" > source.sha256 \
     && sha256sum -c source.sha256 \
     && unzip -q "${SOURCE_ARCHIVE}"
 
-RUN cargo build --release --locked -p tellurion --no-default-features --features cog,geopackage
+WORKDIR /build/tellurion-28fb41c
+
+RUN cargo build --release --locked -p tellurion --no-default-features --features cog,geopackage \
+    && cargo build --release --locked -p tellurion-ingest
 
 FROM debian:bookworm-slim@sha256:7b140f374b289a7c2befc338f42ebe6441b7ea838a042bbd5acbfca6ec875818 AS data-builder
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends gdal-bin \
+    && apt-get install -y --no-install-recommends ca-certificates gdal-bin python3 \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /build
 
-COPY data/stac/esa-worldcover /build/stac
+COPY --from=source-builder /build/tellurion-28fb41c/target/release/tellurion-ingest /usr/local/bin/tellurion-ingest
+COPY data/stac/esa-worldcover /build/stac/rome
+COPY data/stac/esa-worldcover-italy /build/stac/italy
+COPY deploy/render/build_stac_italy.py /build/build_stac_italy.py
 
 RUN mkdir -p /app/data \
-    && ogr2ogr -f GPKG /app/data/worldcover.gpkg /build/stac/footprint.geojson \
+    && ogr2ogr -f GPKG /app/data/worldcover.gpkg /build/stac/rome/footprint.geojson \
          -nln esa_worldcover_2021_rome \
          -lco GEOMETRY_NAME=geom \
          -lco FID=id \
+    && ogr2ogr -update /app/data/worldcover.gpkg /build/stac/italy/footprints.geojson \
+         -nln esa_worldcover_2021_italy \
+         -lco GEOMETRY_NAME=geom \
+         -lco FID=id \
     && test "$(ogrinfo -ro -so /app/data/worldcover.gpkg esa_worldcover_2021_rome | sed -n 's/^Feature Count: //p')" = "1" \
+    && test "$(ogrinfo -ro -so /app/data/worldcover.gpkg esa_worldcover_2021_italy | sed -n 's/^Feature Count: //p')" = "17" \
+    && python3 /build/build_stac_italy.py \
+         --manifest /build/stac/italy/mosaic.json \
+         --output-dir /app/data/worldcover \
+         --mosaic-manifest /app/data/worldcover/mosaic.yaml \
+         --ingest-binary /usr/local/bin/tellurion-ingest \
+    && test "$(find /app/data/worldcover -type f -name '*.tif' | wc -l)" = "17" \
     && chmod 0755 /app/data \
-    && chmod 0644 /app/data/worldcover.gpkg
+    && chmod 0644 /app/data/worldcover.gpkg /app/data/worldcover/mosaic.yaml \
+    && find /app/data/worldcover -type f -name '*.tif' -exec chmod 0444 {} +
 
 FROM debian:bookworm-slim@sha256:7b140f374b289a7c2befc338f42ebe6441b7ea838a042bbd5acbfca6ec875818
 
 COPY --from=source-builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
-COPY --from=source-builder /build/target/release/tellurion /app/tellurion
-COPY --from=source-builder /build/LICENSE /app/licenses/LICENSE
-COPY --from=source-builder /build/COMMERCIAL-LICENSE.md /app/licenses/COMMERCIAL-LICENSE.md
+COPY --from=source-builder /build/tellurion-28fb41c/target/release/tellurion /app/tellurion
+COPY --from=source-builder /build/tellurion-28fb41c/LICENSE /app/licenses/LICENSE
+COPY --from=source-builder /build/tellurion-28fb41c/COMMERCIAL-LICENSE.md /app/licenses/COMMERCIAL-LICENSE.md
 COPY --chown=10001:10001 --from=data-builder /app/data /app/data
 COPY deploy/render/stac-harvest.yaml /app/config.yaml
 
 ENV TELLURION_CONFIG=/app/config.yaml
 ENV TELLURION_GEOPACKAGE_PATH=/app/data/worldcover.gpkg
 ENV TELLURION_COG_URL=https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/ESA_WorldCover_10m_2021_v200_N39E012_Map.tif
+ENV TELLURION_COG_MOSAIC_MANIFEST=/app/data/worldcover/mosaic.yaml
 
 USER 10001:10001
 EXPOSE 10000
