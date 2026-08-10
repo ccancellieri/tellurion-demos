@@ -76,7 +76,7 @@ The committed [Italy manifest](../../data/stac/esa-worldcover-italy/manifest.jso
 [mosaic definition](../../data/stac/esa-worldcover-italy/mosaic.json), and
 [national design](../design/2026-08-05-italy-worldcover-mosaic-design.md) are
 the reviewable evidence while deployment is pending. The reusable mosaic work
-is tracked in the [Tellurion engine PR](https://github.com/ccancellieri/tellurion/pull/259).
+is available in the [merged Tellurion engine PR](https://github.com/ccancellieri/tellurion/pull/288).
 
 ## Claims deliberately not made
 

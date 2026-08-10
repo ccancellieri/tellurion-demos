@@ -123,6 +123,6 @@ National deployment is pending. The Italy URLs must not be described as live
 yet; the Rome resources above remain the live evidence for this field note.
 The [national design](../design/2026-08-05-italy-worldcover-mosaic-design.md),
 [manifest](../../data/stac/esa-worldcover-italy/manifest.json), and [engine
-PR](https://github.com/ccancellieri/tellurion/pull/259) document the reviewed
+PR](https://github.com/ccancellieri/tellurion/pull/288) document the reviewed
 release boundary. [From one COG to Italy](from-one-cog-to-italy.md) explains
 the planned country-to-neighbourhood route and its post-deployment checks.
