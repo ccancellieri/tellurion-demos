@@ -17,12 +17,15 @@
       <a href="./" aria-current="page">Documentation</a>
       <a href="https://github.com/ccancellieri/tellurion">Source</a>
     </nav>
+    <button class="search-trigger" id="docs-search" type="button" aria-haspopup="dialog" aria-controls="search-dialog" aria-keyshortcuts="/">Search <kbd>/</kbd></button>
   </header>
+
+  <aside class="preview-ribbon" aria-label="Next preview capability"><strong>Next / Preview</strong><span>Shapefile ZIP · secure bounded reads are implemented on a development branch. Server wiring, vector tiles and a public demo remain incomplete.</span></aside>
 
   <div class="docs-layout">
     <nav class="docs-nav" aria-label="Documentation sections">
       <p class="nav-label">Field index</p>
-      <a href="#overview" aria-current="page"><span>00</span> Overview</a>
+      <a href="#overview"><span>00</span> Overview</a>
       <a href="#status"><span>01</span> Capability status</a>
       <a href="#start"><span>02</span> Get started</a>
       <a href="#download"><span>03</span> Download &amp; build</a>
@@ -38,6 +41,7 @@
         <div class="coordinate-strip" aria-label="Guide principles">
           <span>Truthful status</span><span>Canonical instructions</span><span>Bounded claims</span>
         </div>
+        <p class="evidence-stamp"><strong>Documentation snapshot: 2026-08-31</strong> · Product evidence: Tellurion source revision <code>3eb31a872b74</code> on the remote-vector development branch; this is not a release. Links labelled “Source docs” follow the mutable main branch.</p>
       </section>
 
       <section class="doc-section" id="status">
@@ -49,12 +53,31 @@
           <span><i class="status planned"></i>Planned</span>
         </div>
         <div class="matrix" role="list">
-          <article role="listitem"><span class="tag available-tag">Available</span><h3>Core serving surface</h3><p>Landing pages, conformance declarations, API descriptions, OGC API Features, Tiles, read-only Styles and STAC routes are implemented in the source.</p><a href="https://github.com/ccancellieri/tellurion#what-it-serves">Inspect the protocol table →</a></article>
-          <article role="listitem"><span class="tag available-tag">Available</span><h3>Embedded GeoPackage</h3><p>The default build includes the embedded GeoPackage path for catalogs, features, tiles and supported writes. It is the shortest self-contained evaluation route.</p><a href="https://github.com/ccancellieri/tellurion/blob/main/docs/quickstart/real-data-osm-geopackage.md">Run the real-data guide →</a></article>
-          <article role="listitem"><span class="tag optional-tag">Optional</span><h3>Additional data drivers</h3><p>PMTiles, FlatGeobuf, GeoParquet, COG, Zarr, Iceberg and DuckDB are compile-time features. Support is read-only or capability-specific; enabling a driver does not make it read-write.</p><a href="https://github.com/ccancellieri/tellurion#cargo-features">Compare driver capabilities →</a></article>
-          <article role="listitem"><span class="tag optional-tag">Optional</span><h3>Shared infrastructure</h3><p>PostGIS provides the shared database route. Valkey adds an optional L2 tile cache. The embedded browser UI is also an opt-in build feature.</p><a href="https://github.com/ccancellieri/tellurion/blob/main/docs/deployment-topologies.md">Choose a topology →</a></article>
+          <article role="listitem"><span class="tag available-tag">Available</span><h3>Core serving surface</h3><p>Landing pages, conformance declarations, API descriptions, OGC API Features, Tiles, read-only Styles and STAC routes are implemented in the source.</p><a href="https://github.com/ccancellieri/tellurion#what-it-serves">Source docs: inspect the protocol table →</a></article>
+          <article role="listitem"><span class="tag available-tag">Available</span><h3>PostGIS</h3><p>PostGIS is enabled in the default build and provides the shared database route for catalogs, features, tiles, writes, outbox, derived index, search and volumes.</p><a href="https://github.com/ccancellieri/tellurion#cargo-features">Source docs: inspect build features →</a></article>
+          <article role="listitem"><span class="tag available-tag">Available</span><h3>Embedded GeoPackage</h3><p>The default build includes the embedded GeoPackage path for catalogs, features, tiles and supported writes. It is the shortest self-contained evaluation route.</p><a href="https://github.com/ccancellieri/tellurion/blob/main/docs/quickstart/real-data-osm-geopackage.md">Source docs: run the real-data guide →</a></article>
+          <article role="listitem"><span class="tag optional-tag">Optional</span><h3>Valkey cache and browser UI</h3><p>Valkey adds an opt-in L2 tile cache; the embedded browser UI is a separate opt-in build feature. Neither is required for the default serving engine.</p><a href="https://github.com/ccancellieri/tellurion/blob/main/docs/deployment-topologies.md">Source docs: choose a topology →</a></article>
           <article role="listitem"><span class="tag preview-tag">Preview</span><h3>Interactive evaluation</h3><p>The public gallery demonstrates bounded vector, raster, Zarr, 3D, CQL2, STAC, Maps and Styles paths. Demo availability is evidence, not a production SLA or benchmark.</p><a href="../#capabilities">Open the demo gallery →</a></article>
           <article role="listitem"><span class="tag planned-tag">Planned</span><h3>Approved v0.4 binaries</h3><p>Platform archives are intended, but there is no verified public v0.4 binary release today. Do not treat the repository’s source archive as an executable distribution.</p><a href="#download">See the verified download state →</a></article>
+        </div>
+
+        <div class="table-wrap" tabindex="0" role="region" aria-label="Driver support matrix">
+          <table class="driver-table">
+            <caption>Driver capabilities at the documented evidence revision. “No” means the driver does not expose that capability.</caption>
+            <thead><tr><th scope="col">Driver</th><th scope="col">Shipping status</th><th scope="col">Source access</th><th scope="col">Read / write</th><th scope="col">Tiles or render</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">PostGIS</th><td><span class="tag available-tag">Available · default</span></td><td>Database service, local or network</td><td>Features read/write</td><td>MVT and styled PNG</td></tr>
+              <tr><th scope="row">GeoPackage</th><td><span class="tag available-tag">Available · default</span></td><td>Local file</td><td>Features read/write</td><td>MVT and styled PNG</td></tr>
+              <tr><th scope="row">PMTiles</th><td><span class="tag optional-tag">Optional</span></td><td>Local archive</td><td>Read-only tiles; no Features</td><td>Stored archive tiles; no feature rendering</td></tr>
+              <tr><th scope="row">FlatGeobuf</th><td><span class="tag optional-tag">Optional</span></td><td>Local file</td><td>Features read-only</td><td>No</td></tr>
+              <tr><th scope="row">GeoParquet</th><td><span class="tag preview-tag">Preview branch</span></td><td>Local file or HTTPS byte ranges</td><td>Features read-only</td><td>MVT when CRS84 metadata and covering are usable</td></tr>
+              <tr><th scope="row">COG</th><td><span class="tag optional-tag">Optional</span></td><td>Local file or HTTPS byte ranges</td><td>Raster read-only</td><td>PNG raster tiles</td></tr>
+              <tr><th scope="row">Zarr</th><td><span class="tag optional-tag">Optional</span></td><td>Local or HTTPS chunk store</td><td>Raster read-only</td><td>PNG from a configured, bounded 2D <code>x/y</code> slice; leading indexes are fixed, not selected per request</td></tr>
+              <tr><th scope="row">Iceberg</th><td><span class="tag optional-tag">Optional</span></td><td>REST catalog; local or S3-protocol table data</td><td>Features read-only</td><td>No</td></tr>
+              <tr><th scope="row">DuckDB</th><td><span class="tag optional-tag">Optional</span></td><td>Local database file</td><td>Features read-only</td><td>No</td></tr>
+              <tr><th scope="row">Shapefile</th><td><span class="tag preview-tag">Preview branch</span></td><td>Local or HTTPS ZIP, bounded secure spool</td><td>Features read-only</td><td>No. Server wiring, vector tiles and a public demo remain incomplete.</td></tr>
+            </tbody>
+          </table>
         </div>
       </section>
 
@@ -105,6 +128,17 @@
     </main>
   </div>
 
+  <dialog id="search-dialog" aria-labelledby="search-title">
+    <form method="dialog" class="search-panel">
+      <div class="search-head"><div><p class="station">Field index</p><h2 id="search-title">Search documentation</h2></div><button class="search-close" value="close" aria-label="Close search">Close <kbd>Esc</kbd></button></div>
+      <label for="search-input">Search headings, capabilities and manuals</label>
+      <input id="search-input" type="search" autocomplete="off" placeholder="Try “Zarr”, “licensing” or “PostGIS”">
+      <p class="search-count" id="search-count" aria-live="polite"></p>
+      <ul id="search-results" class="search-results"></ul>
+    </form>
+  </dialog>
+
   <footer><span>Tellurion field guide</span><span>Current source documentation · verify release state before use</span></footer>
+  <script src="search.js"></script>
 </body>
 </html>
