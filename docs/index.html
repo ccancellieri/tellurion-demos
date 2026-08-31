@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tellurion documentation — evaluate, build and operate</title>
+  <meta name="description" content="A truthful field guide to Tellurion capabilities, installation paths, licensing, deployment and current limitations.">
+  <link rel="icon" href="../favicon.svg">
+  <link rel="stylesheet" href="docs.css">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <header class="topbar">
+    <a class="brand" href="../"><img src="../favicon.svg" alt=""><span>Tellurion</span><small>Field guide</small></a>
+    <nav aria-label="Site navigation">
+      <a href="../">Demos</a>
+      <a href="./" aria-current="page">Documentation</a>
+      <a href="https://github.com/ccancellieri/tellurion">Source</a>
+    </nav>
+  </header>
+
+  <div class="docs-layout">
+    <nav class="docs-nav" aria-label="Documentation sections">
+      <p class="nav-label">Field index</p>
+      <a href="#overview" aria-current="page"><span>00</span> Overview</a>
+      <a href="#status"><span>01</span> Capability status</a>
+      <a href="#start"><span>02</span> Get started</a>
+      <a href="#download"><span>03</span> Download &amp; build</a>
+      <a href="#operate"><span>04</span> Operate</a>
+      <a href="#limits"><span>05</span> Limits</a>
+    </nav>
+
+    <main id="main-content" tabindex="-1">
+      <section class="hero" id="overview">
+        <p class="kicker">Documentation / current source</p>
+        <h1>Read the terrain<br>before you deploy.</h1>
+        <p class="lede">Tellurion is a geospatial serving engine for features, tiles, rasters, multidimensional arrays, STAC and 3D. This guide separates what is ready in the current source tree from optional build features, previews and future work.</p>
+        <div class="coordinate-strip" aria-label="Guide principles">
+          <span>Truthful status</span><span>Canonical instructions</span><span>Bounded claims</span>
+        </div>
+      </section>
+
+      <section class="doc-section" id="status">
+        <div class="section-heading"><p class="station">Station 01</p><h2>Capability status</h2><p>These labels describe the current source tree, not a promise that every capability is present in every build or deployment.</p></div>
+        <div class="legend" aria-label="Status legend">
+          <span><i class="status available"></i>Available</span>
+          <span><i class="status optional"></i>Optional</span>
+          <span><i class="status preview"></i>Preview</span>
+          <span><i class="status planned"></i>Planned</span>
+        </div>
+        <div class="matrix" role="list">
+          <article role="listitem"><span class="tag available-tag">Available</span><h3>Core serving surface</h3><p>Landing pages, conformance declarations, API descriptions, OGC API Features, Tiles, read-only Styles and STAC routes are implemented in the source.</p><a href="https://github.com/ccancellieri/tellurion#what-it-serves">Inspect the protocol table →</a></article>
+          <article role="listitem"><span class="tag available-tag">Available</span><h3>Embedded GeoPackage</h3><p>The default build includes the embedded GeoPackage path for catalogs, features, tiles and supported writes. It is the shortest self-contained evaluation route.</p><a href="https://github.com/ccancellieri/tellurion/blob/main/docs/quickstart/real-data-osm-geopackage.md">Run the real-data guide →</a></article>
+          <article role="listitem"><span class="tag optional-tag">Optional</span><h3>Additional data drivers</h3><p>PMTiles, FlatGeobuf, GeoParquet, COG, Zarr, Iceberg and DuckDB are compile-time features. Support is read-only or capability-specific; enabling a driver does not make it read-write.</p><a href="https://github.com/ccancellieri/tellurion#cargo-features">Compare driver capabilities →</a></article>
+          <article role="listitem"><span class="tag optional-tag">Optional</span><h3>Shared infrastructure</h3><p>PostGIS provides the shared database route. Valkey adds an optional L2 tile cache. The embedded browser UI is also an opt-in build feature.</p><a href="https://github.com/ccancellieri/tellurion/blob/main/docs/deployment-topologies.md">Choose a topology →</a></article>
+          <article role="listitem"><span class="tag preview-tag">Preview</span><h3>Interactive evaluation</h3><p>The public gallery demonstrates bounded vector, raster, Zarr, 3D, CQL2, STAC, Maps and Styles paths. Demo availability is evidence, not a production SLA or benchmark.</p><a href="../#capabilities">Open the demo gallery →</a></article>
+          <article role="listitem"><span class="tag planned-tag">Planned</span><h3>Approved v0.4 binaries</h3><p>Platform archives are intended, but there is no verified public v0.4 binary release today. Do not treat the repository’s source archive as an executable distribution.</p><a href="#download">See the verified download state →</a></article>
+        </div>
+      </section>
+
+      <section class="doc-section" id="start">
+        <div class="section-heading"><p class="station">Station 02</p><h2>Choose your first route</h2><p>Begin with the smallest shape that answers your evaluation question.</p></div>
+        <ol class="routes">
+          <li><span class="route-number">A</span><div><h3>Look first</h3><p>Use the public demo gallery when you want to inspect outputs before installing anything. Services may cold-start and are not load-test environments.</p><a href="../#capabilities">Explore visual demos →</a></div></li>
+          <li><span class="route-number">B</span><div><h3>Build one self-contained server</h3><p>Build the current source, create a GeoPackage demo and serve it locally without a database service or container runtime.</p><a href="https://github.com/ccancellieri/tellurion/blob/main/docs/quickstart/install.md">Follow Build from source →</a></div></li>
+          <li><span class="route-number">C</span><div><h3>Use real geospatial data</h3><p>Load attributed OpenStreetMap data into GeoPackage, inspect Features and Tiles, then connect a desktop GIS.</p><a href="https://github.com/ccancellieri/tellurion/blob/main/docs/quickstart/qgis.md">Connect QGIS →</a></div></li>
+        </ol>
+      </section>
+
+      <section class="doc-section" id="download">
+        <div class="section-heading"><p class="station">Station 03</p><h2>Download state</h2></div>
+        <div class="notice" role="note" aria-label="Current download status">
+          <strong>No verified public v0.4 binary is available yet.</strong>
+          <p>The GitHub Releases page is the only place to look for an approved, checksummed and attested binary release. Until one appears there, build the current source. GitHub may offer automatic source archives; a source archive is not an installable Tellurion binary.</p>
+          <div class="actions"><a class="button primary" href="https://github.com/ccancellieri/tellurion/blob/main/docs/quickstart/install.md">Build from source</a><a class="button" href="https://github.com/ccancellieri/tellurion/releases">Check releases</a></div>
+        </div>
+        <div class="safety-grid">
+          <div><h3>Before production</h3><p>Read the licence that applies to the version and intended use. The plain-language guide is informative; the licence text controls.</p><a href="https://github.com/ccancellieri/tellurion/blob/main/docs/licensing.md">Read licensing guidance →</a></div>
+          <div><h3>Before trusting an artifact</h3><p>Require the checksum and GitHub artifact attestation described by the install guide. If either is absent, treat it as an unapproved candidate.</p><a href="https://github.com/ccancellieri/tellurion/blob/main/docs/quickstart/install.md#version-040-release-archives">Review verification steps →</a></div>
+        </div>
+      </section>
+
+      <section class="doc-section" id="operate">
+        <div class="section-heading"><p class="station">Station 04</p><h2>Operate with the canonical manuals</h2><p>The detailed instructions live beside the code so they change with it. This site points to those manuals instead of copying commands that can drift.</p></div>
+        <div class="manuals">
+          <a href="https://github.com/ccancellieri/tellurion/blob/main/docs/deployment-topologies.md"><strong>Deployment topologies</strong><span>Binary, containers, Kubernetes, multi-replica caveats and air-gapped installs.</span></a>
+          <a href="https://github.com/ccancellieri/tellurion/blob/main/docs/quickstart/real-data-osm-geopackage.md"><strong>Real-data GeoPackage</strong><span>A complete embedded evaluation with attributed OpenStreetMap data.</span></a>
+          <a href="https://github.com/ccancellieri/tellurion/blob/main/docs/quickstart/qgis.md"><strong>QGIS connection</strong><span>Use Tellurion’s advertised resources from a desktop GIS.</span></a>
+          <a href="https://github.com/ccancellieri/tellurion/blob/main/docs/spec-deviations.md"><strong>Protocol deviations</strong><span>Known behavior boundaries and explicit refusals.</span></a>
+          <a href="https://github.com/ccancellieri/tellurion/blob/main/docs/driver-authoring.md"><strong>Driver contracts</strong><span>Capability-aware interfaces for contributors and integrators.</span></a>
+          <a href="https://github.com/ccancellieri/tellurion#authentication-and-authorization"><strong>Authentication &amp; authorization</strong><span>Understand configured identity and policy behavior before exposure.</span></a>
+        </div>
+      </section>
+
+      <section class="doc-section" id="limits">
+        <div class="section-heading"><p class="station">Station 05</p><h2>What is not supported</h2><p>Refusing unsupported behavior is safer than returning an answer that looks plausible.</p></div>
+        <ul class="limits-list">
+          <li><strong>No universal read/write promise.</strong> Driver capabilities differ; several optional formats are explicitly read-only.</li>
+          <li><strong>No automatic production readiness.</strong> A successful demo or local run does not replace security, capacity and operational review.</li>
+          <li><strong>No benchmark claim from hosted demos.</strong> Shared infrastructure and cold starts make those timings unsuitable for comparison.</li>
+          <li><strong>No DGGS or geometry/3D statistics API today.</strong> Current use cases deliberately exclude them.</li>
+          <li><strong>No implied conformance.</strong> Consult each deployment’s <code>/conformance</code> response and the documented deviations.</li>
+        </ul>
+      </section>
+    </main>
+  </div>
+
+  <footer><span>Tellurion field guide</span><span>Current source documentation · verify release state before use</span></footer>
+</body>
+</html>

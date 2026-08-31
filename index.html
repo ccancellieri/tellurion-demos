@@ -13,17 +13,19 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
   <header class="shell nav">
     <a class="brand" href="./"><img src="favicon.svg" alt=""><span>Tellurion demos</span></a>
     <nav class="nav-links" aria-label="Primary navigation">
       <a href="#capabilities">Capabilities</a>
       <a href="#evidence">Evidence</a>
+      <a href="docs/">Documentation</a>
       <a href="#author">Author</a>
       <a href="https://github.com/ccancellieri/tellurion-demos">Source</a>
     </nav>
   </header>
 
-  <main>
+  <main id="main-content">
     <section class="shell hero">
       <div>
         <p class="eyebrow">Open geospatial serving, made visible</p>
@@ -31,6 +33,7 @@
         <p class="lede">Tellurion routes vector features, cloud-optimized rasters, multidimensional arrays and streamed 3D content, then exposes CQL2 filtering, STAC catalog views and server-rendered maps. This gallery puts a human interface in front of every machine endpoint.</p>
         <div class="actions">
           <a class="button primary" href="#capabilities">Explore the demos</a>
+          <a class="button" href="docs/">Read the documentation</a>
           <a class="button" href="https://github.com/ccancellieri/tellurion">Read the engine</a>
         </div>
       </div>
@@ -38,6 +41,19 @@
         <strong>Public, reproducible, bounded.</strong>
         Synthetic fixtures are labelled. Open data keeps its attribution. Hosted timings are never presented as benchmarks. Render services may need a short cold start.
       </aside>
+    </section>
+
+    <section class="section" id="documentation">
+      <div class="shell docs-callout">
+        <div>
+          <p class="eyebrow">Documentation</p>
+          <h2>Start with the field guide.</h2>
+        </div>
+        <div class="docs-callout-copy">
+          <p>See what is available now, choose a safe first run, and follow the canonical installation, configuration, licensing and deployment guides.</p>
+          <a class="button primary" href="docs/">Open Tellurion documentation →</a>
+        </div>
+      </div>
     </section>
 
     <section class="section" id="capabilities">
