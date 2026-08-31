@@ -5,6 +5,7 @@
   const results = document.getElementById("search-results");
   const count = document.getElementById("search-count");
   if (!dialog || !trigger || !input || !results || !count || typeof dialog.showModal !== "function") return;
+  document.documentElement.classList.add("search-ready");
 
   const sourceNodes = [...document.querySelectorAll("h2, h3, .matrix article, .manuals a")]
     .filter((node) => !dialog.contains(node));

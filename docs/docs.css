@@ -25,6 +25,8 @@ a:focus-visible { outline: 3px solid var(--amber); outline-offset: 4px; }
 .topbar nav { display: flex; gap: 22px; margin-left: auto; color: var(--muted); font-size: .9rem; }
 .topbar nav a { padding: 10px 0; text-decoration: none; }
 .topbar nav a[aria-current="page"] { color: var(--ink); border-bottom: 1px solid var(--mint); }
+.enhanced-only { display: none; }
+.search-ready .enhanced-only { display: inline-block; }
 .search-trigger { min-height: 38px; padding: 0 11px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); font: inherit; cursor: pointer; }
 kbd { padding: 2px 5px; border: 1px solid var(--line); border-radius: 2px; color: var(--muted); font: 700 .7rem/1 ui-monospace, monospace; }
 .preview-ribbon { position: sticky; z-index: 18; top: 74px; display: flex; gap: 16px; padding: 10px clamp(20px, 4vw, 60px); border-bottom: 1px solid rgba(185,165,255,.38); background: #171b29; color: var(--muted); font-size: .78rem; line-height: 1.45; }

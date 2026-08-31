@@ -17,7 +17,7 @@
       <a href="./" aria-current="page">Documentation</a>
       <a href="https://github.com/ccancellieri/tellurion">Source</a>
     </nav>
-    <button class="search-trigger" id="docs-search" type="button" aria-haspopup="dialog" aria-controls="search-dialog" aria-keyshortcuts="/">Search <kbd>/</kbd></button>
+    <button class="search-trigger enhanced-only" id="docs-search" type="button" aria-haspopup="dialog" aria-controls="search-dialog" aria-keyshortcuts="/">Search <kbd>/</kbd></button>
   </header>
 
   <aside class="preview-ribbon" aria-label="Next preview capability"><strong>Next / Preview</strong><span>Shapefile ZIP · secure bounded reads are implemented on a development branch. Server wiring, vector tiles and a public demo remain incomplete.</span></aside>
@@ -41,7 +41,7 @@
         <div class="coordinate-strip" aria-label="Guide principles">
           <span>Truthful status</span><span>Canonical instructions</span><span>Bounded claims</span>
         </div>
-        <p class="evidence-stamp"><strong>Documentation snapshot: 2026-08-31</strong> · Product evidence: Tellurion source revision <code>3eb31a872b74</code> on the remote-vector development branch; this is not a release. Links labelled “Source docs” follow the mutable main branch.</p>
+        <p class="evidence-stamp"><strong>Documentation snapshot: 2026-08-30</strong> · Product evidence: Tellurion source revision <code>3eb31a872b74</code> on the remote-vector development branch; this is not a release. Links labelled “Source docs” follow the mutable main branch.</p>
       </section>
 
       <section class="doc-section" id="status">
@@ -68,7 +68,7 @@
             <tbody>
               <tr><th scope="row">PostGIS</th><td><span class="tag available-tag">Available · default</span></td><td>Database service, local or network</td><td>Features read/write</td><td>MVT and styled PNG</td></tr>
               <tr><th scope="row">GeoPackage</th><td><span class="tag available-tag">Available · default</span></td><td>Local file</td><td>Features read/write</td><td>MVT and styled PNG</td></tr>
-              <tr><th scope="row">PMTiles</th><td><span class="tag optional-tag">Optional</span></td><td>Local archive</td><td>Read-only tiles; no Features</td><td>Stored archive tiles; no feature rendering</td></tr>
+              <tr><th scope="row">PMTiles</th><td><span class="tag optional-tag">Optional</span></td><td>Local archive</td><td>Read-only tiles</td><td>Stored MVT plus server-rendered PNG with applicable styles; no Features lane</td></tr>
               <tr><th scope="row">FlatGeobuf</th><td><span class="tag optional-tag">Optional</span></td><td>Local file</td><td>Features read-only</td><td>No</td></tr>
               <tr><th scope="row">GeoParquet</th><td><span class="tag preview-tag">Preview branch</span></td><td>Local file or HTTPS byte ranges</td><td>Features read-only</td><td>MVT when CRS84 metadata and covering are usable</td></tr>
               <tr><th scope="row">COG</th><td><span class="tag optional-tag">Optional</span></td><td>Local file or HTTPS byte ranges</td><td>Raster read-only</td><td>PNG raster tiles</td></tr>
