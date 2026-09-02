@@ -12,6 +12,13 @@ This repository intentionally separates the public landing pages from the
 machine-readable OGC API endpoints. Start with the visual gallery; use the API
 links when you want to inspect the protocol payloads.
 
+Tellurion [v0.4.0 release-candidate source](https://github.com/ccancellieri/tellurion)
+is public and is the primary self-hosted evaluation route. Start with its
+[Quickstart](https://github.com/ccancellieri/tellurion#quickstart) and
+[installation manual](https://github.com/ccancellieri/tellurion/blob/main/docs/quickstart/install.md).
+Tellurion is self-hosted software: no Tellurion Cloud, SLA or support service
+is offered.
+
 ## What the gallery demonstrates
 
 | Lane | Public viewer | Tellurion path | Evidence boundary |
@@ -58,8 +65,10 @@ building Tellurion.
 
 ## Reproducibility and licences
 
-The containers use the exact public Tellurion 0.3.0 distribution. Release
-archives carry their own BUSL-1.1 terms, while this demo repository is AGPL-3.0.
+The four active demo backends use the historical, checksum-pinned public
+Tellurion 0.3.0 distribution. The pending Italy backend uses the v0.4.0 source
+release-candidate path. Release archives carry their own BUSL-1.1 terms, while
+this demo repository is AGPL-3.0.
 OpenStreetMap and ESA WorldCover retain their respective data licences and
 attribution requirements. See [NOTICE.md](NOTICE.md) before reuse.
 
@@ -84,7 +93,7 @@ sh tests/render_3d_contract.sh
 
 ## Related work
 
-- [Tellurion public proof brief](proof/) — public evidence, evaluation routes, and the current engine-source boundary.
+- [Tellurion public proof brief](proof/) — public evidence, evaluation routes, and current deployment boundaries.
 - [Tellurion Italy field case](https://github.com/ccancellieri/tellurion-italy-demo) — reproducible OSM/WorldCover analysis and scoped benchmarks.
 - [Carlo Cancellieri's portfolio](https://ccancellieri.github.io/) and [LinkedIn](https://www.linkedin.com/in/ccancellieri/).
 

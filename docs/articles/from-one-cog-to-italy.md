@@ -76,8 +76,9 @@ The committed [Italy manifest](../../data/stac/esa-worldcover-italy/manifest.jso
 [mosaic definition](../../data/stac/esa-worldcover-italy/mosaic.json), and
 [national design](../design/2026-08-05-italy-worldcover-mosaic-design.md) are
 the reviewable evidence while deployment is pending. The reusable mosaic work
-was reviewed with this release. Public engine source launch is pending, so the
-public evidence remains the committed release data and demo contracts.
+was reviewed with this release. Public v0.4.0 release-candidate source is
+available; the public evidence also includes the committed release data and demo
+contracts.
 
 ## Claims deliberately not made
 

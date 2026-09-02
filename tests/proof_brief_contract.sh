@@ -23,12 +23,6 @@ reject_text() {
   fi
 }
 
-reject_private_engine_link() {
-  if grep -Eq 'https://github\.com/ccancellieri/tellurion([/#"[:space:]]|$)' "$1"; then
-    fail "private engine link exposed in $1"
-  fi
-}
-
 require_file proof/index.html
 require_file proof/proof.css
 
@@ -41,9 +35,13 @@ require_text proof/index.html 'For self-hosted evaluation'
 require_text proof/index.html 'self-hosted Community software'
 require_text proof/index.html 'Five read-only service definitions'
 require_text proof/index.html 'Four active backends; one pending activation'
-require_text proof/index.html 'Public engine source launch pending'
+require_text proof/index.html 'Public Tellurion v0.4.0 release-candidate source'
 require_text proof/index.html 'Italy deployment unavailable'
 require_text proof/index.html 'https://github.com/ccancellieri/tellurion-demos/releases/tag/tellurion-v0.3.0'
+require_text proof/index.html 'https://github.com/ccancellieri/tellurion'
+require_text proof/index.html 'https://github.com/ccancellieri/tellurion#quickstart'
+require_text proof/index.html 'https://github.com/ccancellieri/tellurion/blob/main/docs/quickstart/install.md'
+require_text proof/index.html 'No Tellurion Cloud, SLA or support service'
 require_text proof/index.html 'https://github.com/ccancellieri'
 require_text proof/index.html 'https://www.linkedin.com/in/ccancellieri/'
 require_text proof/index.html 'data-contact="github"'
@@ -52,15 +50,11 @@ require_text proof/index.html 'free on standard public runners, but usage is not
 
 reject_text proof/index.html 'mailto:'
 reject_text proof/index.html 'tel:'
-reject_text proof/index.html 'Tellurion Cloud'
 reject_text proof/index.html '#OGC'
 reject_text proof/index.html '#ISO'
 reject_text proof/index.html 'production-ready'
 reject_text proof/index.html 'requests per second'
 reject_text proof/index.html 'four read-only services'
-
-for page in README.md index.html docs/index.html proof/index.html docs/articles/from-one-cog-to-italy.md docs/articles/from-stac-discovery-to-a-live-map.md; do
-  reject_private_engine_link "$page"
-done
+reject_text proof/index.html 'Public engine source launch pending'
 
 printf 'proof brief contract: ok\n'

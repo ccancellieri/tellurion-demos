@@ -20,7 +20,7 @@
     <button class="search-trigger enhanced-only" id="docs-search" type="button" aria-haspopup="dialog" aria-controls="search-dialog" aria-keyshortcuts="/">Search <kbd>/</kbd></button>
   </header>
 
-  <aside class="preview-ribbon" aria-label="Next preview capability"><strong>Next / Preview</strong><span>Shapefile ZIP · secure bounded reads are implemented on a development branch. Server wiring, vector tiles and a public demo remain incomplete.</span></aside>
+  <aside class="preview-ribbon" aria-label="Current preview capability"><strong>Preview · public source</strong><span>Shapefile ZIP secure bounded reads are in the public v0.4.0 release-candidate source. Server wiring and a public demo remain incomplete.</span></aside>
 
   <div class="docs-layout">
     <nav class="docs-nav" aria-label="Documentation sections">
@@ -41,7 +41,7 @@
         <div class="coordinate-strip" aria-label="Guide principles">
           <span>Truthful status</span><span>Canonical instructions</span><span>Bounded claims</span>
         </div>
-        <p class="evidence-stamp"><strong>Documentation snapshot: 2026-08-31</strong> · Product evidence: public Tellurion 0.3.0 demo artifacts and the inspectable demo repository. Public engine source launch pending.</p>
+        <p class="evidence-stamp"><strong>Documentation snapshot: 2026-08-31</strong> · Product evidence: public Tellurion v0.4.0 release-candidate source, its quickstart and installation manual, plus bounded demo artifacts.</p>
       </section>
 
       <section class="doc-section" id="status">
@@ -58,7 +58,7 @@
           <article role="listitem"><span class="tag available-tag">Available</span><h3>Embedded GeoPackage</h3><p>The public vector demonstration uses the embedded GeoPackage path for a self-contained, read-only evaluation.</p><a href="../demos/vector/">Inspect the GeoPackage demo →</a></article>
           <article role="listitem"><span class="tag optional-tag">Optional</span><h3>Valkey cache and browser UI</h3><p>Valkey adds an opt-in L2 tile cache; the embedded browser UI is a separate opt-in build feature. Neither is required for the default serving engine.</p><a href="../proof/#boundary">Review what is publicly inspectable →</a></article>
           <article role="listitem"><span class="tag preview-tag">Preview</span><h3>Interactive evaluation</h3><p>The public gallery demonstrates bounded vector, raster, Zarr, 3D, CQL2, STAC, Maps and Styles paths. Demo availability is evidence, not a production SLA or benchmark.</p><a href="../#capabilities">Open the demo gallery →</a></article>
-          <article role="listitem"><span class="tag planned-tag">Planned</span><h3>Approved v0.4 binaries</h3><p>Platform archives are intended, but there is no verified public v0.4 binary release today. Do not treat the repository’s source archive as an executable distribution.</p><a href="#download">See the verified download state →</a></article>
+          <article role="listitem"><span class="tag planned-tag">Planned</span><h3>Approved v0.4 binaries</h3><p>Tellurion v0.4.0 source is public. Platform archives are intended, but there is no verified public v0.4 binary release today; build from source using the installation manual.</p><a href="#download">See the source and download state →</a></article>
         </div>
 
         <div class="table-wrap" tabindex="0" role="region" aria-label="Driver support matrix">
@@ -70,12 +70,12 @@
               <tr><th scope="row">GeoPackage</th><td><span class="tag available-tag">Available · default</span></td><td>Local file</td><td>Features read/write</td><td>MVT and styled PNG</td></tr>
               <tr><th scope="row">PMTiles</th><td><span class="tag optional-tag">Optional</span></td><td>Local archive</td><td>Read-only tiles</td><td>Stored MVT plus server-rendered PNG with applicable styles; no Features lane</td></tr>
               <tr><th scope="row">FlatGeobuf</th><td><span class="tag optional-tag">Optional</span></td><td>Local file</td><td>Features read-only</td><td>No</td></tr>
-              <tr><th scope="row">GeoParquet</th><td><span class="tag preview-tag">Preview branch</span></td><td>Local file or HTTPS byte ranges</td><td>Features read-only</td><td>MVT when CRS84 metadata and covering are usable</td></tr>
+              <tr><th scope="row">GeoParquet</th><td><span class="tag preview-tag">Preview · public source</span></td><td>Local file or HTTPS byte ranges</td><td>Features read-only</td><td>MVT when CRS84 metadata and covering are usable</td></tr>
               <tr><th scope="row">COG</th><td><span class="tag optional-tag">Optional</span></td><td>Local file or HTTPS byte ranges</td><td>Raster read-only</td><td>PNG raster tiles</td></tr>
               <tr><th scope="row">Zarr</th><td><span class="tag optional-tag">Optional</span></td><td>Local or HTTPS chunk store</td><td>Raster read-only</td><td>PNG from a configured, bounded 2D <code>x/y</code> slice; leading indexes are fixed, not selected per request</td></tr>
               <tr><th scope="row">Iceberg</th><td><span class="tag optional-tag">Optional</span></td><td>REST catalog; local or S3-protocol table data</td><td>Features read-only</td><td>No</td></tr>
               <tr><th scope="row">DuckDB</th><td><span class="tag optional-tag">Optional</span></td><td>Local database file</td><td>Features read-only</td><td>No</td></tr>
-              <tr><th scope="row">Shapefile</th><td><span class="tag preview-tag">Preview branch</span></td><td>Local or HTTPS ZIP, bounded secure spool</td><td>Features read-only</td><td>No. Server wiring, vector tiles and a public demo remain incomplete.</td></tr>
+              <tr><th scope="row">Shapefile</th><td><span class="tag preview-tag">Preview · public source</span></td><td>Local or HTTPS ZIP, bounded secure spool</td><td>Features read-only</td><td>Server wiring and a public demo remain incomplete.</td></tr>
             </tbody>
           </table>
         </div>
@@ -85,27 +85,30 @@
         <div class="section-heading"><p class="station">Station 02</p><h2>Choose your first route</h2><p>Begin with the smallest shape that answers your evaluation question.</p></div>
         <ol class="routes">
           <li><span class="route-number">A</span><div><h3>Look first</h3><p>Use the public demo gallery when you want to inspect outputs before installing anything. Services may cold-start and are not load-test environments.</p><a href="../#capabilities">Explore visual demos →</a></div></li>
-          <li><span class="route-number">B</span><div><h3>Use the verified public release</h3><p>Download the checksummed 0.3.0 artifacts and review the included licence before running a self-hosted evaluation.</p><a href="https://github.com/ccancellieri/tellurion-demos/releases/tag/tellurion-v0.3.0">Open the public release →</a></div></li>
-          <li><span class="route-number">C</span><div><h3>Reproduce the demo fixtures</h3><p>Inspect the attributed OpenStreetMap and WorldCover cases, deterministic generators and deployment definitions in the public demo repository.</p><a href="https://github.com/ccancellieri/tellurion-demos">Review demo source →</a></div></li>
+          <li><span class="route-number">B</span><div><h3>Run v0.4.0 source</h3><p>Use the public release-candidate source and its self-contained GeoPackage quickstart for a self-hosted evaluation.</p><a href="https://github.com/ccancellieri/tellurion#quickstart">Open the quickstart →</a></div></li>
+          <li><span class="route-number">C</span><div><h3>Read the installation manual</h3><p>Build v0.4.0 source with the documented platform prerequisites and commands. The checksummed 0.3.0 binaries remain historical evidence.</p><a href="https://github.com/ccancellieri/tellurion/blob/main/docs/quickstart/install.md">Open the installation manual →</a></div></li>
         </ol>
       </section>
 
       <section class="doc-section" id="download">
         <div class="section-heading"><p class="station">Station 03</p><h2>Download state</h2></div>
         <div class="notice" role="note" aria-label="Current download status">
-          <strong>No verified public v0.4 binary is available yet.</strong>
-          <p>The current public evaluation release is 0.3.0. Public engine source launch pending; until that boundary changes, use the checksummed demo release. An automatic source archive is not an installable Tellurion binary.</p>
-          <div class="actions"><a class="button primary" href="https://github.com/ccancellieri/tellurion-demos/releases/tag/tellurion-v0.3.0">Open public 0.3.0 release</a><a class="button" href="../proof/">Review the proof brief</a></div>
+          <strong>Tellurion v0.4.0 source is public.</strong>
+          <p>v0.4.0 is a release candidate for self-hosted evaluation. Start with the source and quickstart, then use the installation manual to build it. No verified public v0.4 binary is available yet; the checksummed 0.3.0 archives remain historical.</p>
+          <div class="actions"><a class="button primary" href="https://github.com/ccancellieri/tellurion">Open v0.4.0 source</a><a class="button" href="https://github.com/ccancellieri/tellurion#quickstart">Run the quickstart</a><a class="button" href="https://github.com/ccancellieri/tellurion/blob/main/docs/quickstart/install.md">Installation manual</a></div>
         </div>
         <div class="safety-grid">
           <div><h3>Before production</h3><p>Read the licence that applies to the version and intended use. The licence text controls.</p><a href="../NOTICE.md">Read the public licence notice →</a></div>
-          <div><h3>Before trusting an artifact</h3><p>Require the published checksum. If it is absent or does not match, treat the artifact as unapproved.</p><a href="https://github.com/ccancellieri/tellurion-demos/releases/tag/tellurion-v0.3.0">Review release assets →</a></div>
+          <div><h3>Historical binaries</h3><p>The checksummed 0.3.0 archives are retained as historical release evidence, not as the primary v0.4 evaluation path.</p><a href="https://github.com/ccancellieri/tellurion-demos/releases/tag/tellurion-v0.3.0">Review historical release assets →</a></div>
         </div>
       </section>
 
       <section class="doc-section" id="operate">
-        <div class="section-heading"><p class="station">Station 04</p><h2>Use the public evidence set</h2><p>Engine manuals are not presented as public while the engine repository is private. These links stay within the inspectable demo, release and evidence boundary.</p></div>
+        <div class="section-heading"><p class="station">Station 04</p><h2>Use the public source and evidence set</h2><p>The v0.4.0 release-candidate source, quickstart and installation manual are public. Tellurion is self-hosted: no Tellurion Cloud, SLA or support service is offered.</p></div>
         <div class="manuals">
+          <a href="https://github.com/ccancellieri/tellurion"><strong>Tellurion v0.4.0 source</strong><span>Public release-candidate source for self-hosted evaluation.</span></a>
+          <a href="https://github.com/ccancellieri/tellurion#quickstart"><strong>Quickstart</strong><span>Self-contained GeoPackage evaluation path.</span></a>
+          <a href="https://github.com/ccancellieri/tellurion/blob/main/docs/quickstart/install.md"><strong>Installation manual</strong><span>Build prerequisites and platform-specific instructions.</span></a>
           <a href="https://github.com/ccancellieri/tellurion-demos"><strong>Demo source</strong><span>Fixtures, deployment definitions and page code for every public demonstration.</span></a>
           <a href="../proof/"><strong>Proof brief</strong><span>Verified evidence, explicit exclusions and distinct next steps.</span></a>
           <a href="https://github.com/ccancellieri/tellurion-demos/blob/main/render.yaml"><strong>Service definitions</strong><span>The five read-only public demo services and their configured entry points.</span></a>

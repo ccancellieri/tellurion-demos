@@ -85,14 +85,6 @@ def main() -> None:
                 failures.append(f"{relative}: missing {landmark} landmark")
         for href in document.hrefs:
             target_url = urlsplit(href)
-            if (
-                target_url.netloc.lower() == "github.com"
-                and target_url.path.rstrip("/") == "/ccancellieri/tellurion"
-            ) or (
-                target_url.netloc.lower() == "github.com"
-                and target_url.path.startswith("/ccancellieri/tellurion/")
-            ):
-                failures.append(f"{relative}: private engine link exposed: {href}")
             resolved = local_target(page, href)
             if resolved is None:
                 continue

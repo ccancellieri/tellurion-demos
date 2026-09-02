@@ -125,6 +125,6 @@ National deployment is pending. The Italy URLs must not be described as live
 yet; the Rome resources above remain the live evidence for this field note.
 The [national design](../design/2026-08-05-italy-worldcover-mosaic-design.md)
 and [manifest](../../data/stac/esa-worldcover-italy/manifest.json) document the
-reviewed release boundary; the public engine source launch is pending.
+reviewed release boundary; the public v0.4.0 release-candidate source is available.
 [From one COG to Italy](from-one-cog-to-italy.md) explains
 the planned country-to-neighbourhood route and its post-deployment checks.

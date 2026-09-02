@@ -85,7 +85,7 @@ require_text docs/articles/from-stac-discovery-to-a-live-map.md '## Italy expans
 require_text docs/articles/from-stac-discovery-to-a-live-map.md 'deployment is pending'
 require_text docs/articles/from-stac-discovery-to-a-live-map.md '../design/2026-08-05-italy-worldcover-mosaic-design.md'
 require_text docs/articles/from-stac-discovery-to-a-live-map.md '../../data/stac/esa-worldcover-italy/manifest.json'
-require_text docs/articles/from-stac-discovery-to-a-live-map.md 'public engine source launch is pending'
+require_text docs/articles/from-stac-discovery-to-a-live-map.md 'public v0.4.0 release-candidate source is available'
 require_text docs/articles/from-stac-discovery-to-a-live-map.md 'from-one-cog-to-italy.md'
 require_text docs/articles/from-one-cog-to-italy.md 'Italy first, 10 m underneath'
 require_text docs/articles/from-one-cog-to-italy.md '17 ESA WorldCover 2021 v200 source Items'
