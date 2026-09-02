@@ -31,7 +31,7 @@ Source and reproducibility: https://github.com/ccancellieri/tellurion-demos
 
 #STAC #OGCAPI #CloudOptimizedGeoTIFF #Rust #Geospatial #OpenStandards
 
-## Italy expansion follow-up — publish only after live endpoint/evidence verification
+## Italy expansion follow-up
 
 Italy is not a larger Rome tile.
 
@@ -43,12 +43,12 @@ per origin, with matching SHA-256 values.
 
 The boundary is deliberate. The source selection is a build-time JSON POST
 over the pinned GISCO Italy geometry. No request-time STAC federation.
-The COGs remain source assets, while the planned STAC, Features, and Tiles
+The COGs remain source assets, while the live STAC, Features, and Tiles
 resources are service links. Dynamic PNG tiles are not OGC API Maps conformance.
 
 ESA WorldCover remains CC BY 4.0. The Italy boundary retains its GISCO and
-EuroGeographics terms. Publish this only after the live national endpoint and
-evidence checks have succeeded.
+EuroGeographics terms. The public release was verified at deployment time; it
+is an evaluation path, not a throughput or availability claim.
 
 Viewer: https://ccancellieri.github.io/tellurion-demos/demos/stac/
 Article: https://github.com/ccancellieri/tellurion-demos/blob/main/docs/articles/from-one-cog-to-italy.md

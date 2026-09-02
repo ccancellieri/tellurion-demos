@@ -59,26 +59,25 @@ representation. The source footprints are carried through the GeoPackage lane;
 the raster lane reads the mosaic manifest. This demo does not invent a
 Collection-level asset projection for the individual source COGs.
 
-## Reproducibility and planned resources
+## Reproducibility and live resources
 
-### Deployment pending
+### Live evaluation — verified resources
 
-The national routes below are planned resource URLs, not live endpoints. Their
-current deployment is pending, so they are not evidence until the scheduled
-post-deployment smoke checks and visual evidence have succeeded.
-Desktop/browser and 390x844 mobile country/city evidence remain pending until deployment and post-deployment verification.
+The national routes below returned their expected representations during
+post-deployment verification. They are a public, read-only evaluation path, not
+an uptime, capacity, or performance commitment.
 
-- Planned STAC Collection: `/public/stac/catalogs/default/collections/esa_worldcover_2021_italy`
-- Planned FeatureCollection: `/public/features/catalogs/default/collections/esa_worldcover_2021_italy/items?limit=1`
-- Planned raster TileSet: `/public/tiles/catalogs/default/collections/esa_worldcover_2021_italy/tiles/WebMercatorQuad`
+- [STAC Collection](https://tellurion-stac-harvest-demo.onrender.com/public/stac/catalogs/default/collections/esa_worldcover_2021_italy)
+- [FeatureCollection](https://tellurion-stac-harvest-demo.onrender.com/public/features/catalogs/default/collections/esa_worldcover_2021_italy/items?limit=1)
+- [raster TileSet](https://tellurion-stac-harvest-demo.onrender.com/public/tiles/catalogs/default/collections/esa_worldcover_2021_italy/tiles/WebMercatorQuad)
+- [country PNG tile](https://tellurion-stac-harvest-demo.onrender.com/public/tiles/catalogs/default/collections/esa_worldcover_2021_italy/tiles/WebMercatorQuad/5/11/17.png)
 
 The committed [Italy manifest](../../data/stac/esa-worldcover-italy/manifest.json),
 [mosaic definition](../../data/stac/esa-worldcover-italy/mosaic.json), and
-[national design](../design/2026-08-05-italy-worldcover-mosaic-design.md) are
-the reviewable evidence while deployment is pending. The reusable mosaic work
-was reviewed with this release. Public v0.4.0 release-candidate source is
-available; the public evidence also includes the committed release data and demo
-contracts.
+[national design](../design/2026-08-05-italy-worldcover-mosaic-design.md) remain
+the reviewable provenance. Public v0.4.0 release-candidate source is available;
+the public evidence also includes the committed release data, demo contracts,
+and live evaluation links.
 
 ## Claims deliberately not made
 
@@ -95,5 +94,5 @@ ESA WorldCover is available under [ESA WorldCover CC BY 4.0](https://esa-worldco
 The pinned GISCO boundary has separate terms: Non-commercial use; © EuroGeographics for the administrative boundaries.
 
 The bounded composition is specific: 17 reviewed 2021 v200 source COGs,
-identified before deployment, compose one planned Italy TileSet without a
+identified before deployment, compose one live Italy TileSet without a
 request-time catalog dependency.

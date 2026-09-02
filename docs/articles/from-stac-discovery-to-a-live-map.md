@@ -7,8 +7,8 @@ STAC snapshot to a browser map. The visible result is not a screenshot of a
 pre-rendered image: MapLibre requests PNG tiles that Tellurion composes from the
 source Cloud Optimized GeoTIFF (COG).
 
-The live Rome resources remain listed below. The gallery page now presents the
-separate Italy release as unavailable until its deployment is verified.
+The live Rome resources remain listed below. The gallery also presents a live
+Italy explorer for the separately reviewed national release.
 
 ![Desktop view of the WorldCover source-to-map demo, including its live map,
 provenance chain, class legend and resource checks](../../evidence/stac-harvest/desktop.jpg)
@@ -110,7 +110,7 @@ artifacts, deployment configuration, contract tests and live endpoint evidence.
 Start with the [reproducible source](https://github.com/ccancellieri/tellurion-demos),
 then compare the manifest to the live Rome resources above. The
 [Italy release page](https://ccancellieri.github.io/tellurion-demos/demos/stac/)
-is explicitly held at the deployment boundary.
+adds a live Italy explorer while keeping the released provenance visible.
 
 Interoperability is not copying JSON; it is preserving meaning while each system adds only the capabilities it can prove.
 
@@ -121,10 +121,11 @@ official mirror, and one dynamic PNG route. The reviewed Italy release proves a
 different bounded composition in code and committed artifacts: 17 selected
 source Items, their footprints, a release manifest, and one mosaic definition.
 
-National deployment is pending. The Italy URLs must not be described as live
-yet; the Rome resources above remain the live evidence for this field note.
+The Italy routes were verified after deployment and are available as a bounded,
+read-only public evaluation path. The Rome resources above remain a separate,
+one-Item field note rather than a substitute for national coverage.
 The [national design](../design/2026-08-05-italy-worldcover-mosaic-design.md)
 and [manifest](../../data/stac/esa-worldcover-italy/manifest.json) document the
 reviewed release boundary; the public v0.4.0 release-candidate source is available.
 [From one COG to Italy](from-one-cog-to-italy.md) explains
-the planned country-to-neighbourhood route and its post-deployment checks.
+the live country-to-neighbourhood route and its verification scope.

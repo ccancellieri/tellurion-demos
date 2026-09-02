@@ -28,7 +28,7 @@ is offered.
 | Zarr | [Two-slice comparison](https://ccancellieri.github.io/tellurion-demos/demos/zarr/) | Zarr v2 shape `[time, y, x]` → PNG | Synthetic fixed slices; no on-wire dimension-selection claim |
 | 3D | [Interactive GLB scene](https://ccancellieri.github.io/tellurion-demos/demos/3d/) | polygons → MVT → extrusion → GLB/3D Tiles 1.1 | Synthetic footprints; no OGC API 3D GeoVolumes conformance claim |
 | CQL2 | [Live query workbench](https://ccancellieri.github.io/tellurion-demos/demos/query/) | CQL2 text → GeoPackage filter → GeoJSON | Bounded to 50 features and this driver's advertised filter classes |
-| STAC harvest | [Italy release evidence — deployment unavailable](https://ccancellieri.github.io/tellurion-demos/demos/stac/) | reviewed country-to-neighbourhood release snapshot; national service activation is pending | planned dynamic PNG tile composition, not a raster OGC API Maps conformance claim; ESA, Microsoft, and CC BY 4.0 attribution retained |
+| STAC harvest | [Italy live explorer](https://ccancellieri.github.io/tellurion-demos/demos/stac/) | reviewed 17-source country-to-neighbourhood release → STAC/Features resources and dynamic PNG tiles | dynamic PNG tile composition, not a raster OGC API Maps conformance claim; ESA, Microsoft, and CC BY 4.0 attribution retained |
 | Maps + Styles | [Server-rendered Rome map](https://ccancellieri.github.io/tellurion-demos/demos/maps/) | MVT mosaic → PNG, optionally painted by MapLibre Style JSON | Maps 1.0 path; Styles surface is draft-aligned and read-only |
 
 Read the STAC harvest field note,
@@ -36,15 +36,16 @@ Read the STAC harvest field note,
 for the verified source-to-service provenance chain and its stated limitations.
 
 The repository contains a reviewed 17-source Italy release and its
-country-to-neighbourhood viewer. National backend deployment is pending: the
-Italy resource URLs are not live yet. The earlier one-Item Rome release remains
-the live field note and endpoint evidence. ESA WorldCover is CC BY 4.0; use is
+country-to-neighbourhood viewer. Italy resource URLs are live for public
+evaluation, with the gallery linking the collection, FeatureCollection, TileSet
+and representative PNGs. This is a bounded demonstrator, not an availability,
+performance, or support commitment. The earlier one-Item Rome release remains
+an independently inspectable field note. ESA WorldCover is CC BY 4.0; use is
 attributed as © ESA WorldCover project 2021 / Contains modified Copernicus
-Sentinel data (2021) processed by ESA WorldCover consortium. The
-GISCO boundary has separate terms: Non-commercial use; © EuroGeographics for the administrative boundaries.
-See [From one COG to
-Italy](docs/articles/from-one-cog-to-italy.md) for the bounded national
-composition and planned post-deployment checks.
+Sentinel data (2021) processed by ESA WorldCover consortium. The GISCO boundary
+has separate terms: Non-commercial use; © EuroGeographics for the administrative
+boundaries. See [From one COG to Italy](docs/articles/from-one-cog-to-italy.md)
+for the bounded national composition and verification scope.
 
 Render's free services can sleep after inactivity, so a viewer may need a short
 cold start. Hosted response times are not benchmark evidence.
@@ -65,8 +66,8 @@ building Tellurion.
 
 ## Reproducibility and licences
 
-The four active demo backends use the historical, checksum-pinned public
-Tellurion 0.3.0 distribution. The pending Italy backend uses the v0.4.0 source
+Four focused demo backends use the historical, checksum-pinned public
+Tellurion 0.3.0 distribution. The live Italy backend uses the v0.4.0 source
 release-candidate path. Release archives carry their own BUSL-1.1 terms, while
 this demo repository is AGPL-3.0.
 OpenStreetMap and ESA WorldCover retain their respective data licences and

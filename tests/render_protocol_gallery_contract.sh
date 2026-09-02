@@ -49,15 +49,15 @@ require_file docs/social/esa-worldcover-stac-harvest-linkedin.md
 cmp -s demos/stac/manifest.json data/stac/esa-worldcover-italy/manifest.json
 cmp -s demos/stac/legend.json data/stac/esa-worldcover-italy/legend.json
 cmp -s demos/stac/footprints.geojson data/stac/esa-worldcover-italy/footprints.geojson
-require_text demos/stac/index.html 'Public deployment unavailable'
-require_text demos/stac/index.html 'Release evidence only'
-require_text demos/stac/index.html 'Italy deployment unavailable'
+require_text demos/stac/index.html 'Italy land-cover explorer'
+require_text demos/stac/index.html 'Live evaluation path verified.'
+require_text demos/stac/index.html 'Italy, from source records to live tiles.'
 require_text demos/stac/index.html 'Promise.all([fetch("legend.json"), fetch("manifest.json")])'
 require_text demos/stac/index.html 'Planetary Computer STAC snapshot'
 require_text demos/stac/index.html 'Official ESA COG mirror'
 require_text demos/stac/index.html 'Tellurion COG driver'
-require_text demos/stac/index.html 'planned raster TileSet / PNG tiles'
-require_text demos/stac/index.html 'Planned API surface'
+require_text demos/stac/index.html 'raster TileSet / PNG tiles'
+require_text demos/stac/index.html 'Inspect the live resources'
 require_text demos/stac/index.html 'Source asset'
 require_text demos/stac/index.html 'Derived by Tellurion'
 require_text demos/stac/index.html 'ESA'
@@ -66,9 +66,11 @@ require_text demos/stac/index.html 'CC BY 4.0'
 require_text demos/stac/index.html 'esa_worldcover_2021_italy'
 require_text demos/stac/index.html 'data/stac/esa-worldcover-italy/manifest.json'
 require_text demos/stac/index.html 'textContent'
-reject_text demos/stac/index.html 'tellurion-stac-harvest-demo.onrender.com/public/stac/catalogs/default/collections/esa_worldcover_2021_italy'
-reject_text demos/stac/index.html 'maplibregl.Map'
-reject_text demos/stac/index.html 'live map'
+require_text demos/stac/index.html 'tellurion-stac-harvest-demo.onrender.com/public/stac/catalogs/default/collections/esa_worldcover_2021_italy'
+require_text demos/stac/index.html 'maplibregl.Map'
+require_text demos/stac/index.html 'Live Italy map from Tellurion.'
+require_text demos/stac/index.html 'Unable to load the live layer.'
+reject_text demos/stac/index.html 'The service is still waking up.'
 require_text demos/stac/index.html '© EuroGeographics for the administrative boundaries'
 require_text demos/stac/index.html 'Non-commercial use'
 require_text demos/stac/index.html 'Dynamic PNG tile composition, not a raster OGC API Maps conformance claim.'
@@ -82,7 +84,7 @@ require_text docs/articles/from-stac-discovery-to-a-live-map.md '41,236,803 byte
 require_text docs/articles/from-stac-discovery-to-a-live-map.md '8370f37c0ffadd33fff59473c633a827653c14f1d46c4175ed07b77efbf17aa5'
 require_text docs/articles/from-stac-discovery-to-a-live-map.md '5d951afb19e5fdcb90773bac374b556d425f8945ba4b719114c7f7b03157464a'
 require_text docs/articles/from-stac-discovery-to-a-live-map.md '## Italy expansion — 2026-08-05'
-require_text docs/articles/from-stac-discovery-to-a-live-map.md 'deployment is pending'
+require_text docs/articles/from-stac-discovery-to-a-live-map.md 'live Italy explorer'
 require_text docs/articles/from-stac-discovery-to-a-live-map.md '../design/2026-08-05-italy-worldcover-mosaic-design.md'
 require_text docs/articles/from-stac-discovery-to-a-live-map.md '../../data/stac/esa-worldcover-italy/manifest.json'
 require_text docs/articles/from-stac-discovery-to-a-live-map.md 'public v0.4.0 release-candidate source is available'
@@ -94,7 +96,7 @@ require_text docs/articles/from-one-cog-to-italy.md '889,726,110 bytes'
 require_text docs/articles/from-one-cog-to-italy.md '381ac0bb927b0a3014134ac472c627ddf95a1b7c7ed01fbb9ede9f4916f92c49'
 require_text docs/articles/from-one-cog-to-italy.md '7b1499635f5463b8e2a510b8d6f4f6a3a6ae0b494dc0e15eed48bcd02fcdbedf'
 require_text docs/articles/from-one-cog-to-italy.md '5c0019d82d9c54dae8e6b6c1b5a97198c6c67e66fa110b1b55a2ed4b527c5c9e'
-require_text docs/articles/from-one-cog-to-italy.md 'Deployment pending'
+require_text docs/articles/from-one-cog-to-italy.md 'Live evaluation — verified resources'
 require_text docs/articles/from-one-cog-to-italy.md '/public/stac/catalogs/default/collections/esa_worldcover_2021_italy'
 require_text docs/articles/from-one-cog-to-italy.md '/public/features/catalogs/default/collections/esa_worldcover_2021_italy/items?limit=1'
 require_text docs/articles/from-one-cog-to-italy.md '/public/tiles/catalogs/default/collections/esa_worldcover_2021_italy/tiles/WebMercatorQuad'
@@ -178,9 +180,9 @@ else:
         failures.append('national matrix entries must retain national URLs')
 
 article = Path('docs/articles/from-one-cog-to-italy.md').read_text()
-evidence_boundary = 'Desktop/browser and 390x844 mobile country/city evidence remain pending until deployment and post-deployment verification.'
+evidence_boundary = 'They are a public, read-only evaluation path, not\nan uptime, capacity, or performance commitment.'
 if evidence_boundary not in article:
-    failures.append('national article must explicitly leave desktop/browser and 390x844 mobile country/city evidence pending')
+    failures.append('national article must keep live resources bounded as a public evaluation path')
 
 release = Path('data/stac/esa-worldcover-italy')
 manifest = json.loads((release / 'manifest.json').read_text())
@@ -210,15 +212,15 @@ if failures:
 PY
 require_text index.html 'Seven visible paths.'
 require_text index.html 'CQL2 filtering, STAC catalog views and server-rendered maps'
-require_text index.html 'Italy snapshot, held at the deployment boundary.'
-require_text index.html 'National endpoints are unavailable pending activation and post-deployment verification.'
-require_text README.md 'Italy release evidence — deployment unavailable'
-require_text README.md 'national service activation is pending'
-require_text README.md 'Non-commercial use; © EuroGeographics for the administrative boundaries'
+require_text index.html 'Italy land cover, from a verified 17-source release.'
+require_text index.html 'Explore a live national mosaic, then inspect the released source records and endpoint representations.'
+require_text README.md 'Italy live explorer'
+require_text README.md 'Italy resource URLs are live for public'
+require_text README.md 'Non-commercial use; © EuroGeographics'
 require_text README.md 'dynamic PNG tile composition, not a raster OGC API Maps conformance claim'
 require_text README.md 'Hosted response times are not benchmark evidence.'
 require_text docs/social/esa-worldcover-stac-harvest-linkedin.md '## Original Rome launch copy'
-require_text docs/social/esa-worldcover-stac-harvest-linkedin.md '## Italy expansion follow-up — publish only after live endpoint/evidence verification'
+require_text docs/social/esa-worldcover-stac-harvest-linkedin.md '## Italy expansion follow-up'
 require_text docs/social/esa-worldcover-stac-harvest-linkedin.md '17 source COGs'
 require_text docs/social/esa-worldcover-stac-harvest-linkedin.md '889,726,110 bytes'
 require_text docs/social/esa-worldcover-stac-harvest-linkedin.md 'No request-time STAC federation'
