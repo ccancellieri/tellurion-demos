@@ -4,6 +4,7 @@ set -eu
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 WORKFLOWS="$ROOT/.github/workflows"
 DAILY="$WORKFLOWS/daily.yml"
+COMMIT_GATE="$WORKFLOWS/commit-gate.yml"
 
 fail() {
   printf 'daily automation contract failed: %s\n' "$1" >&2
@@ -14,6 +15,7 @@ scheduled=$(grep -l '^[[:space:]]*schedule:' "$WORKFLOWS"/*.yml | wc -l | tr -d 
 test "$scheduled" = 1 || fail "expected exactly one scheduled workflow, found $scheduled"
 
 test -f "$DAILY" || fail "missing .github/workflows/daily.yml"
+test -f "$COMMIT_GATE" || fail "missing .github/workflows/commit-gate.yml"
 test ! -f "$WORKFLOWS/smoke.yml" || fail "smoke.yml must be consolidated into daily.yml"
 test ! -f "$WORKFLOWS/verify.yml" || fail "verify.yml must be consolidated into daily.yml"
 
@@ -31,6 +33,21 @@ grep -Fq 'name: public distribution manifest' "$DAILY" || fail "daily.yml is mis
 grep -Fq 'name: ${{ matrix.demo }}' "$DAILY" || fail "daily.yml is missing live endpoint smoke checks"
 grep -Fq 'sh tests/proof_brief_contract.sh' "$DAILY" || fail "daily.yml is missing the proof brief contract"
 grep -Fq 'http://127.0.0.1:8080/proof/' "$DAILY" || fail "daily.yml does not load the proof brief"
+
+grep -Fq 'pull_request:' "$COMMIT_GATE" || fail "commit gate must validate pull requests"
+grep -Fq 'push:' "$COMMIT_GATE" || fail "commit gate must validate main commits"
+grep -Fq 'main' "$COMMIT_GATE" || fail "commit gate must be limited to main"
+if grep -Eq '^[[:space:]]*schedule:' "$COMMIT_GATE"; then
+  fail "commit gate must not add live checks to the daily schedule"
+fi
+grep -Fq 'name: deterministic deployment contracts' "$COMMIT_GATE" || fail "commit gate is missing deterministic contracts"
+grep -Fq 'sh tests/daily_automation_contract.sh' "$COMMIT_GATE" || fail "commit gate must verify automation policy"
+grep -Fq 'sh tests/render_deployment_contract.sh' "$COMMIT_GATE" || fail "commit gate must verify Render deployment contracts"
+grep -Fq 'python3 tests/static_site_links.py' "$COMMIT_GATE" || fail "commit gate must verify static site links"
+if grep -Eq 'https?://(ccancellieri\.github\.io|tellurion-[a-z0-9-]+\.onrender\.com)' "$COMMIT_GATE"; then
+  fail "commit gate must not probe public endpoints"
+fi
+grep -Fq 'timeout-minutes:' "$COMMIT_GATE" || fail "commit gate jobs require timeouts"
 
 render_services=$(grep -c '^[[:space:]]*-[[:space:]]*type: web' "$ROOT/render.yaml")
 checks_pass=$(grep -c 'autoDeployTrigger: checksPass' "$ROOT/render.yaml")

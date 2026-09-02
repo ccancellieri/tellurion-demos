@@ -16,8 +16,9 @@ jobs:
   contracts:
     name: deployment and fixture contracts
     runs-on: ubuntu-latest
+    timeout-minutes: 12
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Verify daily automation policy
         run: sh tests/daily_automation_contract.sh
@@ -57,6 +58,7 @@ jobs:
   distribution:
     name: public distribution manifest
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - name: Verify release manifest is public and complete
         run: |
@@ -70,6 +72,7 @@ jobs:
   live-endpoints:
     name: ${{ matrix.demo }}
     runs-on: ubuntu-latest
+    timeout-minutes: 18
     strategy:
       fail-fast: false
       matrix:
@@ -159,6 +162,7 @@ jobs:
     name: Italy WorldCover endpoints (deployment activation required) — ${{ matrix.demo }}
     if: ${{ vars.ITALY_WORLDCOVER_SMOKE_ENABLED == 'true' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 18
     strategy:
       fail-fast: false
       matrix:
