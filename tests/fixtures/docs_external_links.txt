@@ -1,13 +1,2 @@
-https://github.com/ccancellieri/tellurion
-https://github.com/ccancellieri/tellurion#authentication-and-authorization
-https://github.com/ccancellieri/tellurion#cargo-features
-https://github.com/ccancellieri/tellurion#what-it-serves
-https://github.com/ccancellieri/tellurion/blob/main/docs/deployment-topologies.md
-https://github.com/ccancellieri/tellurion/blob/main/docs/driver-authoring.md
-https://github.com/ccancellieri/tellurion/blob/main/docs/licensing.md
-https://github.com/ccancellieri/tellurion/blob/main/docs/quickstart/install.md
-https://github.com/ccancellieri/tellurion/blob/main/docs/quickstart/install.md#version-040-release-archives
-https://github.com/ccancellieri/tellurion/blob/main/docs/quickstart/qgis.md
-https://github.com/ccancellieri/tellurion/blob/main/docs/quickstart/real-data-osm-geopackage.md
-https://github.com/ccancellieri/tellurion/blob/main/docs/spec-deviations.md
-https://github.com/ccancellieri/tellurion/releases
+https://github.com/ccancellieri/tellurion-demos
+https://github.com/ccancellieri/tellurion-demos/releases/tag/tellurion-v0.3.0

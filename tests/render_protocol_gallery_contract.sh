@@ -18,6 +18,13 @@ require_text() {
   fi
 }
 
+reject_text() {
+  if grep -Fq "$2" "$1"; then
+    printf 'forbidden text in %s: %s\n' "$1" "$2" >&2
+    exit 1
+  fi
+}
+
 require_file deploy/render/roads-style.json
 require_file demos/query/index.html
 require_file demos/stac/index.html
@@ -42,62 +49,26 @@ require_file docs/social/esa-worldcover-stac-harvest-linkedin.md
 cmp -s demos/stac/manifest.json data/stac/esa-worldcover-italy/manifest.json
 cmp -s demos/stac/legend.json data/stac/esa-worldcover-italy/legend.json
 cmp -s demos/stac/footprints.geojson data/stac/esa-worldcover-italy/footprints.geojson
-require_text demos/stac/index.html 'https://tellurion-stac-harvest-demo.onrender.com'
-require_text demos/stac/index.html 'source_item_id'
+require_text demos/stac/index.html 'Public deployment unavailable'
+require_text demos/stac/index.html 'Release evidence only'
+require_text demos/stac/index.html 'Italy deployment unavailable'
 require_text demos/stac/index.html 'Promise.all([fetch("legend.json"), fetch("manifest.json")])'
 require_text demos/stac/index.html 'Planetary Computer STAC snapshot'
 require_text demos/stac/index.html 'Official ESA COG mirror'
 require_text demos/stac/index.html 'Tellurion COG driver'
-require_text demos/stac/index.html 'raster TileSet / PNG tiles'
-require_text demos/stac/index.html 'browser map'
+require_text demos/stac/index.html 'planned raster TileSet / PNG tiles'
+require_text demos/stac/index.html 'Planned API surface'
 require_text demos/stac/index.html 'Source asset'
 require_text demos/stac/index.html 'Derived by Tellurion'
 require_text demos/stac/index.html 'ESA'
 require_text demos/stac/index.html 'Microsoft'
 require_text demos/stac/index.html 'CC BY 4.0'
 require_text demos/stac/index.html 'esa_worldcover_2021_italy'
-require_text demos/stac/index.html 'const italyBounds = [[6.4, 35.3], [18.7, 47.2]];'
-require_text demos/stac/index.html 'map.fitBounds(italyBounds'
-require_text demos/stac/index.html 'id="place-italy"'
-require_text demos/stac/index.html 'id="place-milan"'
-require_text demos/stac/index.html 'id="place-venice"'
-require_text demos/stac/index.html 'id="place-rome"'
-require_text demos/stac/index.html 'id="place-naples"'
-require_text demos/stac/index.html 'id="place-palermo"'
-require_text demos/stac/index.html 'data-lon="9.19" data-lat="45.464" data-zoom="12.6"'
-require_text demos/stac/index.html 'data-lon="12.3358" data-lat="45.438" data-zoom="12.6"'
-require_text demos/stac/index.html 'data-lon="12.4964" data-lat="41.9028" data-zoom="12.6"'
-require_text demos/stac/index.html 'data-lon="14.2681" data-lat="40.8518" data-zoom="12.6"'
-require_text demos/stac/index.html 'data-lon="13.3615" data-lat="38.1157" data-zoom="12.6"'
-require_text demos/stac/index.html 'aria-pressed'
-require_text demos/stac/index.html 'id="scale-rail"'
-require_text demos/stac/index.html 'zoom < 6.5'
-require_text demos/stac/index.html 'zoom < 9.5'
-require_text demos/stac/index.html 'zoom < 12.5'
-require_text demos/stac/index.html '≈ '
-require_text demos/stac/index.html 'metresPerPixel >= 1000'
-require_text demos/stac/index.html 'source-footprints'
-require_text demos/stac/index.html 'maxzoom: 9'
-require_text demos/stac/index.html 'maxZoom: 14'
-require_text demos/stac/index.html 'bounds: italyBounds'
-require_text demos/stac/index.html 'fitBoundsOptions: {padding: fitPadding(), duration: movementDuration()}'
-if grep -Fq '"source-footprints": {type: "geojson", data: "footprints.geojson", maxzoom:' demos/stac/index.html; then
-  printf 'source-footprints must not set an unsupported GeoJSON source maxzoom\n' >&2
-  exit 1
-fi
-require_text demos/stac/index.html '/public/stac/catalogs/default/collections/esa_worldcover_2021_italy'
-require_text demos/stac/index.html '/public/stac/catalogs/default/collections/esa_worldcover_2021_italy/items/1'
-require_text demos/stac/index.html '/public/features/catalogs/default/collections/esa_worldcover_2021_italy/items?limit=1'
-require_text demos/stac/index.html '/public/tiles/catalogs/default/collections/esa_worldcover_2021_italy/tiles/WebMercatorQuad'
-require_text demos/stac/index.html '/{z}/{y}/{x}.png'
-require_text demos/stac/index.html '/5/11/17.png'
-require_text demos/stac/index.html 'type: "raster"'
+require_text demos/stac/index.html 'data/stac/esa-worldcover-italy/manifest.json'
 require_text demos/stac/index.html 'textContent'
-require_text demos/stac/index.html 'resource-collection'
-require_text demos/stac/index.html 'resource-item'
-require_text demos/stac/index.html 'resource-features'
-require_text demos/stac/index.html 'resource-tileset'
-require_text demos/stac/index.html 'resource-png'
+reject_text demos/stac/index.html 'tellurion-stac-harvest-demo.onrender.com/public/stac/catalogs/default/collections/esa_worldcover_2021_italy'
+reject_text demos/stac/index.html 'maplibregl.Map'
+reject_text demos/stac/index.html 'live map'
 require_text demos/stac/index.html '© EuroGeographics for the administrative boundaries'
 require_text demos/stac/index.html 'Non-commercial use'
 require_text demos/stac/index.html 'Dynamic PNG tile composition, not a raster OGC API Maps conformance claim.'
@@ -114,7 +85,7 @@ require_text docs/articles/from-stac-discovery-to-a-live-map.md '## Italy expans
 require_text docs/articles/from-stac-discovery-to-a-live-map.md 'deployment is pending'
 require_text docs/articles/from-stac-discovery-to-a-live-map.md '../design/2026-08-05-italy-worldcover-mosaic-design.md'
 require_text docs/articles/from-stac-discovery-to-a-live-map.md '../../data/stac/esa-worldcover-italy/manifest.json'
-require_text docs/articles/from-stac-discovery-to-a-live-map.md 'https://github.com/ccancellieri/tellurion/pull/288'
+require_text docs/articles/from-stac-discovery-to-a-live-map.md 'public engine source launch is pending'
 require_text docs/articles/from-stac-discovery-to-a-live-map.md 'from-one-cog-to-italy.md'
 require_text docs/articles/from-one-cog-to-italy.md 'Italy first, 10 m underneath'
 require_text docs/articles/from-one-cog-to-italy.md '17 ESA WorldCover 2021 v200 source Items'
@@ -140,7 +111,7 @@ require_text demos/maps/index.html '/public/tiles/catalogs/default/collections/s
 require_text demos/maps/index.html '/public/styles/catalogs/default/styles/roads-night'
 require_text demos/maps/index.html 'OGC API — Styles is a draft'
 require_text demos/query/index.html 'const statusBox = document.getElementById("status");'
-require_text demos/stac/index.html 'const mapStatus = document.getElementById("map-status");'
+require_text demos/stac/index.html 'const evidenceStatus = document.getElementById("evidence-status");'
 require_text demos/maps/index.html 'const statusBox = document.getElementById("status");'
 
 for page in query stac maps; do
@@ -239,12 +210,10 @@ if failures:
 PY
 require_text index.html 'Seven visible paths.'
 require_text index.html 'CQL2 filtering, STAC catalog views and server-rendered maps'
-require_text index.html 'Italy-wide ESA WorldCover mosaic'
-require_text index.html 'country-to-neighbourhood coverage through one Tellurion TileSet'
-require_text index.html 'deployment is pending'
-require_text README.md 'Italy-wide ESA WorldCover mosaic'
-require_text README.md 'country-to-neighbourhood coverage through one Tellurion TileSet'
-require_text README.md 'deployment is pending'
+require_text index.html 'Italy snapshot, held at the deployment boundary.'
+require_text index.html 'National endpoints are unavailable pending activation and post-deployment verification.'
+require_text README.md 'Italy release evidence — deployment unavailable'
+require_text README.md 'national service activation is pending'
 require_text README.md 'Non-commercial use; © EuroGeographics for the administrative boundaries'
 require_text README.md 'dynamic PNG tile composition, not a raster OGC API Maps conformance claim'
 require_text README.md 'Hosted response times are not benchmark evidence.'

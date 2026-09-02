@@ -6,7 +6,7 @@ multidimensional, 3D, filtering, catalog and server-rendering paths.
 **Visual entry point:** <https://ccancellieri.github.io/tellurion-demos/>
 
 The public gallery and each live backend are checked daily by the
-[`Public demo smoke test`](https://github.com/ccancellieri/tellurion-demos/actions/workflows/smoke.yml).
+[`Daily verification and deployment gate`](https://github.com/ccancellieri/tellurion-demos/actions/workflows/daily.yml).
 
 This repository intentionally separates the public landing pages from the
 machine-readable OGC API endpoints. Start with the visual gallery; use the API
@@ -21,7 +21,7 @@ links when you want to inspect the protocol payloads.
 | Zarr | [Two-slice comparison](https://ccancellieri.github.io/tellurion-demos/demos/zarr/) | Zarr v2 shape `[time, y, x]` → PNG | Synthetic fixed slices; no on-wire dimension-selection claim |
 | 3D | [Interactive GLB scene](https://ccancellieri.github.io/tellurion-demos/demos/3d/) | polygons → MVT → extrusion → GLB/3D Tiles 1.1 | Synthetic footprints; no OGC API 3D GeoVolumes conformance claim |
 | CQL2 | [Live query workbench](https://ccancellieri.github.io/tellurion-demos/demos/query/) | CQL2 text → GeoPackage filter → GeoJSON | Bounded to 50 features and this driver's advertised filter classes |
-| STAC harvest | [Italy-wide ESA WorldCover mosaic](https://ccancellieri.github.io/tellurion-demos/demos/stac/) | country-to-neighbourhood coverage through one Tellurion TileSet | dynamic PNG tile composition, not a raster OGC API Maps conformance claim; ESA, Microsoft, and CC BY 4.0 attribution retained |
+| STAC harvest | [Italy release evidence — deployment unavailable](https://ccancellieri.github.io/tellurion-demos/demos/stac/) | reviewed country-to-neighbourhood release snapshot; national service activation is pending | planned dynamic PNG tile composition, not a raster OGC API Maps conformance claim; ESA, Microsoft, and CC BY 4.0 attribution retained |
 | Maps + Styles | [Server-rendered Rome map](https://ccancellieri.github.io/tellurion-demos/demos/maps/) | MVT mosaic → PNG, optionally painted by MapLibre Style JSON | Maps 1.0 path; Styles surface is draft-aligned and read-only |
 
 Read the STAC harvest field note,
@@ -84,9 +84,8 @@ sh tests/render_3d_contract.sh
 
 ## Related work
 
-- [Tellurion](https://github.com/ccancellieri/tellurion) — the serving engine.
+- [Tellurion public proof brief](proof/) — public evidence, evaluation routes, and the current engine-source boundary.
 - [Tellurion Italy field case](https://github.com/ccancellieri/tellurion-italy-demo) — reproducible OSM/WorldCover analysis and scoped benchmarks.
-- [GeoID](https://github.com/un-fao/GeoID) — earlier multi-tenant OGC/STAC platform work.
 - [Carlo Cancellieri's portfolio](https://ccancellieri.github.io/) and [LinkedIn](https://www.linkedin.com/in/ccancellieri/).
 
 Built by Carlo Cancellieri, a geospatial platform engineer and former GeoServer

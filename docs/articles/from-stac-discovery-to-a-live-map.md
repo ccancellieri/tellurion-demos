@@ -7,10 +7,11 @@ STAC snapshot to a browser map. The visible result is not a screenshot of a
 pre-rendered image: MapLibre requests PNG tiles that Tellurion composes from the
 source Cloud Optimized GeoTIFF (COG).
 
-[Open the live source-to-map viewer](https://ccancellieri.github.io/tellurion-demos/demos/stac/)
+The live Rome resources remain listed below. The gallery page now presents the
+separate Italy release as unavailable until its deployment is verified.
 
 ![Desktop view of the WorldCover source-to-map demo, including its live map,
-provenance chain, class legend and four resource checks](../../evidence/stac-harvest/desktop.jpg)
+provenance chain, class legend and resource checks](../../evidence/stac-harvest/desktop.jpg)
 
 ## One source Item, deliberately bounded
 
@@ -91,10 +92,9 @@ The deployed result exposes five independently checkable resources:
 - [WebMercatorQuad raster TileSet](https://tellurion-stac-harvest-demo.onrender.com/public/tiles/catalogs/default/collections/esa_worldcover_2021_rome/tiles/WebMercatorQuad)
 - [Representative 256 × 256 PNG tile over Rome](https://tellurion-stac-harvest-demo.onrender.com/public/tiles/catalogs/default/collections/esa_worldcover_2021_rome/tiles/WebMercatorQuad/13/3043/4380.png)
 
-The viewer checks four headline resources separately; the evidence matrix also
-verifies the FeatureCollection. A cold or unavailable endpoint does not hide
-the others, and the page reports the state it observes rather than turning
-hosted response time into benchmark evidence.
+Each resource can be inspected separately. A cold or unavailable endpoint does
+not hide the others, and the verification workflow reports the state it
+observes rather than turning hosted response time into benchmark evidence.
 
 ## What this result does not claim
 
@@ -108,7 +108,9 @@ general Tellurion contract rather than claimed by this demo.
 The repository contains the source snapshots, transformation script, generated
 artifacts, deployment configuration, contract tests and live endpoint evidence.
 Start with the [reproducible source](https://github.com/ccancellieri/tellurion-demos),
-then compare the manifest to the [live viewer](https://ccancellieri.github.io/tellurion-demos/demos/stac/).
+then compare the manifest to the live Rome resources above. The
+[Italy release page](https://ccancellieri.github.io/tellurion-demos/demos/stac/)
+is explicitly held at the deployment boundary.
 
 Interoperability is not copying JSON; it is preserving meaning while each system adds only the capabilities it can prove.
 
@@ -121,8 +123,8 @@ source Items, their footprints, a release manifest, and one mosaic definition.
 
 National deployment is pending. The Italy URLs must not be described as live
 yet; the Rome resources above remain the live evidence for this field note.
-The [national design](../design/2026-08-05-italy-worldcover-mosaic-design.md),
-[manifest](../../data/stac/esa-worldcover-italy/manifest.json), and [engine
-PR](https://github.com/ccancellieri/tellurion/pull/288) document the reviewed
-release boundary. [From one COG to Italy](from-one-cog-to-italy.md) explains
+The [national design](../design/2026-08-05-italy-worldcover-mosaic-design.md)
+and [manifest](../../data/stac/esa-worldcover-italy/manifest.json) document the
+reviewed release boundary; the public engine source launch is pending.
+[From one COG to Italy](from-one-cog-to-italy.md) explains
 the planned country-to-neighbourhood route and its post-deployment checks.

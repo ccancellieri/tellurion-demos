@@ -15,7 +15,7 @@
     <nav aria-label="Site navigation">
       <a href="../">Demos</a>
       <a href="./" aria-current="page">Documentation</a>
-      <a href="https://github.com/ccancellieri/tellurion">Source</a>
+      <a href="../proof/">Public boundary</a>
     </nav>
     <button class="search-trigger enhanced-only" id="docs-search" type="button" aria-haspopup="dialog" aria-controls="search-dialog" aria-keyshortcuts="/">Search <kbd>/</kbd></button>
   </header>
@@ -35,13 +35,13 @@
 
     <main id="main-content" tabindex="-1">
       <section class="hero" id="overview">
-        <p class="kicker">Documentation / current source</p>
+        <p class="kicker">Documentation / public evidence</p>
         <h1>Read the terrain<br>before you deploy.</h1>
-        <p class="lede">Tellurion is a geospatial serving engine for features, tiles, rasters, multidimensional arrays, STAC and 3D. This guide separates what is ready in the current source tree from optional build features, previews and future work.</p>
+        <p class="lede">Tellurion is a geospatial serving engine for features, tiles, rasters, multidimensional arrays, STAC and 3D. This guide separates the current public evidence from optional capabilities, previews and future work.</p>
         <div class="coordinate-strip" aria-label="Guide principles">
           <span>Truthful status</span><span>Canonical instructions</span><span>Bounded claims</span>
         </div>
-        <p class="evidence-stamp"><strong>Documentation snapshot: 2026-08-31</strong> · Product evidence: Tellurion source revision <code>3eb31a872b74</code> on the remote-vector development branch; this is not a release. Links labelled “Source docs” follow the mutable main branch.</p>
+        <p class="evidence-stamp"><strong>Documentation snapshot: 2026-08-31</strong> · Product evidence: public Tellurion 0.3.0 demo artifacts and the inspectable demo repository. Public engine source launch pending.</p>
       </section>
 
       <section class="doc-section" id="status">
@@ -53,10 +53,10 @@
           <span><i class="status planned"></i>Planned</span>
         </div>
         <div class="matrix" role="list">
-          <article role="listitem"><span class="tag available-tag">Available</span><h3>Core serving surface</h3><p>Landing pages, conformance declarations, API descriptions, OGC API Features, Tiles, read-only Styles and STAC routes are implemented in the source.</p><a href="https://github.com/ccancellieri/tellurion#what-it-serves">Source docs: inspect the protocol table →</a></article>
-          <article role="listitem"><span class="tag available-tag">Available</span><h3>PostGIS</h3><p>PostGIS is enabled in the default build and provides the shared database route for catalogs, features, tiles, writes, outbox, derived index, search and volumes.</p><a href="https://github.com/ccancellieri/tellurion#cargo-features">Source docs: inspect build features →</a></article>
-          <article role="listitem"><span class="tag available-tag">Available</span><h3>Embedded GeoPackage</h3><p>The default build includes the embedded GeoPackage path for catalogs, features, tiles and supported writes. It is the shortest self-contained evaluation route.</p><a href="https://github.com/ccancellieri/tellurion/blob/main/docs/quickstart/real-data-osm-geopackage.md">Source docs: run the real-data guide →</a></article>
-          <article role="listitem"><span class="tag optional-tag">Optional</span><h3>Valkey cache and browser UI</h3><p>Valkey adds an opt-in L2 tile cache; the embedded browser UI is a separate opt-in build feature. Neither is required for the default serving engine.</p><a href="https://github.com/ccancellieri/tellurion/blob/main/docs/deployment-topologies.md">Source docs: choose a topology →</a></article>
+          <article role="listitem"><span class="tag available-tag">Available</span><h3>Core serving surface</h3><p>Landing pages, conformance declarations, API descriptions, Features, Tiles, read-only Styles and catalog routes are represented in the public demonstrations.</p><a href="../#capabilities">Public demos: inspect the routes →</a></article>
+          <article role="listitem"><span class="tag available-tag">Available</span><h3>PostGIS</h3><p>PostGIS is enabled in the documented default build and provides the shared database route for catalogs, features, tiles, writes, outbox, derived index, search and volumes.</p><a href="../proof/#boundary">Review the public evidence boundary →</a></article>
+          <article role="listitem"><span class="tag available-tag">Available</span><h3>Embedded GeoPackage</h3><p>The public vector demonstration uses the embedded GeoPackage path for a self-contained, read-only evaluation.</p><a href="../demos/vector/">Inspect the GeoPackage demo →</a></article>
+          <article role="listitem"><span class="tag optional-tag">Optional</span><h3>Valkey cache and browser UI</h3><p>Valkey adds an opt-in L2 tile cache; the embedded browser UI is a separate opt-in build feature. Neither is required for the default serving engine.</p><a href="../proof/#boundary">Review what is publicly inspectable →</a></article>
           <article role="listitem"><span class="tag preview-tag">Preview</span><h3>Interactive evaluation</h3><p>The public gallery demonstrates bounded vector, raster, Zarr, 3D, CQL2, STAC, Maps and Styles paths. Demo availability is evidence, not a production SLA or benchmark.</p><a href="../#capabilities">Open the demo gallery →</a></article>
           <article role="listitem"><span class="tag planned-tag">Planned</span><h3>Approved v0.4 binaries</h3><p>Platform archives are intended, but there is no verified public v0.4 binary release today. Do not treat the repository’s source archive as an executable distribution.</p><a href="#download">See the verified download state →</a></article>
         </div>
@@ -85,8 +85,8 @@
         <div class="section-heading"><p class="station">Station 02</p><h2>Choose your first route</h2><p>Begin with the smallest shape that answers your evaluation question.</p></div>
         <ol class="routes">
           <li><span class="route-number">A</span><div><h3>Look first</h3><p>Use the public demo gallery when you want to inspect outputs before installing anything. Services may cold-start and are not load-test environments.</p><a href="../#capabilities">Explore visual demos →</a></div></li>
-          <li><span class="route-number">B</span><div><h3>Build one self-contained server</h3><p>Build the current source, create a GeoPackage demo and serve it locally without a database service or container runtime.</p><a href="https://github.com/ccancellieri/tellurion/blob/main/docs/quickstart/install.md">Follow Build from source →</a></div></li>
-          <li><span class="route-number">C</span><div><h3>Use real geospatial data</h3><p>Load attributed OpenStreetMap data into GeoPackage, inspect Features and Tiles, then connect a desktop GIS.</p><a href="https://github.com/ccancellieri/tellurion/blob/main/docs/quickstart/qgis.md">Connect QGIS →</a></div></li>
+          <li><span class="route-number">B</span><div><h3>Use the verified public release</h3><p>Download the checksummed 0.3.0 artifacts and review the included licence before running a self-hosted evaluation.</p><a href="https://github.com/ccancellieri/tellurion-demos/releases/tag/tellurion-v0.3.0">Open the public release →</a></div></li>
+          <li><span class="route-number">C</span><div><h3>Reproduce the demo fixtures</h3><p>Inspect the attributed OpenStreetMap and WorldCover cases, deterministic generators and deployment definitions in the public demo repository.</p><a href="https://github.com/ccancellieri/tellurion-demos">Review demo source →</a></div></li>
         </ol>
       </section>
 
@@ -94,24 +94,24 @@
         <div class="section-heading"><p class="station">Station 03</p><h2>Download state</h2></div>
         <div class="notice" role="note" aria-label="Current download status">
           <strong>No verified public v0.4 binary is available yet.</strong>
-          <p>The GitHub Releases page is the only place to look for an approved, checksummed and attested binary release. Until one appears there, build the current source. GitHub may offer automatic source archives; a source archive is not an installable Tellurion binary.</p>
-          <div class="actions"><a class="button primary" href="https://github.com/ccancellieri/tellurion/blob/main/docs/quickstart/install.md">Build from source</a><a class="button" href="https://github.com/ccancellieri/tellurion/releases">Check releases</a></div>
+          <p>The current public evaluation release is 0.3.0. Public engine source launch pending; until that boundary changes, use the checksummed demo release. An automatic source archive is not an installable Tellurion binary.</p>
+          <div class="actions"><a class="button primary" href="https://github.com/ccancellieri/tellurion-demos/releases/tag/tellurion-v0.3.0">Open public 0.3.0 release</a><a class="button" href="../proof/">Review the proof brief</a></div>
         </div>
         <div class="safety-grid">
-          <div><h3>Before production</h3><p>Read the licence that applies to the version and intended use. The plain-language guide is informative; the licence text controls.</p><a href="https://github.com/ccancellieri/tellurion/blob/main/docs/licensing.md">Read licensing guidance →</a></div>
-          <div><h3>Before trusting an artifact</h3><p>Require the checksum and GitHub artifact attestation described by the install guide. If either is absent, treat it as an unapproved candidate.</p><a href="https://github.com/ccancellieri/tellurion/blob/main/docs/quickstart/install.md#version-040-release-archives">Review verification steps →</a></div>
+          <div><h3>Before production</h3><p>Read the licence that applies to the version and intended use. The licence text controls.</p><a href="../NOTICE.md">Read the public licence notice →</a></div>
+          <div><h3>Before trusting an artifact</h3><p>Require the published checksum. If it is absent or does not match, treat the artifact as unapproved.</p><a href="https://github.com/ccancellieri/tellurion-demos/releases/tag/tellurion-v0.3.0">Review release assets →</a></div>
         </div>
       </section>
 
       <section class="doc-section" id="operate">
-        <div class="section-heading"><p class="station">Station 04</p><h2>Operate with the canonical manuals</h2><p>The detailed instructions live beside the code so they change with it. This site points to those manuals instead of copying commands that can drift.</p></div>
+        <div class="section-heading"><p class="station">Station 04</p><h2>Use the public evidence set</h2><p>Engine manuals are not presented as public while the engine repository is private. These links stay within the inspectable demo, release and evidence boundary.</p></div>
         <div class="manuals">
-          <a href="https://github.com/ccancellieri/tellurion/blob/main/docs/deployment-topologies.md"><strong>Deployment topologies</strong><span>Binary, containers, Kubernetes, multi-replica caveats and air-gapped installs.</span></a>
-          <a href="https://github.com/ccancellieri/tellurion/blob/main/docs/quickstart/real-data-osm-geopackage.md"><strong>Real-data GeoPackage</strong><span>A complete embedded evaluation with attributed OpenStreetMap data.</span></a>
-          <a href="https://github.com/ccancellieri/tellurion/blob/main/docs/quickstart/qgis.md"><strong>QGIS connection</strong><span>Use Tellurion’s advertised resources from a desktop GIS.</span></a>
-          <a href="https://github.com/ccancellieri/tellurion/blob/main/docs/spec-deviations.md"><strong>Protocol deviations</strong><span>Known behavior boundaries and explicit refusals.</span></a>
-          <a href="https://github.com/ccancellieri/tellurion/blob/main/docs/driver-authoring.md"><strong>Driver contracts</strong><span>Capability-aware interfaces for contributors and integrators.</span></a>
-          <a href="https://github.com/ccancellieri/tellurion#authentication-and-authorization"><strong>Authentication &amp; authorization</strong><span>Understand configured identity and policy behavior before exposure.</span></a>
+          <a href="https://github.com/ccancellieri/tellurion-demos"><strong>Demo source</strong><span>Fixtures, deployment definitions and page code for every public demonstration.</span></a>
+          <a href="../proof/"><strong>Proof brief</strong><span>Verified evidence, explicit exclusions and distinct next steps.</span></a>
+          <a href="https://github.com/ccancellieri/tellurion-demos/blob/main/render.yaml"><strong>Service definitions</strong><span>The five read-only public demo services and their configured entry points.</span></a>
+          <a href="https://github.com/ccancellieri/tellurion-demos/tree/main/scripts"><strong>Fixture generation</strong><span>Deterministic scripts and data preparation paths used by the demonstrations.</span></a>
+          <a href="#limits"><strong>Current limits</strong><span>Behavior and claims that this public evidence does not establish.</span></a>
+          <a href="https://github.com/ccancellieri/tellurion-demos/actions/workflows/daily.yml"><strong>Daily verification</strong><span>Repository contracts, public pages, release assets and active endpoint checks.</span></a>
         </div>
       </section>
 

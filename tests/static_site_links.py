@@ -3,11 +3,17 @@
 
 from html.parser import HTMLParser
 from pathlib import Path
+import re
 from urllib.parse import unquote, urlsplit
 
 
 ROOT = Path(__file__).resolve().parents[1]
-PAGES = (ROOT / "index.html", ROOT / "docs" / "index.html")
+PAGES = (
+    ROOT / "index.html",
+    ROOT / "docs" / "index.html",
+    ROOT / "proof" / "index.html",
+    ROOT / "demos" / "stac" / "index.html",
+)
 
 
 class PageParser(HTMLParser):
@@ -61,7 +67,13 @@ def local_target(page: Path, href: str) -> tuple[Path, str] | None:
 
 def main() -> None:
     failures: list[str] = []
-    parsed = {page: parse(page) for page in PAGES}
+    parsed: dict[Path, PageParser] = {}
+    for page in PAGES:
+        if not page.exists():
+            failures.append(f"{page.relative_to(ROOT)}: missing public page")
+            continue
+        parsed[page] = parse(page)
+
     for page, document in parsed.items():
         relative = page.relative_to(ROOT)
         if document.lang != "en":
@@ -72,6 +84,15 @@ def main() -> None:
             if count < 1:
                 failures.append(f"{relative}: missing {landmark} landmark")
         for href in document.hrefs:
+            target_url = urlsplit(href)
+            if (
+                target_url.netloc.lower() == "github.com"
+                and target_url.path.rstrip("/") == "/ccancellieri/tellurion"
+            ) or (
+                target_url.netloc.lower() == "github.com"
+                and target_url.path.startswith("/ccancellieri/tellurion/")
+            ):
+                failures.append(f"{relative}: private engine link exposed: {href}")
             resolved = local_target(page, href)
             if resolved is None:
                 continue
@@ -89,10 +110,23 @@ def main() -> None:
         for line in (ROOT / "tests/fixtures/docs_external_links.txt").read_text().splitlines()
         if line.strip() and not line.startswith("#")
     }
-    docs_hrefs = set(parsed[ROOT / "docs" / "index.html"].hrefs)
-    missing = sorted(expected - docs_hrefs)
-    if missing:
-        failures.append("docs/index.html missing checked external links: " + ", ".join(missing))
+    docs_page = ROOT / "docs" / "index.html"
+    if docs_page in parsed:
+        docs_hrefs = set(parsed[docs_page].hrefs)
+        missing = sorted(expected - docs_hrefs)
+        if missing:
+            failures.append("docs/index.html missing checked external links: " + ", ".join(missing))
+
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    workflow_refs = re.findall(
+        r"https://github\.com/ccancellieri/tellurion-demos/actions/workflows/([^/)]+\.yml)",
+        readme,
+    )
+    if not workflow_refs:
+        failures.append("README.md: missing public workflow link")
+    for workflow in workflow_refs:
+        if not (ROOT / ".github" / "workflows" / workflow).is_file():
+            failures.append(f"README.md: workflow link targets missing file {workflow}")
 
     if failures:
         raise SystemExit("\n".join(failures))

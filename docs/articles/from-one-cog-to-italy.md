@@ -68,15 +68,16 @@ current deployment is pending, so they are not evidence until the scheduled
 post-deployment smoke checks and visual evidence have succeeded.
 Desktop/browser and 390x844 mobile country/city evidence remain pending until deployment and post-deployment verification.
 
-- [Planned STAC Collection](https://tellurion-stac-harvest-demo.onrender.com/public/stac/catalogs/default/collections/esa_worldcover_2021_italy)
-- [Planned FeatureCollection](https://tellurion-stac-harvest-demo.onrender.com/public/features/catalogs/default/collections/esa_worldcover_2021_italy/items?limit=1)
-- [Planned raster TileSet](https://tellurion-stac-harvest-demo.onrender.com/public/tiles/catalogs/default/collections/esa_worldcover_2021_italy/tiles/WebMercatorQuad)
+- Planned STAC Collection: `/public/stac/catalogs/default/collections/esa_worldcover_2021_italy`
+- Planned FeatureCollection: `/public/features/catalogs/default/collections/esa_worldcover_2021_italy/items?limit=1`
+- Planned raster TileSet: `/public/tiles/catalogs/default/collections/esa_worldcover_2021_italy/tiles/WebMercatorQuad`
 
 The committed [Italy manifest](../../data/stac/esa-worldcover-italy/manifest.json),
 [mosaic definition](../../data/stac/esa-worldcover-italy/mosaic.json), and
 [national design](../design/2026-08-05-italy-worldcover-mosaic-design.md) are
 the reviewable evidence while deployment is pending. The reusable mosaic work
-is available in the [merged Tellurion engine PR](https://github.com/ccancellieri/tellurion/pull/288).
+was reviewed with this release. Public engine source launch is pending, so the
+public evidence remains the committed release data and demo contracts.
 
 ## Claims deliberately not made
 

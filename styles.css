@@ -54,6 +54,8 @@ h1 em { color: var(--amber); font-style: normal; }
 .card { position: relative; display: flex; flex-direction: column; min-height: 380px; padding: 28px; overflow: hidden; background: rgba(11, 29, 25, 0.88); border: 1px solid var(--line); text-decoration: none; }
 .card::after { content: ""; position: absolute; inset: auto -70px -120px auto; width: 260px; height: 260px; border: 1px solid var(--line); border-radius: 50%; box-shadow: 0 0 0 38px rgba(117, 230, 196, 0.03), 0 0 0 78px rgba(117, 230, 196, 0.025); }
 .card:hover { border-color: rgba(117, 230, 196, 0.55); transform: translateY(-2px); }
+.card.pending-card { border-color: rgba(245, 189, 103, .42); background: linear-gradient(145deg, rgba(44, 35, 18, .42), rgba(11, 29, 25, .88)); }
+.card.pending-card .card-link { color: var(--amber); }
 .card-index { color: var(--amber); font: 700 0.74rem/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 0.13em; }
 .card h3 { max-width: 440px; margin: auto 0 14px; font: 500 clamp(2rem, 3.6vw, 3.2rem)/0.98 Georgia, serif; letter-spacing: -0.04em; }
 .card p { max-width: 470px; margin: 0; color: var(--muted); line-height: 1.6; }

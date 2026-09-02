@@ -29,6 +29,8 @@ grep -Fq 'cancel-in-progress: true' "$DAILY" || fail "daily.yml must cancel supe
 grep -Fq 'name: deployment and fixture contracts' "$DAILY" || fail "daily.yml is missing repository contracts"
 grep -Fq 'name: public distribution manifest' "$DAILY" || fail "daily.yml is missing distribution verification"
 grep -Fq 'name: ${{ matrix.demo }}' "$DAILY" || fail "daily.yml is missing live endpoint smoke checks"
+grep -Fq 'sh tests/proof_brief_contract.sh' "$DAILY" || fail "daily.yml is missing the proof brief contract"
+grep -Fq 'http://127.0.0.1:8080/proof/' "$DAILY" || fail "daily.yml does not load the proof brief"
 
 render_services=$(grep -c '^[[:space:]]*-[[:space:]]*type: web' "$ROOT/render.yaml")
 checks_pass=$(grep -c 'autoDeployTrigger: checksPass' "$ROOT/render.yaml")
