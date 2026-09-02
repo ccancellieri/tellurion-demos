@@ -84,4 +84,9 @@ require_text docs/docs.css '@media (max-width: 760px)'
 require_text docs/docs.css '.docs-nav'
 require_text docs/docs.css '.driver-table'
 
+for demo in vector raster zarr; do
+  require_text "demos/$demo/index.html" 'Unable to load the live layer.'
+  reject_text "demos/$demo/index.html" 'The service is still waking up.'
+done
+
 printf 'documentation contract: ok\n'
