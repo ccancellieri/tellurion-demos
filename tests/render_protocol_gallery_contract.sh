@@ -26,12 +26,30 @@ reject_text() {
 }
 
 require_file deploy/render/roads-style.json
+require_file assets/social/tellurion-try-your-file-1200x627.svg
+require_file assets/social/tellurion-try-your-file-1200x627.png
 require_file demos/query/index.html
 require_file demos/stac/index.html
 require_file demos/maps/index.html
 require_text index.html 'https://tellurion-public-demo.onrender.com/ui/'
 require_text index.html 'Try your own public file'
 require_text index.html 'COG and GeoParquet use bounded range reads'
+require_text index.html 'property="og:image" content="https://ccancellieri.github.io/tellurion-demos/assets/social/tellurion-try-your-file-1200x627.png"'
+require_text index.html 'name="twitter:card" content="summary_large_image"'
+require_text index.html 'rel="canonical" href="https://ccancellieri.github.io/tellurion-demos/"'
+require_text assets/social/tellurion-try-your-file-1200x627.svg 'Try Tellurion with your own geospatial data'
+
+python3 - <<'PY'
+from pathlib import Path
+import struct
+
+card = Path('assets/social/tellurion-try-your-file-1200x627.png').read_bytes()
+if card[:8] != b'\x89PNG\r\n\x1a\n':
+    raise SystemExit('social card must be a PNG')
+width, height = struct.unpack('>II', card[16:24])
+if (width, height) != (1200, 627):
+    raise SystemExit(f'social card must be 1200x627, found {width}x{height}')
+PY
 
 require_text deploy/render/roads-style.json '"version": 8'
 require_text deploy/render/roads-style.json '"source-layer": "sample_roads"'
