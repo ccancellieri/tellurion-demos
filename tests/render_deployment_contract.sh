@@ -22,15 +22,16 @@ require_text() {
 require_file Dockerfile
 require_file render.yaml
 require_file deploy/render/vector.yaml
-require_file dist/tellurion-v0.5.0-rc.1-source-209fa5c8df54.zip
+require_file dist/README.md
+require_file dist/tellurion-v0.5.0-rc.1-source-02e855affea9.zip
 
 require_text Dockerfile 'sha256sum -c'
 require_text Dockerfile 'USER 10001:10001'
 require_text Dockerfile 'ENTRYPOINT ["/app/tellurion"]'
 require_text Dockerfile 'ARG TELLURION_VERSION=v0.5.0-rc.1'
-require_text Dockerfile 'ARG TELLURION_REVISION=209fa5c8df54'
-require_text Dockerfile 'f64b480864ef84c6b852ff11ee3bf11d85dbd7fa4c8fb9e34655bf6979b11728'
-require_text Dockerfile 'dist/tellurion-v0.5.0-rc.1-source-209fa5c8df54.zip'
+require_text Dockerfile 'ARG TELLURION_REVISION=02e855affea9'
+require_text Dockerfile '21c243fc5164c2561a142b47c7a4cce1b7f1e0f29e74daab68275e81704b20d0'
+require_text Dockerfile 'dist/tellurion-v0.5.0-rc.1-source-02e855affea9.zip'
 require_text Dockerfile 'cargo build --release --locked -p tellurion --no-default-features --features geopackage'
 require_text Dockerfile 'cargo build --release --locked -p tellurion-ingest'
 require_text Dockerfile '/app/licenses/THIRD_PARTY_NOTICES.json'
@@ -46,7 +47,9 @@ require_text render.yaml 'plan: free'
 require_text render.yaml 'healthCheckPath: /'
 require_text render.yaml 'autoDeployTrigger: checksPass'
 require_text render.yaml 'deploy/render/vector.yaml'
-require_text render.yaml 'dist/tellurion-v0.5.0-rc.1-source-209fa5c8df54.zip'
+require_text render.yaml 'dist/tellurion-v0.5.0-rc.1-source-02e855affea9.zip'
+require_text dist/README.md 'Source revision: `02e855affea95ab8a22fcd4744bc00000fb3b4c4`'
+require_text dist/README.md 'SHA-256: `21c243fc5164c2561a142b47c7a4cce1b7f1e0f29e74daab68275e81704b20d0`'
 
 require_text deploy/render/vector.yaml 'driver: geopackage'
 require_text deploy/render/vector.yaml 'id: sample_roads'
@@ -77,15 +80,15 @@ if grep -Eq '(^|[[:space:]])PORT=[0-9]+' "$ROOT/Dockerfile"; then
   exit 1
 fi
 
-expected_source_hash='f64b480864ef84c6b852ff11ee3bf11d85dbd7fa4c8fb9e34655bf6979b11728'
-actual_source_hash=$(sha256sum "$ROOT/dist/tellurion-v0.5.0-rc.1-source-209fa5c8df54.zip" | awk '{print $1}')
+expected_source_hash='21c243fc5164c2561a142b47c7a4cce1b7f1e0f29e74daab68275e81704b20d0'
+actual_source_hash=$(sha256sum "$ROOT/dist/tellurion-v0.5.0-rc.1-source-02e855affea9.zip" | awk '{print $1}')
 test "$actual_source_hash" = "$expected_source_hash" || {
   printf 'the vector source archive hash does not match the checked-in build pin\n' >&2
   exit 1
 }
 
 for archive_member in Cargo.lock LICENSE THIRD_PARTY_NOTICES.json crates/tellurion-server/Cargo.toml; do
-  unzip -Z1 "$ROOT/dist/tellurion-v0.5.0-rc.1-source-209fa5c8df54.zip" | grep -Fx "$archive_member" >/dev/null || {
+  unzip -Z1 "$ROOT/dist/tellurion-v0.5.0-rc.1-source-02e855affea9.zip" | grep -Fx "$archive_member" >/dev/null || {
     printf 'the vector source archive is missing required member: %s\n' "$archive_member" >&2
     exit 1
   }
