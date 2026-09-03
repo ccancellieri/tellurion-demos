@@ -83,6 +83,11 @@ import yaml
 with open(sys.argv[1], encoding="utf-8") as config_file:
     config = yaml.safe_load(config_file)
 
+expected = "https://tellurion-stac-harvest-demo.onrender.com"
+actual = config.get("server", {}).get("public_base_url")
+if actual != expected:
+    raise SystemExit(f"STAC harvest public_base_url must be {expected!r}, got {actual!r}")
+
 for collection in config["collections"]:
     keywords = collection.get("settings", {}).get("stac", {}).get("keywords", [])
     if not all(isinstance(keyword, str) for keyword in keywords):

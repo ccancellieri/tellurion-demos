@@ -49,6 +49,69 @@ if grep -Eq 'https?://(ccancellieri\.github\.io|tellurion-[a-z0-9-]+\.onrender\.
 fi
 grep -Fq 'timeout-minutes:' "$COMMIT_GATE" || fail "commit gate jobs require timeouts"
 
+python3 - "$DAILY" <<'PY'
+import sys
+
+import yaml
+
+with open(sys.argv[1], encoding="utf-8") as workflow_file:
+    workflow = yaml.safe_load(workflow_file)
+
+jobs = workflow["jobs"]
+live_entries = jobs["live-endpoints"]["strategy"]["matrix"]["include"]
+italy_entries = jobs["italy-endpoints"]["strategy"]["matrix"]["include"]
+
+
+def require_entry(entries, demo, expected):
+    matches = [entry for entry in entries if entry.get("demo") == demo]
+    if len(matches) != 1:
+        raise SystemExit(f"expected one {demo!r} smoke entry, found {len(matches)}")
+    for key, value in expected.items():
+        if matches[0].get(key) != value:
+            raise SystemExit(
+                f"{demo!r} must set {key}={value!r}, got {matches[0].get(key)!r}"
+            )
+
+
+vector_base = "https://tellurion-vector-demo.onrender.com"
+stac_base = "https://tellurion-stac-harvest-demo.onrender.com"
+require_entry(
+    live_entries,
+    "vector landing links",
+    {
+        "url": f"{vector_base}/public",
+        "expected_base_url": vector_base,
+        "link_contract": "landing",
+    },
+)
+require_entry(
+    live_entries,
+    "vector features",
+    {"expected_base_url": vector_base, "link_contract": "items"},
+)
+require_entry(
+    live_entries,
+    "STAC harvest landing links",
+    {
+        "url": f"{stac_base}/public",
+        "expected_base_url": stac_base,
+        "link_contract": "landing",
+    },
+)
+require_entry(
+    italy_entries,
+    "Italy FeatureCollection",
+    {"expected_base_url": stac_base, "link_contract": "items"},
+)
+
+for job_name in ("live-endpoints", "italy-endpoints"):
+    run_blocks = "\n".join(
+        step.get("run", "") for step in jobs[job_name]["steps"] if isinstance(step, dict)
+    )
+    if "python3 tests/canonical_links.py" not in run_blocks:
+        raise SystemExit(f"{job_name} must enforce the canonical-link response contract")
+PY
+
 render_services=$(grep -c '^[[:space:]]*-[[:space:]]*type: web' "$ROOT/render.yaml")
 checks_pass=$(grep -c 'autoDeployTrigger: checksPass' "$ROOT/render.yaml")
 test "$render_services" = 5 || fail "expected five Render web services, found $render_services"

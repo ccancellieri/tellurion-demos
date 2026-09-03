@@ -43,6 +43,20 @@ require_text deploy/render/vector.yaml 'id: sample_roads'
 require_text deploy/render/vector.yaml 'url_env: TELLURION_GEOPACKAGE_PATH'
 require_text demos/vector/index.html 'WebMercatorQuad/{z}/{y}/{x}.mvt'
 
+python3 - "$ROOT/deploy/render/vector.yaml" <<'PY'
+import sys
+
+import yaml
+
+with open(sys.argv[1], encoding="utf-8") as config_file:
+    config = yaml.safe_load(config_file)
+
+expected = "https://tellurion-vector-demo.onrender.com"
+actual = config.get("server", {}).get("public_base_url")
+if actual != expected:
+    raise SystemExit(f"vector public_base_url must be {expected!r}, got {actual!r}")
+PY
+
 if grep -Eq 'routing:[[:space:]]*$|write:[[:space:]]' "$ROOT/deploy/render/vector.yaml"; then
   printf 'the public vector demo must not configure a write route\n' >&2
   exit 1
