@@ -22,10 +22,19 @@ require_text() {
 require_file Dockerfile
 require_file render.yaml
 require_file deploy/render/vector.yaml
+require_file dist/tellurion-v0.5.0-rc.1-source-209fa5c8df54.zip
 
 require_text Dockerfile 'sha256sum -c'
 require_text Dockerfile 'USER 10001:10001'
 require_text Dockerfile 'ENTRYPOINT ["/app/tellurion"]'
+require_text Dockerfile 'ARG TELLURION_VERSION=v0.5.0-rc.1'
+require_text Dockerfile 'ARG TELLURION_REVISION=209fa5c8df54'
+require_text Dockerfile 'f64b480864ef84c6b852ff11ee3bf11d85dbd7fa4c8fb9e34655bf6979b11728'
+require_text Dockerfile 'dist/tellurion-v0.5.0-rc.1-source-209fa5c8df54.zip'
+require_text Dockerfile 'cargo build --release --locked -p tellurion --no-default-features --features geopackage'
+require_text Dockerfile 'cargo build --release --locked -p tellurion-ingest'
+require_text Dockerfile '/app/licenses/THIRD_PARTY_NOTICES.json'
+require_text Dockerfile '/app/licenses/THIRD_PARTY_NOTICES.txt'
 require_text Dockerfile 'ARG DEMO_VERSION=v0.2.0'
 require_text Dockerfile 'DEMO_ARCHIVE=tellurion-italy-demo-${DEMO_VERSION}.zip'
 require_text Dockerfile 'rome-roads.geojson'
@@ -37,6 +46,7 @@ require_text render.yaml 'plan: free'
 require_text render.yaml 'healthCheckPath: /'
 require_text render.yaml 'autoDeployTrigger: checksPass'
 require_text render.yaml 'deploy/render/vector.yaml'
+require_text render.yaml 'dist/tellurion-v0.5.0-rc.1-source-209fa5c8df54.zip'
 
 require_text deploy/render/vector.yaml 'driver: geopackage'
 require_text deploy/render/vector.yaml 'id: sample_roads'
@@ -66,5 +76,19 @@ if grep -Eq '(^|[[:space:]])PORT=[0-9]+' "$ROOT/Dockerfile"; then
   printf 'the container must accept Render\047s dynamic PORT instead of fixing one\n' >&2
   exit 1
 fi
+
+expected_source_hash='f64b480864ef84c6b852ff11ee3bf11d85dbd7fa4c8fb9e34655bf6979b11728'
+actual_source_hash=$(sha256sum "$ROOT/dist/tellurion-v0.5.0-rc.1-source-209fa5c8df54.zip" | awk '{print $1}')
+test "$actual_source_hash" = "$expected_source_hash" || {
+  printf 'the vector source archive hash does not match the checked-in build pin\n' >&2
+  exit 1
+}
+
+for archive_member in Cargo.lock LICENSE THIRD_PARTY_NOTICES.json crates/tellurion-server/Cargo.toml; do
+  unzip -Z1 "$ROOT/dist/tellurion-v0.5.0-rc.1-source-209fa5c8df54.zip" | grep -Fx "$archive_member" >/dev/null || {
+    printf 'the vector source archive is missing required member: %s\n' "$archive_member" >&2
+    exit 1
+  }
+done
 
 printf 'Render deployment contract verified.\n'

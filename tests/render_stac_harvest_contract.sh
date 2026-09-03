@@ -11,7 +11,7 @@ COLORMAP="$ROOT/data/stac/esa-worldcover/colormap.yaml"
 ITALY_MANIFEST="$ROOT/data/stac/esa-worldcover-italy/manifest.json"
 ITALY_MOSAIC="$ROOT/data/stac/esa-worldcover-italy/mosaic.json"
 ITALY_BUILDER="$ROOT/deploy/render/build_stac_italy.py"
-ENGINE_SOURCE="$ROOT/dist/tellurion-v0.4.0-source-28fb41c.zip"
+ENGINE_SOURCE="$ROOT/dist/tellurion-v0.5.0-rc.1-source-209fa5c8df54.zip"
 
 require_file() {
   if [ ! -f "$1" ]; then
@@ -38,10 +38,13 @@ require_file "$ITALY_MOSAIC"
 require_file "$ITALY_BUILDER"
 require_file "$ENGINE_SOURCE"
 
-require_text Dockerfile.stac-harvest 'ARG TELLURION_VERSION=v0.4.0'
-require_text Dockerfile.stac-harvest 'ARG TELLURION_REVISION=28fb41c'
-require_text Dockerfile.stac-harvest 'tellurion-v0.4.0-source-28fb41c.zip'
+require_text Dockerfile.stac-harvest 'ARG TELLURION_VERSION=v0.5.0-rc.1'
+require_text Dockerfile.stac-harvest 'ARG TELLURION_REVISION=209fa5c8df54'
+require_text Dockerfile.stac-harvest 'tellurion-v0.5.0-rc.1-source-209fa5c8df54.zip'
+require_text Dockerfile.stac-harvest 'f64b480864ef84c6b852ff11ee3bf11d85dbd7fa4c8fb9e34655bf6979b11728'
 require_text Dockerfile.stac-harvest 'sha256sum -c'
+require_text Dockerfile.stac-harvest '/app/licenses/THIRD_PARTY_NOTICES.json'
+require_text Dockerfile.stac-harvest '/app/licenses/THIRD_PARTY_NOTICES.txt'
 require_text deploy/render/build_stac_italy.py '"cog", "mosaic"'
 require_text Dockerfile.stac-harvest 'ogr2ogr -f GPKG'
 require_text Dockerfile.stac-harvest 'USER 10001:10001'
@@ -62,7 +65,7 @@ require_text deploy/render/stac-harvest.yaml '{ name: end_datetime, type: string
 require_text render.yaml 'name: tellurion-stac-harvest-demo'
 require_text render.yaml 'data/stac/esa-worldcover-italy'
 require_text render.yaml 'deploy/render/build_stac_italy.py'
-require_text render.yaml 'dist/tellurion-v0.4.0-source-28fb41c.zip'
+require_text render.yaml 'dist/tellurion-v0.5.0-rc.1-source-209fa5c8df54.zip'
 require_text .github/workflows/daily.yml 'tests/render_stac_harvest_contract.sh'
 
 if grep -Eq 'write:[[:space:]]' "$CONFIG"; then
@@ -125,6 +128,20 @@ done
 
 for asset in source_cog source_snapshot provenance_manifest; do
   require_text deploy/render/stac-harvest.yaml "$asset"
+done
+
+expected_source_hash='f64b480864ef84c6b852ff11ee3bf11d85dbd7fa4c8fb9e34655bf6979b11728'
+actual_source_hash=$(sha256sum "$ENGINE_SOURCE" | awk '{print $1}')
+test "$actual_source_hash" = "$expected_source_hash" || {
+  printf 'the STAC source archive hash does not match the checked-in build pin\n' >&2
+  exit 1
+}
+
+for archive_member in Cargo.lock LICENSE THIRD_PARTY_NOTICES.json crates/tellurion-server/Cargo.toml; do
+  unzip -Z1 "$ENGINE_SOURCE" | grep -Fx "$archive_member" >/dev/null || {
+    printf 'the STAC source archive is missing required member: %s\n' "$archive_member" >&2
+    exit 1
+  }
 done
 
 for stop in \

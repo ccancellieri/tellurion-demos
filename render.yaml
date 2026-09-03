@@ -15,6 +15,7 @@ services:
         - Dockerfile
         - deploy/render/vector.yaml
         - deploy/render/roads-style.json
+        - dist/tellurion-v0.5.0-rc.1-source-209fa5c8df54.zip
   - type: web
     name: tellurion-raster-demo
     runtime: docker
@@ -48,7 +49,7 @@ services:
         - data/stac/esa-worldcover
         - data/stac/esa-worldcover-italy
         - deploy/render/build_stac_italy.py
-        - dist/tellurion-v0.4.0-source-28fb41c.zip
+        - dist/tellurion-v0.5.0-rc.1-source-209fa5c8df54.zip
   - type: web
     name: tellurion-zarr-demo
     runtime: docker
