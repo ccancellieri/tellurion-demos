@@ -8,13 +8,23 @@ separate licences. Do not treat them as one licence grant.
 Original code and text in this repository are distributed under the GNU Affero
 General Public License, version 3. See [LICENSE](LICENSE).
 
-## Tellurion 0.3.0
+## Tellurion v0.5.0-rc.1 source-backed demos
 
-The containers download the unmodified, checksum-pinned Tellurion 0.3.0 source
-or binaries. That release is source-available under the Business Source License
-1.1 (`BUSL-1.1`) with a Change Date of 2030-07-23 and AGPL-3.0-only as its
-Change License. The release archives include their own `LICENSE` and commercial
-licensing notice; those terms govern Tellurion itself.
+The vector and STAC harvest containers compile the checksum-pinned public
+Tellurion v0.5.0-rc.1 source snapshot included in `dist/`. That source is
+distributed under the GNU Affero General Public License, version 3. Its
+included `LICENSE` and commercial licence notice govern those Tellurion
+binaries. Each resulting demo image also carries the source snapshot's
+conservative third-party notice inventories under `/app/licenses/`.
+
+## Historical Tellurion 0.3.0 artifacts
+
+The raster, Zarr and 3D containers download the unmodified, checksum-pinned
+Tellurion 0.3.0 source or binaries. That release is source-available under the
+Business Source License 1.1 (`BUSL-1.1`) with a Change Date of 2030-07-23 and
+AGPL-3.0-only as its Change License. The release archives include their own
+`LICENSE` and commercial licensing notice; those terms govern those historical
+Tellurion binaries.
 
 Evaluation, development, testing, training, and personal non-commercial
 production use are permitted as described by that release. Production use by

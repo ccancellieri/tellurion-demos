@@ -1,26 +1,40 @@
-FROM alpine:3.22 AS builder
+FROM rust:1.97.1-slim-bookworm@sha256:99e09cb2284e2ddbb73a995deee3e91783fd04d177602ccf6eab326d778ee777 AS source-builder
 
-RUN apk add --no-cache ca-certificates curl tar unzip
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+      build-essential ca-certificates cmake pkg-config unzip \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /build
 
-ARG TELLURION_VERSION=v0.3.0
-ARG TELLURION_TARGET=x86_64-unknown-linux-musl
-ARG DEMO_VERSION=v0.2.0
+ARG TELLURION_VERSION=v0.5.0-rc.1
+ARG TELLURION_REVISION=209fa5c8df54
+ENV SOURCE_ARCHIVE=tellurion-v0.5.0-rc.1-source-209fa5c8df54.zip
 
-ENV TELLURION_ARCHIVE=tellurion-${TELLURION_VERSION}-${TELLURION_TARGET}.tar.gz
-ENV TELLURION_RELEASE=https://github.com/ccancellieri/tellurion-demos/releases/download/tellurion-${TELLURION_VERSION}
+COPY dist/tellurion-v0.5.0-rc.1-source-209fa5c8df54.zip /build/tellurion-v0.5.0-rc.1-source-209fa5c8df54.zip
+
+RUN printf '%s  %s\n' \
+      'f64b480864ef84c6b852ff11ee3bf11d85dbd7fa4c8fb9e34655bf6979b11728' \
+      "${SOURCE_ARCHIVE}" > source.sha256 \
+    && sha256sum -c source.sha256 \
+    && unzip -q "${SOURCE_ARCHIVE}"
+
+RUN cargo build --release --locked -p tellurion --no-default-features --features geopackage \
+    && cargo build --release --locked -p tellurion-ingest
+
+FROM debian:bookworm-slim@sha256:7b140f374b289a7c2befc338f42ebe6441b7ea838a042bbd5acbfca6ec875818 AS data-builder
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ca-certificates curl unzip \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /build
+
+ARG DEMO_VERSION=v0.2.0
 ENV DEMO_ARCHIVE=tellurion-italy-demo-${DEMO_VERSION}.zip
 ENV DEMO_RELEASE=https://github.com/ccancellieri/tellurion-italy-demo/releases/download/demo-${DEMO_VERSION}
 
-RUN curl --fail --location --retry 3 \
-      --output "${TELLURION_ARCHIVE}" "${TELLURION_RELEASE}/${TELLURION_ARCHIVE}" \
-    && curl --fail --location --retry 3 \
-      --output SHA256SUMS "${TELLURION_RELEASE}/SHA256SUMS" \
-    && grep "  ${TELLURION_ARCHIVE}$" SHA256SUMS > tellurion.sha256 \
-    && sha256sum -c tellurion.sha256 \
-    && mkdir tellurion \
-    && tar -xzf "${TELLURION_ARCHIVE}" --strip-components=1 -C tellurion
+COPY --from=source-builder /build/target/release/tellurion-ingest /usr/local/bin/tellurion-ingest
 
 RUN curl --fail --location --retry 3 \
       --output "${DEMO_ARCHIVE}" "${DEMO_RELEASE}/${DEMO_ARCHIVE}" \
@@ -30,17 +44,15 @@ RUN curl --fail --location --retry 3 \
     && mkdir demo \
     && unzip -q "${DEMO_ARCHIVE}" -d demo
 
-RUN mkdir -p /app/data /app/licenses \
-    && install -m 0755 tellurion/tellurion tellurion/tellurion-ingest /app/ \
-    && install -m 0644 tellurion/LICENSE tellurion/COMMERCIAL-LICENSE.md /app/licenses/ \
-    && /app/tellurion-ingest geopackage create-tables \
+RUN mkdir -p /app/data \
+    && tellurion-ingest geopackage create-tables \
       --path /app/data/sample-roads.gpkg \
       --table sample_roads \
       --geometry geom \
       --srid 4326 \
       --geometry-type LINESTRING \
       --columns highway:TEXT,name:TEXT,railway:TEXT \
-    && /app/tellurion-ingest geopackage load \
+    && tellurion-ingest geopackage load \
       --path /app/data/sample-roads.gpkg \
       --table sample_roads \
       demo/tellurion-italy-demo/output/rome-roads.geojson > /tmp/rome-load.jsonl \
@@ -48,12 +60,15 @@ RUN mkdir -p /app/data /app/licenses \
     && chmod 0555 /app/data \
     && chmod 0444 /app/data/sample-roads.gpkg
 
-FROM scratch
+FROM debian:bookworm-slim@sha256:7b140f374b289a7c2befc338f42ebe6441b7ea838a042bbd5acbfca6ec875818
 
-COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
-COPY --from=builder /app/tellurion /app/tellurion
-COPY --from=builder /app/data /app/data
-COPY --from=builder /app/licenses /app/licenses
+COPY --from=source-builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
+COPY --from=source-builder /build/target/release/tellurion /app/tellurion
+COPY --from=source-builder /build/LICENSE /app/licenses/LICENSE
+COPY --from=source-builder /build/COMMERCIAL-LICENSE.md /app/licenses/COMMERCIAL-LICENSE.md
+COPY --from=source-builder /build/THIRD_PARTY_NOTICES.json /app/licenses/THIRD_PARTY_NOTICES.json
+COPY --from=source-builder /build/THIRD_PARTY_NOTICES.txt /app/licenses/THIRD_PARTY_NOTICES.txt
+COPY --chown=10001:10001 --from=data-builder /app/data /app/data
 COPY deploy/render/vector.yaml /app/config.yaml
 COPY deploy/render/roads-style.json /app/styles/roads.json
 

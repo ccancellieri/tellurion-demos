@@ -25,7 +25,7 @@ jobs:
         run: sh tests/daily_automation_contract.sh
 
       - name: Verify STAC harvest transformation
-        run: python3 -m unittest -v tests.test_harvest_esa_worldcover tests.test_harvest_esa_worldcover_italy
+        run: python3 -m unittest -v tests.test_harvest_esa_worldcover tests.test_harvest_esa_worldcover_italy tests.test_canonical_links
 
       - name: Verify deployment contracts
         run: |

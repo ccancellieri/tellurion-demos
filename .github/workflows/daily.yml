@@ -24,7 +24,7 @@ jobs:
         run: sh tests/daily_automation_contract.sh
 
       - name: Verify STAC harvest transformation
-        run: python3 -m unittest -v tests.test_harvest_esa_worldcover tests.test_harvest_esa_worldcover_italy
+        run: python3 -m unittest -v tests.test_harvest_esa_worldcover tests.test_harvest_esa_worldcover_italy tests.test_canonical_links
 
       - name: Verify deployment contracts
         run: |
@@ -81,10 +81,18 @@ jobs:
             url: https://ccancellieri.github.io/tellurion-demos/
             content_type: text/html
             minimum_bytes: 1000
+          - demo: vector landing links
+            url: https://tellurion-vector-demo.onrender.com/public
+            content_type: application/json
+            minimum_bytes: 200
+            expected_base_url: https://tellurion-vector-demo.onrender.com
+            link_contract: landing
           - demo: vector features
             url: https://tellurion-vector-demo.onrender.com/public/features/catalogs/default/collections/sample_roads/items?limit=1
             content_type: application/geo+json
             minimum_bytes: 200
+            expected_base_url: https://tellurion-vector-demo.onrender.com
+            link_contract: items
           - demo: CQL2 feature filter
             url: "https://tellurion-vector-demo.onrender.com/public/features/catalogs/default/collections/sample_roads/items?filter=highway%20%3D%20%27residential%27&filter-lang=cql2-text&limit=1"
             content_type: application/geo+json
@@ -113,6 +121,12 @@ jobs:
             url: https://tellurion-3d-demo.onrender.com/public/3dtiles/catalogs/default/collections/sample_buildings_3d/3dtiles/tiles/13/4095/4096.glb
             content_type: model/gltf-binary
             minimum_bytes: 1000
+          - demo: STAC harvest landing links
+            url: https://tellurion-stac-harvest-demo.onrender.com/public
+            content_type: application/json
+            minimum_bytes: 200
+            expected_base_url: https://tellurion-stac-harvest-demo.onrender.com
+            link_contract: landing
           - demo: STAC Collection
             url: https://tellurion-stac-harvest-demo.onrender.com/public/stac/catalogs/default/collections/esa_worldcover_2021_rome
             content_type: application/json
@@ -135,6 +149,8 @@ jobs:
           DEMO_URL: ${{ matrix.url }}
           EXPECTED_CONTENT_TYPE: ${{ matrix.content_type }}
           MINIMUM_BYTES: ${{ matrix.minimum_bytes }}
+          EXPECTED_BASE_URL: ${{ matrix.expected_base_url }}
+          LINK_CONTRACT: ${{ matrix.link_contract }}
         run: |
           for attempt in $(seq 1 12); do
             : > headers.txt
@@ -146,6 +162,15 @@ jobs:
             if [ "$status" = 200 ] \
               && grep -Fiq "content-type: ${EXPECTED_CONTENT_TYPE}" headers.txt \
               && [ "$size" -ge "$MINIMUM_BYTES" ]; then
+              if [ -n "$LINK_CONTRACT" ] && ! python3 tests/canonical_links.py \
+                --kind "$LINK_CONTRACT" \
+                --body body.bin \
+                --expected-base "$EXPECTED_BASE_URL" \
+                --request-url "$DEMO_URL"; then
+                printf 'Attempt %s: response links did not satisfy the canonical URL contract\n' "$attempt"
+                sleep 10
+                continue
+              fi
               printf 'Verified HTTP 200, %s, %s bytes\n' "$EXPECTED_CONTENT_TYPE" "$size"
               exit 0
             fi
@@ -175,6 +200,8 @@ jobs:
             url: https://tellurion-stac-harvest-demo.onrender.com/public/features/catalogs/default/collections/esa_worldcover_2021_italy/items?limit=1
             content_type: application/geo+json
             minimum_bytes: 500
+            expected_base_url: https://tellurion-stac-harvest-demo.onrender.com
+            link_contract: items
           - demo: Italy raster TileSet
             url: https://tellurion-stac-harvest-demo.onrender.com/public/tiles/catalogs/default/collections/esa_worldcover_2021_italy/tiles/WebMercatorQuad
             content_type: application/json
@@ -209,6 +236,8 @@ jobs:
           DEMO_URL: ${{ matrix.url }}
           EXPECTED_CONTENT_TYPE: ${{ matrix.content_type }}
           MINIMUM_BYTES: ${{ matrix.minimum_bytes }}
+          EXPECTED_BASE_URL: ${{ matrix.expected_base_url }}
+          LINK_CONTRACT: ${{ matrix.link_contract }}
         run: |
           for attempt in $(seq 1 12); do
             : > headers.txt
@@ -220,6 +249,15 @@ jobs:
             if [ "$status" = 200 ] \
               && grep -Fiq "content-type: ${EXPECTED_CONTENT_TYPE}" headers.txt \
               && [ "$size" -ge "$MINIMUM_BYTES" ]; then
+              if [ -n "$LINK_CONTRACT" ] && ! python3 tests/canonical_links.py \
+                --kind "$LINK_CONTRACT" \
+                --body body.bin \
+                --expected-base "$EXPECTED_BASE_URL" \
+                --request-url "$DEMO_URL"; then
+                printf 'Attempt %s: response links did not satisfy the canonical URL contract\n' "$attempt"
+                sleep 10
+                continue
+              fi
               printf 'Verified HTTP 200, %s, %s bytes\n' "$EXPECTED_CONTENT_TYPE" "$size"
               exit 0
             fi

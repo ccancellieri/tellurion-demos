@@ -75,7 +75,7 @@ an uptime, capacity, or performance commitment.
 The committed [Italy manifest](../../data/stac/esa-worldcover-italy/manifest.json),
 [mosaic definition](../../data/stac/esa-worldcover-italy/mosaic.json), and
 [national design](../design/2026-08-05-italy-worldcover-mosaic-design.md) remain
-the reviewable provenance. Public v0.4.0 release-candidate source is available;
+the reviewable provenance. Public v0.5.0-rc.1 release-candidate source is available;
 the public evidence also includes the committed release data, demo contracts,
 and live evaluation links.
 

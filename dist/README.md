@@ -1,14 +1,14 @@
 # Tellurion source snapshot used by the public demos
 
-`tellurion-v0.4.0-source-28fb41c.zip` is the complete corresponding source used to
-build the Tellurion binary for the public Italy WorldCover demo. It includes
-the locked dependency graph, the GNU AGPL-3.0 licence, and the commercial
-licence notice.
+`tellurion-v0.5.0-rc.1-source-209fa5c8df54.zip` is the complete corresponding
+public source used to build the Tellurion binaries for the public vector and
+Italy WorldCover demos. It includes the locked dependency graph, the GNU
+AGPL-3.0 licence, and the commercial licence notice.
 
-- Source revision: `28fb41c6bdaa6a3eecaf09c0676a37203028520b`
-- Release version: `v0.4.0`
-- SHA-256: `7cf5e36b803a1e4b39f367f96774706354d9424a0b7ff965105bf6f1e3467441`
-- Archive root: `tellurion-28fb41c/`
+- Source revision: `209fa5c8df5446f82fc66b41256a238ec6ec90ae`
+- Release version: `v0.5.0-rc.1`
+- SHA-256: `f64b480864ef84c6b852ff11ee3bf11d85dbd7fa4c8fb9e34655bf6979b11728`
+- Archive root: repository root (no enclosing directory)
 
 The archive is published with this repository so a clean build does not depend
 on access to a private development checkout.

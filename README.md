@@ -12,10 +12,15 @@ This repository intentionally separates the public landing pages from the
 machine-readable OGC API endpoints. Start with the visual gallery; use the API
 links when you want to inspect the protocol payloads.
 
-Tellurion [v0.4.0 release-candidate source](https://github.com/ccancellieri/tellurion)
+Tellurion [v0.5.0-rc.1 release-candidate source](https://github.com/ccancellieri/tellurion)
 is public and is the primary self-hosted evaluation route. Start with its
 [Quickstart](https://github.com/ccancellieri/tellurion#quickstart) and
 [installation manual](https://github.com/ccancellieri/tellurion/blob/main/docs/quickstart/install.md).
+
+To evaluate before installing, open the
+[temporary public-file preview](https://tellurion-public-demo.onrender.com/ui/)
+with a public COG, GeoParquet file, or zipped Shapefile. It accepts no
+credentials or sensitive data and creates no persistent tenant or catalog.
 Tellurion is self-hosted software: no Tellurion Cloud, SLA or support service
 is offered.
 
@@ -66,10 +71,11 @@ building Tellurion.
 
 ## Reproducibility and licences
 
-Four focused demo backends use the historical, checksum-pinned public
-Tellurion 0.3.0 distribution. The live Italy backend uses the v0.4.0 source
-release-candidate path. Release archives carry their own BUSL-1.1 terms, while
-this demo repository is AGPL-3.0.
+The raster, Zarr and 3D demo backends use the historical, checksum-pinned
+Tellurion 0.3.0 distribution. The vector and live Italy backends build the
+same checksum-pinned Tellurion v0.5.0-rc.1 public source snapshot. That source
+snapshot and this demo repository are AGPL-3.0; the historical 0.3.0 archives
+retain their own BUSL-1.1 terms.
 OpenStreetMap and ESA WorldCover retain their respective data licences and
 attribution requirements. See [NOTICE.md](NOTICE.md) before reuse.
 

@@ -126,6 +126,6 @@ read-only public evaluation path. The Rome resources above remain a separate,
 one-Item field note rather than a substitute for national coverage.
 The [national design](../design/2026-08-05-italy-worldcover-mosaic-design.md)
 and [manifest](../../data/stac/esa-worldcover-italy/manifest.json) document the
-reviewed release boundary; the public v0.4.0 release-candidate source is available.
+reviewed release boundary; the public v0.5.0-rc.1 release-candidate source is available.
 [From one COG to Italy](from-one-cog-to-italy.md) explains
 the live country-to-neighbourhood route and its verification scope.

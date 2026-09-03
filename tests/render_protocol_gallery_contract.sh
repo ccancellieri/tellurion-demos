@@ -29,6 +29,9 @@ require_file deploy/render/roads-style.json
 require_file demos/query/index.html
 require_file demos/stac/index.html
 require_file demos/maps/index.html
+require_text index.html 'https://tellurion-public-demo.onrender.com/ui/'
+require_text index.html 'Try your own public file'
+require_text index.html 'COG and GeoParquet use bounded range reads'
 
 require_text deploy/render/roads-style.json '"version": 8'
 require_text deploy/render/roads-style.json '"source-layer": "sample_roads"'
@@ -87,7 +90,7 @@ require_text docs/articles/from-stac-discovery-to-a-live-map.md '## Italy expans
 require_text docs/articles/from-stac-discovery-to-a-live-map.md 'live Italy explorer'
 require_text docs/articles/from-stac-discovery-to-a-live-map.md '../design/2026-08-05-italy-worldcover-mosaic-design.md'
 require_text docs/articles/from-stac-discovery-to-a-live-map.md '../../data/stac/esa-worldcover-italy/manifest.json'
-require_text docs/articles/from-stac-discovery-to-a-live-map.md 'public v0.4.0 release-candidate source is available'
+require_text docs/articles/from-stac-discovery-to-a-live-map.md 'public v0.5.0-rc.1 release-candidate source is available'
 require_text docs/articles/from-stac-discovery-to-a-live-map.md 'from-one-cog-to-italy.md'
 require_text docs/articles/from-one-cog-to-italy.md 'Italy first, 10 m underneath'
 require_text docs/articles/from-one-cog-to-italy.md '17 ESA WorldCover 2021 v200 source Items'
