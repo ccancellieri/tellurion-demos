@@ -1,5 +1,11 @@
 # Tellurion demos
 
+Development lives in [`demo/gallery` in Tellurion](https://github.com/ccancellieri/tellurion/tree/main/demo/gallery).
+This gallery is exported to the existing `tellurion-demos` repository to retain
+published URLs. Edit the source there, not a publication copy.
+See [versioned demos and publication](docs/demo-versioning.md) and the
+[retained demo versions](releases/).
+
 A human-first, reproducible gallery for Tellurion's vector, raster,
 multidimensional, 3D, filtering, catalog and server-rendering paths.
 

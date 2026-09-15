@@ -13,7 +13,7 @@ PAGES = (
     ROOT / "docs" / "index.html",
     ROOT / "proof" / "index.html",
     ROOT / "demos" / "stac" / "index.html",
-)
+) + tuple(sorted((ROOT / 'releases').rglob('*.html')))
 
 
 class PageParser(HTMLParser):
