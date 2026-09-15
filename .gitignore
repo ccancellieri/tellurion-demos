@@ -4,3 +4,10 @@ __pycache__/
 .pytest_cache/
 .idea/
 .vscode/
+.worktrees/
+.memory/
+AGENTS.md
+CLAUDE.md
+GEMINI.md
+.codex/
+.claude/
